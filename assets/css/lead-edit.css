@@ -1,0 +1,35 @@
+/* Estilos para modo edición */
+.edit-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.edit-input:focus {
+    border-color: #0d6efd;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(13,110,253,.25);
+}
+
+.edit-lead-btn.save-mode {
+    background-color: #198754;
+}
+
+.edit-lead-btn.save-mode:hover {
+    background-color: #157347;
+}
+
+.cancel-edit-btn {
+    margin-left: 10px;
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.cancel-edit-btn:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+    color: white;
+}
