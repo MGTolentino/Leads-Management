@@ -8,32 +8,28 @@ class LTB_Leads_Router {
     private $query_handler;
 
     public static function get_instance() {
-        error_log('=== ROUTER GET_INSTANCE llamado ===');
         if (null === self::$instance) {
-            error_log('Creando nueva instancia de Router');
+
             self::$instance = new self();
         }
         return self::$instance;
     }
 
     private function __construct() {
-        error_log('=== ROUTER CONSTRUCTOR ===');
+
         $this->query_handler = new LTB_Leads_Query();
         $this->init_hooks();
     }
 
     private function init_hooks() {
-        error_log('=== ROUTER INIT HOOKS ===');
         
         add_action('init', array($this, 'add_rewrite_rules'));
         add_filter('query_vars', array($this, 'add_query_vars'));
         add_filter('template_include', array($this, 'maybe_load_template'));
         
-        error_log('Router hooks registrados');
     }
 
     public function add_rewrite_rules() {
-        error_log('=== ROUTER ADD_REWRITE_RULES llamado ===');
         
         add_rewrite_rule(
             '^lead-details/([^/]+)/?$',
@@ -41,11 +37,9 @@ class LTB_Leads_Router {
             'top'
         );
         
-        error_log('Regla agregada para lead-details');
     }
 
     public function add_query_vars($vars) {
-        error_log('=== ROUTER ADD_QUERY_VARS llamado ===');
         $vars[] = 'lead_details';
         $vars[] = 'lead_slug';
         return $vars;
@@ -123,7 +117,6 @@ class LTB_Leads_Router {
 }
 
     public static function activate() {
-        error_log('=== ROUTER ACTIVATE llamado ===');
         global $wp_rewrite;
         $wp_rewrite->flush_rules();
     }

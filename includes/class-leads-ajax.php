@@ -7,16 +7,13 @@ class LTB_Leads_Ajax {
     private $query_handler;
 
     public function __construct() {
-        error_log('=== Inicializando LTB_Leads_Ajax ===');
         $this->query_handler = new LTB_Leads_Query();
         $this->init_hooks();
     }
 
     private function init_hooks() {
-        error_log('=== Inicializando hooks de Ajax ===');
         add_action('wp_ajax_save_lead_data', array($this, 'handle_lead_save'));
         add_action('wp_ajax_nopriv_save_lead_data', array($this, 'handle_lead_save'));
-        error_log('Hooks de Ajax registrados');
 		add_action('wp_ajax_add_event_to_lead', array($this, 'handle_add_event_to_lead'));
 add_action('wp_ajax_nopriv_add_event_to_lead', array($this, 'handle_add_event_to_lead'));
 		add_action('wp_ajax_check_existing_lead', array($this, 'check_existing_lead'));
@@ -32,19 +29,15 @@ add_action('wp_ajax_update_evento_status', array($this, 'update_evento_status'))
     }
 
     public function handle_lead_save() {
-    error_log('=== handle_lead_save llamado ===');
-    error_log('POST data: ' . print_r($_POST, true));
 
     // Verificar nonce
     if (!check_ajax_referer('ltb_lead_edit_nonce', 'nonce', false)) {
-        error_log('Error de nonce en handle_lead_save');
         wp_send_json_error('Error de seguridad');
         return;
     }
 
     // Verificar permisos
     if (!current_user_can('manage_options')) {
-        error_log('Error de permisos en handle_lead_save');
         wp_send_json_error('No tienes permisos para realizar esta acción');
         return;
     }
@@ -52,13 +45,8 @@ add_action('wp_ajax_update_evento_status', array($this, 'update_evento_status'))
     $lead_id = isset($_POST['lead_id']) ? intval($_POST['lead_id']) : 0;
     $fields = isset($_POST['fields']) ? $_POST['fields'] : array();
     $eventos = isset($_POST['eventos']) ? $_POST['eventos'] : array();
-
-    error_log('Lead ID: ' . $lead_id);
-    error_log('Fields: ' . print_r($fields, true));
-    error_log('Eventos: ' . print_r($eventos, true));
     
     if (!$lead_id) {
-        error_log('ID de lead inválido en handle_lead_save');
         wp_send_json_error('ID de lead inválido');
         return;
     }
@@ -80,7 +68,7 @@ add_action('wp_ajax_update_evento_status', array($this, 'update_evento_status'))
         
         // Actualizar en la base de datos
         if (!empty($leads_update)) {
-            error_log('Actualizando tabla leads: ' . print_r($leads_update, true));
+
             $result = $wpdb->update(
                 $wpdb->prefix . 'jet_cct_leads',
                 $leads_update,
@@ -131,7 +119,7 @@ add_action('wp_ajax_update_evento_status', array($this, 'update_evento_status'))
             
             // Actualizar en la base de datos
             if (!empty($eventos_update)) {
-                error_log('Actualizando evento ID ' . $evento_id . ': ' . print_r($eventos_update, true));
+
                 $result = $wpdb->update(
                     $wpdb->prefix . 'jet_cct_eventos',
                     $eventos_update,
@@ -150,13 +138,13 @@ add_action('wp_ajax_update_evento_status', array($this, 'update_evento_status'))
         $updated_data = $this->query_handler->get_single_lead($lead_id);
         
         if ($updated_data) {
-            error_log('Datos actualizados correctamente');
+
             wp_send_json_success(array(
                 'message' => 'Datos actualizados correctamente',
                 'lead' => $updated_data
             ));
         } else {
-            error_log('Error al obtener datos actualizados');
+
             wp_send_json_error('Error al obtener los datos actualizados');
         }
     } else {
@@ -344,8 +332,6 @@ public function filter_leads() {
         'paged' => isset($_POST['paged']) ? intval($_POST['paged']) : 1
     );
     
-    // Añadir logs para depuración
-    error_log('Filtro de fecha de evento en filter_leads: ' . $args['fecha_evento']);
     
     // Obtener datos filtrados
     $leads = $this->query_handler->get_leads($args);
@@ -483,12 +469,6 @@ public function get_leads_by_status() {
         $filters['fecha_evento_inicio'] = $filters['fecha_evento'];
         $filters['fecha_evento_fin'] = $filters['fecha_evento'];
         unset($filters['fecha_evento']);
-    }
-    
-    // Asegurarse de que el campo de búsqueda se procese correctamente
-    if (isset($filters['search']) && !empty($filters['search'])) {
-        // Registrar la búsqueda para debugging
-        error_log('Búsqueda recibida en get_leads_by_status: ' . $filters['search']);
     }
     
     // Obtener datos

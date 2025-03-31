@@ -13,7 +13,6 @@ class LTB_Leads_Followup_Form {
     }
 
     private function init_hooks() {
-    error_log('=== Inicializando hooks de followup ===');
     add_action('wp_ajax_save_followup', array($this, 'handle_save_followup'));
     add_action('wp_ajax_nopriv_save_followup', array($this, 'handle_save_followup'));
 }
@@ -115,21 +114,16 @@ class LTB_Leads_Followup_Form {
     }
 
     public function handle_save_followup() {
-    error_log('=== FOLLOWUP SAVE llamado ===');
-    error_log('POST data: ' . print_r($_POST, true));
 
     // Verificar nonce sin die
     if (!check_ajax_referer('followup_nonce', 'nonce', false)) {
-        error_log('Error de nonce');
         wp_send_json_error('Error de seguridad');
         return;
     }
 
     $lead_id = isset($_POST['lead_id']) ? intval($_POST['lead_id']) : 0;
-    error_log('Lead ID: ' . $lead_id);
     
     if (!$lead_id) {
-        error_log('ID de lead no válido');
         wp_send_json_error('ID de lead no válido');
         return;
     }
@@ -138,7 +132,6 @@ class LTB_Leads_Followup_Form {
     $required_fields = array('status', 'fecha', 'actividad', 'notas');
     foreach ($required_fields as $field) {
         if (!isset($_POST[$field])) {
-            error_log('Campo requerido faltante: ' . $field);
             wp_send_json_error('Campo requerido faltante: ' . $field);
             return;
         }
@@ -154,7 +147,6 @@ class LTB_Leads_Followup_Form {
         )
     );
 
-    error_log('Datos de seguimiento preparados: ' . print_r($seguimiento, true));
 
     // Insertar en la tabla CCT
     $inserted = $this->wpdb->insert(
@@ -171,13 +163,11 @@ class LTB_Leads_Followup_Form {
     );
 
     if ($inserted) {
-        error_log('Seguimiento guardado correctamente');
         wp_send_json_success(array(
             'message' => 'Seguimiento guardado correctamente',
             'seguimiento' => $seguimiento
         ));
     } else {
-        error_log('Error al guardar seguimiento: ' . $this->wpdb->last_error);
         wp_send_json_error('Error al guardar el seguimiento: ' . $this->wpdb->last_error);
     }
 }

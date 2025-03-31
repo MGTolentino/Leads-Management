@@ -136,24 +136,17 @@ if ($form_type === 'lead_and_event') {
     
     // Obtener y validar la fecha como timestamp
     $evento_fecha_original = isset($_POST['fecha_de_evento']) ? $_POST['fecha_de_evento'] : '';
-    error_log('Fecha original recibida: ' . $evento_fecha_original);
     
     $evento_fecha = sanitize_text_field($evento_fecha_original);
-    error_log('Fecha después de sanitize: ' . $evento_fecha);
     
     $fecha_timestamp = strtotime($evento_fecha);
-    error_log('Timestamp generado: ' . $fecha_timestamp);
     
     if ($fecha_timestamp === false) {
         // Si falla la conversión, usar timestamp actual como fallback
-        error_log('Error al convertir fecha: ' . $evento_fecha);
         $fecha_timestamp = time();
     }
     
-    // Guardar el timestamp numérico en lugar de la fecha formateada
-    // Esto es lo que JetEngine espera cuando "save as timestamp" está activado
     $evento_fecha = $fecha_timestamp;
-    error_log('Timestamp final que se guardará: ' . $evento_fecha);
     
     // Preparar datos del evento
             $evento_data = array(
@@ -246,7 +239,6 @@ private function get_post_parent_category($post_id) {
  * Extrae la categoría de un post desde su URL o ID
  */
 public function extraer_categoria_desde_url($url_or_id) {
-    error_log('Procesando entrada para extracción de categoría: ' . $url_or_id);
     
     // Si es un ID numérico
     if (is_numeric($url_or_id)) {
@@ -286,7 +278,6 @@ public function extraer_categoria_desde_url($url_or_id) {
             
             if (!empty($posts)) {
                 $post_id = $posts[0]->ID;
-                error_log('Post encontrado por slug. ID: ' . $post_id);
             }
         }
     }
@@ -305,7 +296,6 @@ public function extraer_categoria_desde_url($url_or_id) {
      * Si hay múltiples ubicaciones, obtiene la ubicación padre
      */
     public function extraer_ubicacion_desde_url($url) {
-        error_log('Procesando URL para extracción de ubicación: ' . $url);
         
         // Si la URL está vacía, retornar vacío
         if (empty($url)) {
@@ -395,7 +385,6 @@ public function extraer_categoria_desde_url($url_or_id) {
             $parent_location = $location_terms[0]->name;
         }
         
-        error_log('Ubicación extraída: ' . $parent_location);
         return $parent_location;
     }
 
