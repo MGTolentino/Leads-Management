@@ -283,7 +283,7 @@ class LTB_Leads_Query {
         $args = apply_filters('ltb_leads_query_args', $args);
         $where_custom = apply_filters('ltb_leads_query_where', '', $args);
         if (!empty($where_custom)) {
-            $where[] = $where_custom;
+            $where[] = trim($where_custom);
         }
     }
 
@@ -788,7 +788,7 @@ public function get_leads_by_status($args = array()) {
        $args = apply_filters('ltb_leads_query_args', $args);
        $where_custom = apply_filters('ltb_leads_query_where', '', $args);
        if (!empty($where_custom)) {
-           $where[] = $where_custom;
+           $where[] = trim($where_custom);
        }
    }
 
