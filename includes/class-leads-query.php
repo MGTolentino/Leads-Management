@@ -278,6 +278,15 @@ class LTB_Leads_Query {
         $values = array_merge($values, array($search, $search, $search, $search, $search, $search));
     }
 
+    // Aplicar filtros personalizados de Events Staff Manager (si está activo)
+    if (function_exists('apply_filters')) {
+        $args = apply_filters('ltb_leads_query_args', $args);
+        $where_custom = apply_filters('ltb_leads_query_where', '', $args);
+        if (!empty($where_custom)) {
+            $where[] = $where_custom;
+        }
+    }
+
     // Agregar cláusula WHERE
     if (!empty($where)) {
         $query .= " WHERE " . implode(' AND ', $where);
@@ -772,6 +781,15 @@ public function get_leads_by_status($args = array()) {
            l.lead_razon_social LIKE %s
        )";
        $values = array_merge($values, array($search, $search, $search, $search, $search));
+   }
+
+   // Aplicar filtros personalizados de Events Staff Manager (si está activo)
+   if (function_exists('apply_filters')) {
+       $args = apply_filters('ltb_leads_query_args', $args);
+       $where_custom = apply_filters('ltb_leads_query_where', '', $args);
+       if (!empty($where_custom)) {
+           $where[] = $where_custom;
+       }
    }
 
    // Agregar cláusula WHERE
