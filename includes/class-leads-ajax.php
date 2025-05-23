@@ -37,7 +37,7 @@ add_action('wp_ajax_update_evento_status', array($this, 'update_evento_status'))
     }
 
     // Verificar permisos
-    if (!current_user_can('manage_options')) {
+    if (!ltb_user_can_manage_leads()) {
         wp_send_json_error('No tienes permisos para realizar esta acción');
         return;
     }
@@ -163,7 +163,7 @@ public function handle_add_event_to_lead() {
     }
 
     // Verificar permisos
-    if (!current_user_can('manage_options')) {
+    if (!ltb_user_can_manage_leads()) {
         wp_send_json_error('No tienes permisos para realizar esta acción');
         return;
     }
@@ -315,7 +315,7 @@ public function handle_add_event_to_lead() {
 public function filter_leads() {
     check_ajax_referer('ltb_leads_filter_nonce', 'nonce');
     
-    if (!current_user_can('manage_options')) {
+    if (!ltb_user_can_manage_leads()) {
         wp_send_json_error(array('message' => 'No tienes permisos para realizar esta acción'));
         return;
     }
@@ -358,7 +358,7 @@ public function handle_delete_lead() {
     }
     
     // Verificar permisos
-    if (!current_user_can('manage_options')) {
+    if (!ltb_user_can_manage_leads()) {
         wp_send_json_error('No tienes permisos para realizar esta acción');
         return;
     }
@@ -457,7 +457,7 @@ public function handle_service_search() {
 public function get_leads_by_status() {
     check_ajax_referer('ltb_leads_nonce', 'nonce');
     
-    if (!current_user_can('manage_options')) {
+    if (!ltb_user_can_manage_leads()) {
         wp_send_json_error(array('message' => 'No tienes permisos para realizar esta acción'));
     }
     
@@ -484,7 +484,7 @@ public function get_leads_by_status() {
 public function update_evento_status() {
     check_ajax_referer('ltb_leads_nonce', 'nonce');
     
-    if (!current_user_can('manage_options')) {
+    if (!ltb_user_can_manage_leads()) {
         wp_send_json_error(array('message' => 'No tienes permisos para realizar esta acción'));
     }
     
