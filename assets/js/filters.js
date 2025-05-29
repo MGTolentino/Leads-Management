@@ -55,15 +55,41 @@ jQuery(function($) {
         tags: true
     });
     
-    // Inicializar secciones colapsables
+    // Inicializar secciones colapsables con comportamiento de acordeón
     $('.section-header').on('click', function() {
         const target = $(this).data('target');
         const $content = $('#' + target);
         const $icon = $(this).find('.toggle-icon');
+        const $allHeaders = $('.section-header');
+        const $allContents = $('.section-content');
+        const $allIcons = $('.section-header .toggle-icon');
         
-        $content.slideToggle(300, function() {
-            $content.toggleClass('open');
-            $icon.toggleClass('open');
+        // Si ya está abierto, simplemente ciérralo
+        if ($content.hasClass('open')) {
+            $content.slideUp(200, function() {
+                $content.removeClass('open');
+                $icon.removeClass('open');
+                $(this).removeClass('active');
+            });
+            return;
+        }
+        
+        // Cierra todos los contenidos abiertos
+        $allContents.slideUp(200, function() {
+            $allContents.removeClass('open');
+        });
+        
+        // Resetea todos los headers y iconos
+        $allHeaders.removeClass('active');
+        $allIcons.removeClass('open');
+        
+        // Activa el header actual
+        $(this).addClass('active');
+        
+        // Abre solo el contenido seleccionado
+        $content.slideDown(200, function() {
+            $content.addClass('open');
+            $icon.addClass('open');
         });
     });
     
@@ -1003,9 +1029,15 @@ jQuery(function($) {
             $('.view-container[data-view="cards"]').addClass('active');
         }
         
-        // Abrir sección de filtros avanzados por defecto
-        $('.section-content').addClass('open').show();
-        $('.section-header .toggle-icon').addClass('open');
+        // Ocultar todas las secciones de filtros por defecto
+        $('.section-content').hide().removeClass('open');
+        $('.section-header').removeClass('active');
+        $('.section-header .toggle-icon').removeClass('open');
+        
+        // Abrir solo la primera sección de filtros (categorización)
+        $('#categorizacion-filters').show().addClass('open');
+        $('.section-header[data-target="categorizacion-filters"]').addClass('active');
+        $('.section-header[data-target="categorizacion-filters"] .toggle-icon').addClass('open');
         
         // Establecer valor inicial del selector de elementos por página
         $('#per_page_select').val(currentFilters.per_page);
