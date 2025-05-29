@@ -143,7 +143,16 @@ class LTB_Leads_Management {
         wp_enqueue_script(
             'ltb-leads-filters',
             LTB_LEADS_PLUGIN_URL . 'assets/js/filters.js',
-            array('jquery', 'jquery-ui-datepicker'),
+            array('jquery', 'jquery-ui-datepicker', 'select2'),
+            LTB_LEADS_VERSION,
+            true
+        );
+        
+        // Nuevo script para gestión de filtros avanzados
+        wp_enqueue_script(
+            'ltb-advanced-filters',
+            LTB_LEADS_PLUGIN_URL . 'assets/js/advanced-filters.js',
+            array('jquery', 'select2'),
             LTB_LEADS_VERSION,
             true
         );

@@ -10,7 +10,6 @@
     
     // Inicialización cuando el DOM está listo
     $(document).ready(function() {
-        console.log('Pipeline view script inicializado');
         
         // Inicializar vista pipeline si estamos en desktop
         if (window.innerWidth >= 768) {
@@ -86,12 +85,10 @@
  * Carga los datos de leads agrupados por status
  */
 function loadPipelineData() {
-    console.log('Cargando datos para pipeline');
     showLoading();
     
     // Recopilar filtros actuales
     const filters = getFilters();
-    console.log('Filtros aplicados a pipeline:', filters);
     
     // Hacer la petición AJAX para cargar datos
     $.ajax({
@@ -103,15 +100,13 @@ function loadPipelineData() {
             filters: filters
         },
         success: function(response) {
-            console.log('Datos recibidos:', response);
             if (response.success) {
                 renderPipelineData(response.data);
             } else {
                 showError(response.data.message || 'Error al cargar los datos');
             }
         },
-        error: function(xhr, status, error) {
-            console.error('Error AJAX:', status, error);
+        error: function() {
             showError('Error de conexión al cargar los datos');
         },
         complete: function() {
@@ -124,7 +119,6 @@ function loadPipelineData() {
  * Renderiza los datos en la vista pipeline
  */
 function renderPipelineData(data) {
-    console.log('Renderizando datos pipeline');
     // Limpiar todas las columnas
     $('.pipeline-cards').empty();
     
@@ -147,7 +141,6 @@ function renderPipelineData(data) {
         const $container = $(`#${status}-cards`);
         
         if ($container.length === 0) {
-            console.warn(`Contenedor para status "${status}" no encontrado`);
             return;
         }
         
@@ -162,9 +155,6 @@ function renderPipelineData(data) {
         $(`.pipeline-column[data-status="${status}"] .lead-count`).text(counts[status]);
     });
 	
-	console.log("Datos para pipeline:", data);
-console.log("Leads sin evento:", data['sin-evento'] ? data['sin-evento'].length : 0, data['sin-evento']);
-console.log("Leads con estados obsoletos:", data['otros'] ? data['otros'].length : 0, data['otros']);
 	
 	// Calcular leads no mostrados
 let hiddenLeads = 0;
