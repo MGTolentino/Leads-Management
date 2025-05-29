@@ -8,6 +8,23 @@ jQuery(function($) {
         tipo_evento: [],
         status: [],
         invitados: '',
+        prioridad: '',
+        valor_potencial: '',
+        probabilidad: '',
+        responsable: [],
+        ultima_interaccion: '',
+        tiempo_sin_actividad: '',
+        proxima_accion: '',
+        fuente: [],
+        campana: [],
+        ubicacion: [],
+        industria: [],
+        estado_propuesta: '',
+        rango_cotizacion: '',
+        temporada: '',
+        servicios_requeridos: [],
+        venue: [],
+        etiquetas: [],
         search: '',
         orderby: 'fecha_solicitud',
         order: 'DESC',
@@ -28,6 +45,14 @@ jQuery(function($) {
         placeholder: 'Seleccionar...',
         allowClear: true,
         closeOnSelect: false
+    });
+    
+    // Inicializar Select2 para etiquetas (con opción de agregar nuevas)
+    $('.select2-tags').select2({
+        placeholder: 'Seleccionar o crear...',
+        allowClear: true,
+        closeOnSelect: false,
+        tags: true
     });
     
     // Inicializar secciones colapsables
@@ -168,6 +193,68 @@ jQuery(function($) {
         $('#fecha_evento_display').text(textoDisplay);
     }
     
+    // Selectores de año y mes para fecha de evento
+    $('#anio_evento').on('change', function() {
+        const anio = $(this).val();
+        const mes = $('#mes_evento').val();
+        
+        if (anio) {
+            if (mes) {
+                // Si también hay mes seleccionado, poner el rango del mes completo
+                const ultimoDia = new Date(anio, parseInt(mes), 0).getDate();
+                $('#fecha_evento_inicio').val(`${anio}-${mes}-01`);
+                $('#fecha_evento_fin').val(`${anio}-${mes}-${ultimoDia}`);
+            } else {
+                // Solo año, poner el rango del año completo
+                $('#fecha_evento_inicio').val(`${anio}-01-01`);
+                $('#fecha_evento_fin').val(`${anio}-12-31`);
+            }
+            actualizarVisualizacionFechaEvento();
+        }
+    });
+    
+    $('#mes_evento').on('change', function() {
+        const mes = $(this).val();
+        const anio = $('#anio_evento').val() || new Date().getFullYear();
+        
+        if (mes) {
+            const ultimoDia = new Date(anio, parseInt(mes), 0).getDate();
+            $('#fecha_evento_inicio').val(`${anio}-${mes}-01`);
+            $('#fecha_evento_fin').val(`${anio}-${mes}-${ultimoDia}`);
+            actualizarVisualizacionFechaEvento();
+        }
+    });
+    
+    // Selectores de año y mes para fecha de ingreso
+    $('#anio_ingreso').on('change', function() {
+        const anio = $(this).val();
+        const mes = $('#mes_ingreso').val();
+        
+        if (anio) {
+            if (mes) {
+                // Si también hay mes seleccionado, poner el rango del mes completo
+                const ultimoDia = new Date(anio, parseInt(mes), 0).getDate();
+                $('#fecha_ingreso_inicio').val(`${anio}-${mes}-01`);
+                $('#fecha_ingreso_fin').val(`${anio}-${mes}-${ultimoDia}`);
+            } else {
+                // Solo año, poner el rango del año completo
+                $('#fecha_ingreso_inicio').val(`${anio}-01-01`);
+                $('#fecha_ingreso_fin').val(`${anio}-12-31`);
+            }
+        }
+    });
+    
+    $('#mes_ingreso').on('change', function() {
+        const mes = $(this).val();
+        const anio = $('#anio_ingreso').val() || new Date().getFullYear();
+        
+        if (mes) {
+            const ultimoDia = new Date(anio, parseInt(mes), 0).getDate();
+            $('#fecha_ingreso_inicio').val(`${anio}-${mes}-01`);
+            $('#fecha_ingreso_fin').val(`${anio}-${mes}-${ultimoDia}`);
+        }
+    });
+    
     // Funciones para los botones de presets de fecha
     function establecerHoy() {
         const hoy = new Date();
@@ -175,6 +262,9 @@ jQuery(function($) {
         
         $('#fecha_evento_inicio').val(fechaFormateada);
         $('#fecha_evento_fin').val(fechaFormateada);
+        
+        // Limpiar selectores de año y mes
+        $('#anio_evento, #mes_evento').val('');
         
         actualizarVisualizacionFechaEvento();
     }
@@ -194,6 +284,9 @@ jQuery(function($) {
         $('#fecha_evento_inicio').val($.datepicker.formatDate('yy-mm-dd', inicioSemana));
         $('#fecha_evento_fin').val($.datepicker.formatDate('yy-mm-dd', finSemana));
         
+        // Limpiar selectores de año y mes
+        $('#anio_evento, #mes_evento').val('');
+        
         actualizarVisualizacionFechaEvento();
     }
     
@@ -205,6 +298,10 @@ jQuery(function($) {
         $('#fecha_evento_inicio').val($.datepicker.formatDate('yy-mm-dd', inicioMes));
         $('#fecha_evento_fin').val($.datepicker.formatDate('yy-mm-dd', finMes));
         
+        // Actualizar selectores de año y mes
+        $('#anio_evento').val(hoy.getFullYear());
+        $('#mes_evento').val(String(hoy.getMonth() + 1).padStart(2, '0'));
+        
         actualizarVisualizacionFechaEvento();
     }
     
@@ -215,6 +312,10 @@ jQuery(function($) {
         
         $('#fecha_evento_inicio').val($.datepicker.formatDate('yy-mm-dd', inicioAnio));
         $('#fecha_evento_fin').val($.datepicker.formatDate('yy-mm-dd', finAnio));
+        
+        // Actualizar selector de año y limpiar mes
+        $('#anio_evento').val(hoy.getFullYear());
+        $('#mes_evento').val('');
         
         actualizarVisualizacionFechaEvento();
     }
@@ -235,21 +336,51 @@ jQuery(function($) {
     $applyFiltersBtn.on('click', function(e) {
         e.preventDefault();
         
-        // Recopilar valores de los filtros
-        currentFilters = {
-            fecha_ingreso_inicio: $('#fecha_ingreso_inicio').val(),
-            fecha_ingreso_fin: $('#fecha_ingreso_fin').val(),
-            fecha_evento_inicio: $('#fecha_evento_inicio').val(),
-            fecha_evento_fin: $('#fecha_evento_fin').val(),
-            tipo_evento: $('#tipo_evento_filter').val() || [],
-            status: $('#status_filter').val() || [],
-            invitados: $('#invitados_filter').val(),
-            search: $('#search_leads').val(),
-            orderby: $('#ordenamiento').val(),
-            order: $('#orden').val(),
-            paged: 1,
-            per_page: currentFilters.per_page
-        };
+        // Recopilar valores de los filtros de categorización
+        currentFilters.fecha_ingreso_inicio = $('#fecha_ingreso_inicio').val();
+        currentFilters.fecha_ingreso_fin = $('#fecha_ingreso_fin').val();
+        currentFilters.fecha_evento_inicio = $('#fecha_evento_inicio').val();
+        currentFilters.fecha_evento_fin = $('#fecha_evento_fin').val();
+        currentFilters.tipo_evento = $('#tipo_evento_filter').val() || [];
+        currentFilters.status = $('#status_filter').val() || [];
+        currentFilters.invitados = $('#invitados_filter').val();
+        
+        // Recopilar valores de los filtros de calificación
+        currentFilters.prioridad = $('#prioridad_filter').val();
+        currentFilters.valor_potencial = $('#valor_potencial_filter').val();
+        currentFilters.probabilidad = $('#probabilidad_filter').val();
+        
+        // Recopilar valores de los filtros de seguimiento
+        currentFilters.responsable = $('#responsable_filter').val() || [];
+        currentFilters.ultima_interaccion = $('#ultima_interaccion_filter').val();
+        currentFilters.tiempo_sin_actividad = $('#tiempo_sin_actividad_filter').val();
+        currentFilters.proxima_accion = $('#proxima_accion_filter').val();
+        
+        // Recopilar valores de los filtros de origen
+        currentFilters.fuente = $('#fuente_filter').val() || [];
+        currentFilters.campana = $('#campana_filter').val() || [];
+        
+        // Recopilar valores de los filtros demográficos
+        currentFilters.ubicacion = $('#ubicacion_filter').val() || [];
+        currentFilters.industria = $('#industria_filter').val() || [];
+        
+        // Recopilar valores de los filtros de conversión
+        currentFilters.estado_propuesta = $('#estado_propuesta_filter').val();
+        currentFilters.rango_cotizacion = $('#rango_cotizacion_filter').val();
+        
+        // Recopilar valores de los filtros específicos de eventos
+        currentFilters.temporada = $('#temporada_filter').val();
+        currentFilters.servicios_requeridos = $('#servicios_requeridos_filter').val() || [];
+        currentFilters.venue = $('#venue_filter').val() || [];
+        
+        // Recopilar valores de las etiquetas
+        currentFilters.etiquetas = $('#etiquetas_filter').val() || [];
+        
+        // Otros filtros
+        currentFilters.search = $('#search_leads').val();
+        currentFilters.orderby = $('#ordenamiento').val();
+        currentFilters.order = $('#orden').val();
+        currentFilters.paged = 1;
         
         // Actualizar tabla
         updateTable();
@@ -266,11 +397,37 @@ jQuery(function($) {
     $clearFiltersBtn.on('click', function(e) {
         e.preventDefault();
         
-        // Limpiar campos de formulario
+        // Limpiar campos de formulario - Categorización
         $('#fecha_ingreso_inicio, #fecha_ingreso_fin, #fecha_evento_inicio, #fecha_evento_fin').val('');
-        $('#search_leads').val('');
+        $('#anio_evento, #mes_evento, #anio_ingreso, #mes_ingreso').val('');
         $('#tipo_evento_filter, #status_filter').val(null).trigger('change');
         $('#invitados_filter').val('');
+        
+        // Limpiar campos de formulario - Calificación
+        $('#prioridad_filter, #valor_potencial_filter, #probabilidad_filter').val('');
+        
+        // Limpiar campos de formulario - Seguimiento
+        $('#responsable_filter').val(null).trigger('change');
+        $('#ultima_interaccion_filter, #tiempo_sin_actividad_filter, #proxima_accion_filter').val('');
+        
+        // Limpiar campos de formulario - Origen
+        $('#fuente_filter, #campana_filter').val(null).trigger('change');
+        
+        // Limpiar campos de formulario - Demográficos
+        $('#ubicacion_filter, #industria_filter').val(null).trigger('change');
+        
+        // Limpiar campos de formulario - Conversión
+        $('#estado_propuesta_filter, #rango_cotizacion_filter').val('');
+        
+        // Limpiar campos de formulario - Eventos específicos
+        $('#temporada_filter').val('');
+        $('#servicios_requeridos_filter, #venue_filter').val(null).trigger('change');
+        
+        // Limpiar campos de formulario - Etiquetas
+        $('#etiquetas_filter').val(null).trigger('change');
+        
+        // Limpiar otros campos
+        $('#search_leads').val('');
         $('#ordenamiento').val('fecha_solicitud');
         $('#orden').val('DESC');
         $('#fecha_evento_display').text('');
@@ -284,6 +441,23 @@ jQuery(function($) {
             tipo_evento: [],
             status: [],
             invitados: '',
+            prioridad: '',
+            valor_potencial: '',
+            probabilidad: '',
+            responsable: [],
+            ultima_interaccion: '',
+            tiempo_sin_actividad: '',
+            proxima_accion: '',
+            fuente: [],
+            campana: [],
+            ubicacion: [],
+            industria: [],
+            estado_propuesta: '',
+            rango_cotizacion: '',
+            temporada: '',
+            servicios_requeridos: [],
+            venue: [],
+            etiquetas: [],
             search: '',
             orderby: 'fecha_solicitud',
             order: 'DESC',
@@ -506,6 +680,7 @@ jQuery(function($) {
         switch (tipo) {
             case 'fecha_evento':
                 $('#fecha_evento_inicio, #fecha_evento_fin').val('');
+                $('#anio_evento, #mes_evento').val('');
                 $('#fecha_evento_display').text('');
                 currentFilters.fecha_evento_inicio = '';
                 currentFilters.fecha_evento_fin = '';
@@ -513,6 +688,7 @@ jQuery(function($) {
                 
             case 'fecha_ingreso':
                 $('#fecha_ingreso_inicio, #fecha_ingreso_fin').val('');
+                $('#anio_ingreso, #mes_ingreso').val('');
                 currentFilters.fecha_ingreso_inicio = '';
                 currentFilters.fecha_ingreso_fin = '';
                 break;
@@ -530,6 +706,91 @@ jQuery(function($) {
             case 'invitados':
                 $('#invitados_filter').val('');
                 currentFilters.invitados = '';
+                break;
+                
+            case 'prioridad':
+                $('#prioridad_filter').val('');
+                currentFilters.prioridad = '';
+                break;
+                
+            case 'valor_potencial':
+                $('#valor_potencial_filter').val('');
+                currentFilters.valor_potencial = '';
+                break;
+                
+            case 'probabilidad':
+                $('#probabilidad_filter').val('');
+                currentFilters.probabilidad = '';
+                break;
+                
+            case 'responsable':
+                $('#responsable_filter').val(null).trigger('change');
+                currentFilters.responsable = [];
+                break;
+                
+            case 'ultima_interaccion':
+                $('#ultima_interaccion_filter').val('');
+                currentFilters.ultima_interaccion = '';
+                break;
+                
+            case 'tiempo_sin_actividad':
+                $('#tiempo_sin_actividad_filter').val('');
+                currentFilters.tiempo_sin_actividad = '';
+                break;
+                
+            case 'proxima_accion':
+                $('#proxima_accion_filter').val('');
+                currentFilters.proxima_accion = '';
+                break;
+                
+            case 'fuente':
+                $('#fuente_filter').val(null).trigger('change');
+                currentFilters.fuente = [];
+                break;
+                
+            case 'campana':
+                $('#campana_filter').val(null).trigger('change');
+                currentFilters.campana = [];
+                break;
+                
+            case 'ubicacion':
+                $('#ubicacion_filter').val(null).trigger('change');
+                currentFilters.ubicacion = [];
+                break;
+                
+            case 'industria':
+                $('#industria_filter').val(null).trigger('change');
+                currentFilters.industria = [];
+                break;
+                
+            case 'estado_propuesta':
+                $('#estado_propuesta_filter').val('');
+                currentFilters.estado_propuesta = '';
+                break;
+                
+            case 'rango_cotizacion':
+                $('#rango_cotizacion_filter').val('');
+                currentFilters.rango_cotizacion = '';
+                break;
+                
+            case 'temporada':
+                $('#temporada_filter').val('');
+                currentFilters.temporada = '';
+                break;
+                
+            case 'servicios_requeridos':
+                $('#servicios_requeridos_filter').val(null).trigger('change');
+                currentFilters.servicios_requeridos = [];
+                break;
+                
+            case 'venue':
+                $('#venue_filter').val(null).trigger('change');
+                currentFilters.venue = [];
+                break;
+                
+            case 'etiquetas':
+                $('#etiquetas_filter').val(null).trigger('change');
+                currentFilters.etiquetas = [];
                 break;
                 
             case 'search':
@@ -743,8 +1004,8 @@ jQuery(function($) {
         }
         
         // Abrir sección de filtros avanzados por defecto
-        $('#advanced-filters').addClass('open').show();
-        $('.section-header[data-target="advanced-filters"] .toggle-icon').addClass('open');
+        $('.section-content').addClass('open').show();
+        $('.section-header .toggle-icon').addClass('open');
         
         // Establecer valor inicial del selector de elementos por página
         $('#per_page_select').val(currentFilters.per_page);

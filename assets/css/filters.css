@@ -144,6 +144,32 @@
     font-weight: bold;
 }
 
+/* Selectores de año y mes */
+.date-selectors {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.year-month-selectors {
+    display: flex;
+    gap: 8px;
+}
+
+.year-month-selectors select {
+    flex: 1;
+}
+
+.date-selector {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+    font-size: 13px;
+}
+
+/* Botones presets de fecha */
 .date-presets {
     display: flex;
     gap: 8px;
@@ -191,6 +217,7 @@
     margin: 0;
     font-size: 15px;
     color: #333;
+    font-weight: 600;
 }
 
 .section-content {
@@ -313,6 +340,74 @@
     background-color: #0073aa;
 }
 
+/* Estilos para las categorías de filtros */
+.filters-section.collapsible {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.filters-section.collapsible .section-header {
+    padding: 12px 0;
+    margin-bottom: 5px;
+    position: relative;
+}
+
+.filters-section.collapsible .section-header h4 {
+    position: relative;
+    padding-left: 10px;
+}
+
+.filters-section.collapsible .section-header h4:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 18px;
+    background-color: #0073aa;
+    border-radius: 2px;
+}
+
+/* Categorías específicas */
+.filters-section.collapsible .section-header[data-target="calificacion-filters"] h4:before {
+    background-color: #28a745; /* Verde */
+}
+
+.filters-section.collapsible .section-header[data-target="seguimiento-filters"] h4:before {
+    background-color: #ffc107; /* Amarillo */
+}
+
+.filters-section.collapsible .section-header[data-target="origen-filters"] h4:before {
+    background-color: #fd7e14; /* Naranja */
+}
+
+.filters-section.collapsible .section-header[data-target="demograficos-filters"] h4:before {
+    background-color: #6f42c1; /* Morado */
+}
+
+.filters-section.collapsible .section-header[data-target="conversion-filters"] h4:before {
+    background-color: #20c997; /* Verde agua */
+}
+
+.filters-section.collapsible .section-header[data-target="eventos-especificos-filters"] h4:before {
+    background-color: #e83e8c; /* Rosa */
+}
+
+.filters-section.collapsible .section-header[data-target="etiquetas-filters"] h4:before {
+    background-color: #17a2b8; /* Azul claro */
+}
+
+/* Estilos para los campos de tipo tag */
+.select2-container--default .select2-selection--multiple.select2-tags {
+    background-color: #f9f9f9;
+}
+
+.select2-container--default .select2-selection--multiple.select2-tags .select2-selection__choice {
+    background-color: #e7e7f9;
+    border-color: #d1d1f2;
+    color: #6f42c1;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .filters-grid {
@@ -327,5 +422,20 @@
 
     .sorting-options {
         flex-wrap: wrap;
+    }
+    
+    .year-month-selectors {
+        flex-direction: column;
+    }
+    
+    .date-presets {
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    .date-preset-btn {
+        flex: 1;
+        text-align: center;
+        min-width: 70px;
     }
 }
