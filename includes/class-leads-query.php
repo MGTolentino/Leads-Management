@@ -25,7 +25,11 @@ class LTB_Leads_Query {
         'order' => 'DESC',
         'per_page' => 20,
         'paged' => 1,
-        'search' => ''
+        'search' => '',
+        // Nuevos parámetros de filtro
+        'tipo_evento' => array(),
+        'status' => array(),
+        'invitados' => ''
     );
 
     $args = wp_parse_args($args, $defaults);
@@ -277,18 +281,54 @@ class LTB_Leads_Query {
         )";
         $values = array_merge($values, array($search, $search, $search, $search, $search, $search));
     }
+    
+    // Filtro por tipo de evento
+    if (!empty($args['tipo_evento']) && is_array($args['tipo_evento'])) {
+        $tipo_evento_placeholders = array();
+        foreach ($args['tipo_evento'] as $tipo) {
+            $tipo_evento_placeholders[] = '%s';
+            $values[] = $tipo;
+        }
+        if (!empty($tipo_evento_placeholders)) {
+            $where[] = "e.tipo_de_evento IN (" . implode(',', $tipo_evento_placeholders) . ")";
+        }
+    }
+    
+    // Filtro por status
+    if (!empty($args['status']) && is_array($args['status'])) {
+        $status_placeholders = array();
+        foreach ($args['status'] as $status) {
+            $status_placeholders[] = '%s';
+            $values[] = $status;
+        }
+        if (!empty($status_placeholders)) {
+            $where[] = "e.evento_status IN (" . implode(',', $status_placeholders) . ")";
+        }
+    }
+    
+    // Filtro por cantidad de invitados
+    if (!empty($args['invitados'])) {
+        $rango = explode('-', $args['invitados']);
+        if (count($rango) == 2) {
+            if ($rango[1] === '+') {
+                // Más de X invitados
+                $where[] = "e.evento_asistentes >= %d";
+                $values[] = intval($rango[0]);
+            } else {
+                // Rango de invitados
+                $where[] = "e.evento_asistentes >= %d AND e.evento_asistentes <= %d";
+                $values[] = intval($rango[0]);
+                $values[] = intval($rango[1]);
+            }
+        }
+    }
 
     // Aplicar filtros personalizados de Events Staff Manager (si está activo)
     if (function_exists('apply_filters')) {
         $args = apply_filters('ltb_leads_query_args', $args);
-        error_log('LTB - Args después de filtro: ' . print_r($args, true));
-        
         $where_custom = apply_filters('ltb_leads_query_where', '', $args);
-        error_log('LTB - WHERE custom recibido: ' . $where_custom);
-        
         if (!empty($where_custom)) {
             $where[] = trim($where_custom);
-            error_log('LTB - WHERE después de agregar filtro personalizado: ' . implode(' AND ', $where));
         }
     }
 
@@ -787,18 +827,54 @@ public function get_leads_by_status($args = array()) {
        )";
        $values = array_merge($values, array($search, $search, $search, $search, $search));
    }
+   
+   // Filtro por tipo de evento
+   if (!empty($args['tipo_evento']) && is_array($args['tipo_evento'])) {
+       $tipo_evento_placeholders = array();
+       foreach ($args['tipo_evento'] as $tipo) {
+           $tipo_evento_placeholders[] = '%s';
+           $values[] = $tipo;
+       }
+       if (!empty($tipo_evento_placeholders)) {
+           $where[] = "e.tipo_de_evento IN (" . implode(',', $tipo_evento_placeholders) . ")";
+       }
+   }
+   
+   // Filtro por status
+   if (!empty($args['status']) && is_array($args['status'])) {
+       $status_placeholders = array();
+       foreach ($args['status'] as $status) {
+           $status_placeholders[] = '%s';
+           $values[] = $status;
+       }
+       if (!empty($status_placeholders)) {
+           $where[] = "e.evento_status IN (" . implode(',', $status_placeholders) . ")";
+       }
+   }
+   
+   // Filtro por cantidad de invitados
+   if (!empty($args['invitados'])) {
+       $rango = explode('-', $args['invitados']);
+       if (count($rango) == 2) {
+           if ($rango[1] === '+') {
+               // Más de X invitados
+               $where[] = "e.evento_asistentes >= %d";
+               $values[] = intval($rango[0]);
+           } else {
+               // Rango de invitados
+               $where[] = "e.evento_asistentes >= %d AND e.evento_asistentes <= %d";
+               $values[] = intval($rango[0]);
+               $values[] = intval($rango[1]);
+           }
+       }
+   }
 
    // Aplicar filtros personalizados de Events Staff Manager (si está activo)
    if (function_exists('apply_filters')) {
        $args = apply_filters('ltb_leads_query_args', $args);
-       error_log('LTB (pipeline) - Args después de filtro: ' . print_r($args, true));
-       
        $where_custom = apply_filters('ltb_leads_query_where', '', $args);
-       error_log('LTB (pipeline) - WHERE custom recibido: ' . $where_custom);
-       
        if (!empty($where_custom)) {
            $where[] = trim($where_custom);
-           error_log('LTB (pipeline) - WHERE después de agregar filtro personalizado: ' . implode(' AND ', $where));
        }
    }
 

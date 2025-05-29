@@ -104,6 +104,30 @@ class LTB_Leads_Management {
             array(),
             LTB_LEADS_VERSION
         );
+        
+        // Nuevos estilos para filtros mejorados
+        wp_enqueue_style(
+            'ltb-leads-filters',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/filters.css',
+            array(),
+            LTB_LEADS_VERSION
+        );
+        
+        // Select2 para selección múltiple
+        wp_enqueue_style(
+            'select2',
+            'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css',
+            array(),
+            '4.1.0-rc.0'
+        );
+        
+        wp_enqueue_script(
+            'select2',
+            'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js',
+            array('jquery'),
+            '4.1.0-rc.0',
+            true
+        );
 
         // jQuery UI para datepicker y autocomplete
         wp_enqueue_style(
