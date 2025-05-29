@@ -111,7 +111,6 @@
     margin-bottom: 3px;
 }
 
-.filter-group select,
 .filter-group input[type="text"],
 .filter-group input[type="number"] {
     width: 100%;
@@ -122,11 +121,28 @@
     font-size: 14px;
 }
 
-.filter-group.compact select,
+.filter-group select {
+    width: 100%;
+    padding: 6px 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 .filter-group.compact input[type="text"],
 .filter-group.compact input[type="number"] {
     padding: 6px 8px;
     font-size: 13px;
+}
+
+.filter-group.compact select {
+    padding: 4px 3px;
+    font-size: 13px;
+    height: 30px;
 }
 
 /* Opción de ancho completo para selects */
@@ -461,6 +477,19 @@
     padding: 2px 5px;
 }
 
+/* Fix para textos cortados en selects */
+.select2-container--default .select2-selection--single {
+    height: auto;
+    padding: 3px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding-right: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 .select2-container--default.select2-container--focus .select2-selection--multiple {
     border-color: #0073aa;
     box-shadow: 0 0 0 1px #0073aa;
@@ -473,6 +502,9 @@
     margin: 2px 3px;
     padding: 2px 5px;
     font-size: 12px;
+    max-width: calc(100% - 10px);
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .filter-group.compact .select2-container--default .select2-selection--multiple .select2-selection__choice {
@@ -488,6 +520,8 @@
 .select2-container--default .select2-results__option {
     padding: 4px 8px;
     font-size: 13px;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
