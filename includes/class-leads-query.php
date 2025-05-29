@@ -281,9 +281,14 @@ class LTB_Leads_Query {
     // Aplicar filtros personalizados de Events Staff Manager (si está activo)
     if (function_exists('apply_filters')) {
         $args = apply_filters('ltb_leads_query_args', $args);
+        error_log('LTB - Args después de filtro: ' . print_r($args, true));
+        
         $where_custom = apply_filters('ltb_leads_query_where', '', $args);
+        error_log('LTB - WHERE custom recibido: ' . $where_custom);
+        
         if (!empty($where_custom)) {
             $where[] = trim($where_custom);
+            error_log('LTB - WHERE después de agregar filtro personalizado: ' . implode(' AND ', $where));
         }
     }
 
@@ -786,9 +791,14 @@ public function get_leads_by_status($args = array()) {
    // Aplicar filtros personalizados de Events Staff Manager (si está activo)
    if (function_exists('apply_filters')) {
        $args = apply_filters('ltb_leads_query_args', $args);
+       error_log('LTB (pipeline) - Args después de filtro: ' . print_r($args, true));
+       
        $where_custom = apply_filters('ltb_leads_query_where', '', $args);
+       error_log('LTB (pipeline) - WHERE custom recibido: ' . $where_custom);
+       
        if (!empty($where_custom)) {
            $where[] = trim($where_custom);
+           error_log('LTB (pipeline) - WHERE después de agregar filtro personalizado: ' . implode(' AND ', $where));
        }
    }
 
