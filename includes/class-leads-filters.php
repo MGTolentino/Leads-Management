@@ -526,84 +526,90 @@ class LTB_Leads_Filters {
 
                 <!-- Filtros básicos siempre visibles -->
                 <div class="filters-section basic-filters">
-                    <div class="filters-grid compact">
-                        <!-- Filtros de fecha de evento (versión compacta) -->
-                        <div class="filter-group date-range-group compact">
-                            <label>Fecha de Evento</label>
-                            <div class="date-range-inputs">
-                                <input type="text" id="fecha_evento_inicio" class="datepicker-input" placeholder="Desde..." readonly>
-                                <span class="date-range-separator">➔</span>
-                                <input type="text" id="fecha_evento_fin" class="datepicker-input" placeholder="Hasta..." readonly>
+                    <div class="filters-grid-two-columns">
+                        <!-- COLUMNA IZQUIERDA: FECHAS -->
+                        <div class="filters-column">
+                            <!-- Filtros de fecha de evento (versión compacta) -->
+                            <div class="filter-group date-range-group">
+                                <label>Fecha de Evento</label>
+                                <div class="date-range-inputs">
+                                    <input type="text" id="fecha_evento_inicio" class="datepicker-input" placeholder="Desde..." readonly>
+                                    <span class="date-range-separator">➔</span>
+                                    <input type="text" id="fecha_evento_fin" class="datepicker-input" placeholder="Hasta..." readonly>
+                                </div>
+                                <div class="date-actions">
+                                    <div class="year-month-selectors">
+                                        <select id="anio_evento" class="date-selector">
+                                            <option value="">Año</option>
+                                            <?php
+                                            $current_year = date('Y');
+                                            for ($i = $current_year + 5; $i >= 2000; $i--) {
+                                                echo '<option value="' . $i . '">' . $i . '</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                        <select id="mes_evento_basic" class="date-selector">
+                                            <option value="">Mes</option>
+                                            <option value="01">Enero</option>
+                                            <option value="02">Febrero</option>
+                                            <option value="03">Marzo</option>
+                                            <option value="04">Abril</option>
+                                            <option value="05">Mayo</option>
+                                            <option value="06">Junio</option>
+                                            <option value="07">Julio</option>
+                                            <option value="08">Agosto</option>
+                                            <option value="09">Septiembre</option>
+                                            <option value="10">Octubre</option>
+                                            <option value="11">Noviembre</option>
+                                            <option value="12">Diciembre</option>
+                                        </select>
+                                    </div>
+                                    <div class="date-presets">
+                                        <button type="button" id="btn_hoy" class="date-preset-btn">Hoy</button>
+                                        <button type="button" id="btn_mes" class="date-preset-btn">Mes</button>
+                                        <button type="button" id="btn_anio" class="date-preset-btn">Año</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="date-actions">
-                                <div class="year-month-selectors">
-                                    <select id="anio_evento" class="date-selector">
-                                        <option value="">Año</option>
-                                        <?php
-                                        $current_year = date('Y');
-                                        for ($i = $current_year + 5; $i >= 2000; $i--) {
-                                            echo '<option value="' . $i . '">' . $i . '</option>';
+                        </div>
+                        
+                        <!-- COLUMNA DERECHA: BUSQUEDA Y FILTROS -->
+                        <div class="filters-column">
+                            <!-- Búsqueda -->
+                            <div class="filter-group">
+                                <label for="search_leads">Buscar</label>
+                                <div class="search-input-wrapper">
+                                    <span class="dashicons dashicons-search"></span>
+                                    <input type="text" id="search_leads" placeholder="Nombre, email, teléfono...">
+                                </div>
+                            </div>
+                            
+                            <!-- Filtros comunes -->
+                            <div class="filter-group">
+                                <label for="status_filter">Status</label>
+                                <select id="status_filter" multiple="multiple" class="select2-multi">
+                                    <?php
+                                    // Obtener opciones de status desde el archivo de utilidades
+                                    if (class_exists('LTB_Leads_Status_Utils')) {
+                                        $status_options = LTB_Leads_Status_Utils::get_status_options();
+                                        foreach ($status_options as $value => $label) {
+                                            echo '<option value="' . esc_attr($value) . '">' . esc_html($label) . '</option>';
                                         }
-                                        ?>
-                                    </select>
-                                    <select id="mes_evento_basic" class="date-selector">
-                                        <option value="">Mes</option>
-                                        <option value="01">Enero</option>
-                                        <option value="02">Febrero</option>
-                                        <option value="03">Marzo</option>
-                                        <option value="04">Abril</option>
-                                        <option value="05">Mayo</option>
-                                        <option value="06">Junio</option>
-                                        <option value="07">Julio</option>
-                                        <option value="08">Agosto</option>
-                                        <option value="09">Septiembre</option>
-                                        <option value="10">Octubre</option>
-                                        <option value="11">Noviembre</option>
-                                        <option value="12">Diciembre</option>
-                                    </select>
-                                </div>
-                                <div class="date-presets">
-                                    <button type="button" id="btn_hoy" class="date-preset-btn">Hoy</button>
-                                    <button type="button" id="btn_mes" class="date-preset-btn">Mes</button>
-                                    <button type="button" id="btn_anio" class="date-preset-btn">Año</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Búsqueda -->
-                        <div class="filter-group compact">
-                            <label for="search_leads">Buscar</label>
-                            <div class="search-input-wrapper">
-                                <span class="dashicons dashicons-search"></span>
-                                <input type="text" id="search_leads" placeholder="Nombre, email, teléfono...">
-                            </div>
-                        </div>
-                        
-                        <!-- Filtros comunes -->
-                        <div class="filter-group compact">
-                            <label for="status_filter">Status</label>
-                            <select id="status_filter" multiple="multiple" class="select2-multi">
-                                <?php
-                                // Obtener opciones de status desde el archivo de utilidades
-                                if (class_exists('LTB_Leads_Status_Utils')) {
-                                    $status_options = LTB_Leads_Status_Utils::get_status_options();
-                                    foreach ($status_options as $value => $label) {
-                                        echo '<option value="' . esc_attr($value) . '">' . esc_html($label) . '</option>';
                                     }
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        
-                        <!-- Tipo de evento -->
-                        <div class="filter-group compact">
-                            <label for="tipo_evento_filter">Tipo de Evento</label>
-                            <select id="tipo_evento_filter" multiple="multiple" class="select2-multi">
-                                <option value="Bodas">Bodas</option>
-                                <option value="XV años">XV años</option>
-                                <option value="Empresarial">Empresarial</option>
-                                <option value="Otros">Otros</option>
-                            </select>
+                                    ?>
+                                </select>
+                            </div>
+                            
+                            <!-- Tipo de evento -->
+                            <div class="filter-group">
+                                <label for="tipo_evento_filter">Tipo de Evento</label>
+                                <select id="tipo_evento_filter" multiple="multiple" class="select2-multi">
+                                    <option value="Bodas">Bodas</option>
+                                    <option value="XV años">XV años</option>
+                                    <option value="Empresarial">Empresarial</option>
+                                    <option value="Otros">Otros</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     

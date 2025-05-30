@@ -162,6 +162,8 @@
     margin-top: 20px;
     padding-top: 15px;
     border-top: 1px solid #e0e0e0;
+    clear: both;
+    width: 100%;
 }
 
 #aplicar_filtros {
@@ -209,6 +211,19 @@
 
 .advanced-filters-container .section-content {
     padding: 15px;
+}
+
+/* Nuevo layout de dos columnas */
+.filters-grid-two-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.filters-column {
+    display: flex;
+    flex-direction: column;
 }
 
 /* Mejorar tamaño de inputs y botones de fecha */
@@ -329,6 +344,11 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+    .filters-grid-two-columns {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
     .filters-grid {
         grid-template-columns: 1fr;
     }
@@ -339,11 +359,36 @@
         gap: 10px;
     }
     
+    .saved-filters-help {
+        display: none; /* Ocultar tooltip en móvil */
+    }
+    
     .primary-actions {
         flex-direction: column;
     }
     
     #aplicar_filtros, #limpiar_filtros {
         width: 100%;
+    }
+    
+    .date-range-inputs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .date-range-separator {
+        display: none;
+    }
+    
+    .year-month-selectors {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+    }
+    
+    .date-presets {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5px;
     }
 }
