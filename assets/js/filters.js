@@ -267,6 +267,8 @@ jQuery(function($) {
                 $('#fecha_ingreso_inicio').val(`${anio}-01-01`);
                 $('#fecha_ingreso_fin').val(`${anio}-12-31`);
             }
+            // Actualizar la visualización amigable
+            actualizarVisualizacionFechaIngreso();
         }
     });
     
@@ -278,8 +280,43 @@ jQuery(function($) {
             const ultimoDia = new Date(anio, parseInt(mes), 0).getDate();
             $('#fecha_ingreso_inicio').val(`${anio}-${mes}-01`);
             $('#fecha_ingreso_fin').val(`${anio}-${mes}-${ultimoDia}`);
+            
+            // Si no hay año seleccionado, seleccionarlo automáticamente
+            if (!$('#anio_ingreso').val()) {
+                $('#anio_ingreso').val(anio);
+            }
+            
+            // Actualizar la visualización amigable
+            actualizarVisualizacionFechaIngreso();
         }
     });
+    
+    // Función para actualizar visualización de fecha de ingreso
+    function actualizarVisualizacionFechaIngreso() {
+        const fechaInicio = $('#fecha_ingreso_inicio').val();
+        const fechaFin = $('#fecha_ingreso_fin').val();
+        
+        let textoDisplay = '';
+        
+        if (fechaInicio && fechaFin) {
+            if (fechaInicio === fechaFin) {
+                textoDisplay = formatearFechaAmigable(fechaInicio);
+            } else {
+                textoDisplay = `Del ${formatearFechaAmigable(fechaInicio)} al ${formatearFechaAmigable(fechaFin)}`;
+            }
+        } else if (fechaInicio) {
+            textoDisplay = `Desde ${formatearFechaAmigable(fechaInicio)}`;
+        } else if (fechaFin) {
+            textoDisplay = `Hasta ${formatearFechaAmigable(fechaFin)}`;
+        }
+        
+        if ($('#fecha_ingreso_display').length) {
+            $('#fecha_ingreso_display').text(textoDisplay);
+        } else {
+            // Si no existe el elemento, crearlo después de los inputs de fecha
+            $('.date-range-inputs').first().after('<div id="fecha_ingreso_display" class="date-friendly-format">' + textoDisplay + '</div>');
+        }
+    }
     
     // Funciones para los botones de presets de fecha
     function establecerHoy() {

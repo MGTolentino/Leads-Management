@@ -209,19 +209,24 @@
     justify-content: space-between;
     gap: 8px;
     margin-bottom: 5px;
+    align-items: center; /* Mejora alineación vertical */
 }
 
 .year-selector {
-    flex: 0 0 40%;
+    flex: 0 0 auto; /* Ajustado para mejor adaptación */
+    min-width: 100px; /* Ancho mínimo para consistencia */
 }
 
 .year-month-selectors {
     display: flex;
     gap: 8px;
+    align-items: center; /* Mejora alineación vertical */
+    width: 100%; /* Asegura que use todo el espacio disponible */
 }
 
 .year-month-selectors select {
     flex: 1;
+    height: 32px; /* Altura consistente */
 }
 
 .date-selector {
@@ -248,8 +253,8 @@
 }
 
 .date-preset-btn {
-    padding: 3px 8px;
-    font-size: 11px;
+    padding: 4px 10px;
+    font-size: 12px;
     border: 1px solid #ddd;
     border-radius: 20px;
     background-color: #f5f5f5;
@@ -257,16 +262,21 @@
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
+    display: inline-block; /* Asegura comportamiento consistente */
+    margin-bottom: 4px; /* Evita que se peguen */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Sombra sutil */
 }
 
 .date-preset-btn:hover {
     background-color: #e0e0e0;
+    border-color: #ccc;
 }
 
 .date-preset-btn.active {
     background-color: #0073aa;
     color: white;
     border-color: #0073aa;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .date-friendly-format {
@@ -301,21 +311,23 @@
 
 .section-content {
     display: none;
-    padding: 15px 10px 10px 10px;
+    padding: 15px;
     margin-bottom: 15px;
     background-color: #fcfcfc;
     border-radius: 0 0 4px 4px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-left: 3px solid transparent;
 }
 
 .section-content.open {
     display: block;
     animation: fadeIn 0.3s ease;
+    border-left: 3px solid #0073aa;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0.7; }
-    to { opacity: 1; }
+    from { opacity: 0.7; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .toggle-icon {
@@ -411,6 +423,29 @@
 .filter-actions {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap; /* Permite ajustarse en pantallas pequeñas */
+}
+
+/* Hacer que los botones de filtros sean siempre visibles */
+#limpiar_filtros {
+    display: inline-block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    color: #666;
+    transition: all 0.2s ease;
+}
+
+#limpiar_filtros:hover {
+    background-color: #f0f0f0;
+    color: #333;
+    border-color: #ccc;
+}
+
+#aplicar_filtros {
+    font-weight: 600;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 /* Chips para filtros activos */
