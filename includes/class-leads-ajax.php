@@ -562,16 +562,8 @@ public function handle_save_lead_metadata() {
         'industria' => isset($_POST['industria']) ? sanitize_text_field($_POST['industria']) : null,
         'estado_propuesta' => isset($_POST['estado_propuesta']) ? sanitize_text_field($_POST['estado_propuesta']) : null,
         'rango_cotizacion' => isset($_POST['rango_cotizacion']) ? sanitize_text_field($_POST['rango_cotizacion']) : null,
-        'temporada' => isset($_POST['temporada']) ? sanitize_text_field($_POST['temporada']) : null,
-        'venue' => isset($_POST['venue']) ? sanitize_text_field($_POST['venue']) : null
+        'temporada' => isset($_POST['temporada']) ? sanitize_text_field($_POST['temporada']) : null
     );
-    
-    // Procesar servicios requeridos (array)
-    if (isset($_POST['servicios_requeridos']) && is_array($_POST['servicios_requeridos'])) {
-        $metadata['servicios_requeridos'] = array_map('sanitize_text_field', $_POST['servicios_requeridos']);
-    } else {
-        $metadata['servicios_requeridos'] = null;
-    }
     
     // Procesar etiquetas (array)
     $etiquetas = isset($_POST['etiquetas']) ? $_POST['etiquetas'] : array();

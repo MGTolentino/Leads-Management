@@ -70,7 +70,6 @@ if (!empty($metadata->tags) && is_array($metadata->tags)) {
         <li><a class="metadata-tab-link" data-target="tab-calificacion">Calificación del Lead</a></li>
         <li><a class="metadata-tab-link" data-target="tab-seguimiento">Seguimiento</a></li>
         <li><a class="metadata-tab-link" data-target="tab-origen">Origen</a></li>
-        <li><a class="metadata-tab-link" data-target="tab-demograficos">Datos Demográficos</a></li>
         <li><a class="metadata-tab-link" data-target="tab-conversion">Estado de Conversión</a></li>
     </ul>
     
@@ -189,6 +188,19 @@ if (!empty($metadata->tags) && is_array($metadata->tags)) {
                             </select>
                         </div>
                         
+                        <!-- Ubicación -->
+                        <div class="metadata-form-group">
+                            <label for="ubicacion">Ubicación del Cliente</label>
+                            <select id="ubicacion" name="ubicacion">
+                                <option value="">Seleccionar ubicación</option>
+                                <?php foreach ($ubicaciones as $value => $label): ?>
+                                <option value="<?php echo esc_attr($value); ?>" <?php selected(isset($metadata->ubicacion) ? $metadata->ubicacion : '', $value); ?>>
+                                    <?php echo esc_html($label); ?>
+                                </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        
                         <!-- Etiquetas -->
                         <div class="metadata-form-group">
                             <label for="etiquetas">Etiquetas</label>
@@ -210,82 +222,6 @@ if (!empty($metadata->tags) && is_array($metadata->tags)) {
                 </div>
             </div>
             
-            <!-- Tab: Datos Demográficos -->
-            <div id="tab-demograficos" class="metadata-tab-pane">
-                <div class="metadata-form-section demograficos">
-                    <h3 class="metadata-form-section-title">Datos Demográficos</h3>
-                    <div class="metadata-form-grid">
-                        <!-- Ubicación -->
-                        <div class="metadata-form-group">
-                            <label for="ubicacion">Ubicación</label>
-                            <select id="ubicacion" name="ubicacion">
-                                <option value="">Seleccionar ubicación</option>
-                                <?php foreach ($ubicaciones as $value => $label): ?>
-                                <option value="<?php echo esc_attr($value); ?>" <?php selected(isset($metadata->ubicacion) ? $metadata->ubicacion : '', $value); ?>>
-                                    <?php echo esc_html($label); ?>
-                                </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        
-                        <!-- Industria -->
-                        <div class="metadata-form-group">
-                            <label for="industria">Industria</label>
-                            <select id="industria" name="industria">
-                                <option value="">Seleccionar industria</option>
-                                <?php foreach ($industrias as $value => $label): ?>
-                                <option value="<?php echo esc_attr($value); ?>" <?php selected(isset($metadata->industria) ? $metadata->industria : '', $value); ?>>
-                                    <?php echo esc_html($label); ?>
-                                </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        
-                        <!-- Servicios requeridos -->
-                        <div class="metadata-form-group">
-                            <label for="servicios_requeridos">Servicios Requeridos</label>
-                            <select id="servicios_requeridos" name="servicios_requeridos[]" multiple="multiple">
-                                <?php 
-                                $servicios_seleccionados = isset($metadata->servicios_requeridos) ? maybe_unserialize($metadata->servicios_requeridos) : array();
-                                if (!is_array($servicios_seleccionados)) {
-                                    $servicios_seleccionados = array();
-                                }
-                                
-                                foreach ($servicios as $value => $label): 
-                                ?>
-                                <option value="<?php echo esc_attr($value); ?>" <?php echo in_array($value, $servicios_seleccionados) ? 'selected' : ''; ?>>
-                                    <?php echo esc_html($label); ?>
-                                </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        
-                        <!-- Venue -->
-                        <div class="metadata-form-group">
-                            <label for="venue">Venue/Lugar</label>
-                            <select id="venue" name="venue">
-                                <option value="">Seleccionar venue</option>
-                                <option value="salon_principal" <?php selected(isset($metadata->venue) ? $metadata->venue : '', 'salon_principal'); ?>>Salón Principal</option>
-                                <option value="jardin" <?php selected(isset($metadata->venue) ? $metadata->venue : '', 'jardin'); ?>>Jardín</option>
-                                <option value="terraza" <?php selected(isset($metadata->venue) ? $metadata->venue : '', 'terraza'); ?>>Terraza</option>
-                                <option value="playa" <?php selected(isset($metadata->venue) ? $metadata->venue : '', 'playa'); ?>>Playa</option>
-                                <option value="hacienda" <?php selected(isset($metadata->venue) ? $metadata->venue : '', 'hacienda'); ?>>Hacienda</option>
-                                <option value="otro_venue" <?php selected(isset($metadata->venue) ? $metadata->venue : '', 'otro_venue'); ?>>Otro</option>
-                            </select>
-                        </div>
-                        
-                        <!-- Temporada -->
-                        <div class="metadata-form-group">
-                            <label for="temporada">Temporada</label>
-                            <select id="temporada" name="temporada">
-                                <option value="">Seleccionar temporada</option>
-                                <option value="alta" <?php selected(isset($metadata->temporada) ? $metadata->temporada : '', 'alta'); ?>>Temporada alta</option>
-                                <option value="baja" <?php selected(isset($metadata->temporada) ? $metadata->temporada : '', 'baja'); ?>>Temporada baja</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
             
             <!-- Tab: Estado de Conversión -->
             <div id="tab-conversion" class="metadata-tab-pane">
@@ -315,6 +251,29 @@ if (!empty($metadata->tags) && is_array($metadata->tags)) {
                                 <option value="30k_50k" <?php selected(isset($metadata->rango_cotizacion) ? $metadata->rango_cotizacion : '', '30k_50k'); ?>>$30,000 - $50,000</option>
                                 <option value="50k_100k" <?php selected(isset($metadata->rango_cotizacion) ? $metadata->rango_cotizacion : '', '50k_100k'); ?>>$50,000 - $100,000</option>
                                 <option value="mas_100k" <?php selected(isset($metadata->rango_cotizacion) ? $metadata->rango_cotizacion : '', 'mas_100k'); ?>>Más de $100,000</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Industria -->
+                        <div class="metadata-form-group">
+                            <label for="industria">Industria del Cliente</label>
+                            <select id="industria" name="industria">
+                                <option value="">Seleccionar industria</option>
+                                <?php foreach ($industrias as $value => $label): ?>
+                                <option value="<?php echo esc_attr($value); ?>" <?php selected(isset($metadata->industria) ? $metadata->industria : '', $value); ?>>
+                                    <?php echo esc_html($label); ?>
+                                </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        
+                        <!-- Temporada -->
+                        <div class="metadata-form-group">
+                            <label for="temporada">Temporada</label>
+                            <select id="temporada" name="temporada">
+                                <option value="">Seleccionar temporada</option>
+                                <option value="alta" <?php selected(isset($metadata->temporada) ? $metadata->temporada : '', 'alta'); ?>>Temporada alta</option>
+                                <option value="baja" <?php selected(isset($metadata->temporada) ? $metadata->temporada : '', 'baja'); ?>>Temporada baja</option>
                             </select>
                         </div>
                     </div>

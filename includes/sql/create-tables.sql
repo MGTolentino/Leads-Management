@@ -16,8 +16,6 @@ CREATE TABLE IF NOT EXISTS `{prefix}ltb_leads_metadata` (
   `estado_propuesta` varchar(50) DEFAULT NULL,
   `rango_cotizacion` varchar(50) DEFAULT NULL,
   `temporada` varchar(50) DEFAULT NULL,
-  `servicios_requeridos` text DEFAULT NULL,
-  `venue` varchar(100) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
