@@ -120,6 +120,14 @@ class LTB_Leads_Management {
             LTB_LEADS_VERSION
         );
         
+        // Estilos mejorados para filtros
+        wp_enqueue_style(
+            'ltb-enhanced-filters',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/enhanced-filters.css',
+            array('ltb-leads-filters'),
+            LTB_LEADS_VERSION
+        );
+        
         // Select2 para selección múltiple
         wp_enqueue_style(
             'select2',

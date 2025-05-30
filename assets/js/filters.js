@@ -1,6 +1,9 @@
 jQuery(function($) {
     // Estado de los filtros
     let currentFilters = {
+        // Añadir identificador para filtros guardados
+        filter_name: '',
+        
         fecha_ingreso_inicio: '',
         fecha_ingreso_fin: '',
         fecha_evento_inicio: '',
@@ -40,6 +43,11 @@ jQuery(function($) {
     const $clearBasicFiltersBtn = $('#limpiar_filtros_basicos');
     const $activeFiltersCount = $('#active_filters_count');
     const $activeFiltersContainer = $('#filtros_activos');
+    const $savedFilterSelect = $('#saved_filter_select');
+    const $saveCurrentFilter = $('#save_current_filter');
+    
+    // Cargar filtros guardados del localStorage
+    loadSavedFilters();
     
     // Inicializar Select2
     $('.select2-multi').select2({
@@ -476,6 +484,19 @@ jQuery(function($) {
         limpiarTodosFiltros();
     });
     
+    // Cargar filtro guardado
+    $savedFilterSelect.on('change', function() {
+        const filterId = $(this).val();
+        if (filterId) {
+            loadSavedFilter(filterId);
+        }
+    });
+    
+    // Guardar filtro actual
+    $saveCurrentFilter.on('click', function() {
+        saveCurrentFilter();
+    });
+    
     // Función para limpiar solo los filtros básicos
     $clearBasicFiltersBtn.on('click', function(e) {
         e.preventDefault();
@@ -483,7 +504,7 @@ jQuery(function($) {
     });
     
     // Función para limpiar todos los filtros
-    function limpiarTodosFiltros() {
+    function limpiarTodosFiltros(updateUI = true) {
         
         // Limpiar campos de formulario - Categorización
         $('#fecha_ingreso_inicio, #fecha_ingreso_fin, #fecha_evento_inicio, #fecha_evento_fin').val('');
@@ -520,8 +541,11 @@ jQuery(function($) {
         $('#orden').val('DESC');
         $('#fecha_evento_display').text('');
         
-        // Reiniciar filtros
+        // Reiniciar filtros (conservando el nombre si existe)
+        const oldFilterName = currentFilters.filter_name;
+        
         currentFilters = {
+            filter_name: oldFilterName, // Preservar nombre de filtro si existe
             fecha_ingreso_inicio: '',
             fecha_ingreso_fin: '',
             fecha_evento_inicio: '',
@@ -553,19 +577,24 @@ jQuery(function($) {
             per_page: currentFilters.per_page
         };
         
-        // Actualizar tabla
-        updateTable();
-        
-        // Actualizar vista pipeline si está visible
-        if ($('.view-container[data-view="pipeline"]').is(':visible')) {
-            if (typeof window.refreshPipelineView === 'function') {
-                window.refreshPipelineView();
+        // Actualizar tabla solo si se solicita
+        if (updateUI) {
+            updateTable();
+            
+            // Actualizar vista pipeline si está visible
+            if ($('.view-container[data-view="pipeline"]').is(':visible')) {
+                if (typeof window.refreshPipelineView === 'function') {
+                    window.refreshPipelineView();
+                }
             }
+            
+            // Limpiar chips de filtros activos
+            actualizarChipsFiltrosActivos([]);
+            actualizarContadorFiltros(0);
+            
+            // También limpiar selector de filtros guardados
+            $savedFilterSelect.val('');
         }
-        
-        // Limpiar chips de filtros activos
-        actualizarChipsFiltrosActivos([]);
-        actualizarContadorFiltros(0);
     }
     
     // Función para limpiar solo los filtros básicos
@@ -1107,6 +1136,131 @@ jQuery(function($) {
         // Guardar preferencia en localStorage
         localStorage.setItem('leads_view_preference', viewType);
     });
+    
+    // Función para cargar filtros guardados
+    function loadSavedFilters() {
+        // Obtener filtros guardados del localStorage
+        const savedFilters = JSON.parse(localStorage.getItem('ltb_leads_saved_filters') || '[]');
+        
+        // Limpiar opciones existentes excepto la primera
+        $savedFilterSelect.find('option:not(:first)').remove();
+        
+        // Añadir opciones para cada filtro guardado
+        savedFilters.forEach(function(filter) {
+            $savedFilterSelect.append(`<option value="${filter.id}">${filter.name}</option>`);
+        });
+    }
+    
+    // Función para cargar un filtro guardado
+    function loadSavedFilter(filterId) {
+        const savedFilters = JSON.parse(localStorage.getItem('ltb_leads_saved_filters') || '[]');
+        const filter = savedFilters.find(f => f.id === filterId);
+        
+        if (filter) {
+            // Limpiar todos los filtros actuales
+            limpiarTodosFiltros(false); // false para no actualizar la tabla
+            
+            // Aplicar los valores del filtro guardado
+            Object.assign(currentFilters, filter.filters);
+            
+            // Actualizar la interfaz con los valores del filtro
+            updateFilterUI(filter.filters);
+            
+            // Actualizar tabla
+            updateTable();
+        }
+    }
+    
+    // Función para actualizar la interfaz con los valores del filtro
+    function updateFilterUI(filters) {
+        // Fechas de evento
+        $('#fecha_evento_inicio').val(filters.fecha_evento_inicio || '');
+        $('#fecha_evento_fin').val(filters.fecha_evento_fin || '');
+        
+        // Fechas de ingreso
+        $('#fecha_ingreso_inicio').val(filters.fecha_ingreso_inicio || '');
+        $('#fecha_ingreso_fin').val(filters.fecha_ingreso_fin || '');
+        
+        // Selects múltiples
+        if (filters.tipo_evento && filters.tipo_evento.length) {
+            $('#tipo_evento_filter').val(filters.tipo_evento).trigger('change');
+        }
+        
+        if (filters.status && filters.status.length) {
+            $('#status_filter').val(filters.status).trigger('change');
+        }
+        
+        // Resto de campos
+        $('#search_leads').val(filters.search || '');
+        $('#invitados_filter').val(filters.invitados || '');
+        $('#prioridad_filter').val(filters.prioridad || '');
+        $('#valor_potencial_filter').val(filters.valor_potencial || '');
+        $('#probabilidad_filter').val(filters.probabilidad || '');
+        
+        // Otros selects múltiples
+        if (filters.responsable && filters.responsable.length) {
+            $('#responsable_filter').val(filters.responsable).trigger('change');
+        }
+        
+        if (filters.fuente && filters.fuente.length) {
+            $('#fuente_filter').val(filters.fuente).trigger('change');
+        }
+        
+        if (filters.campana && filters.campana.length) {
+            $('#campana_filter').val(filters.campana).trigger('change');
+        }
+        
+        // Actualizar visualizaciones amigables
+        if (filters.fecha_evento_inicio || filters.fecha_evento_fin) {
+            actualizarVisualizacionFechaEvento();
+        }
+        
+        if (filters.fecha_ingreso_inicio || filters.fecha_ingreso_fin) {
+            actualizarVisualizacionFechaIngreso();
+        }
+    }
+    
+    // Función para guardar el filtro actual
+    function saveCurrentFilter() {
+        // Verificar si hay algún filtro aplicado
+        const hasActiveFilters = Object.values(currentFilters).some(value => {
+            if (Array.isArray(value)) {
+                return value.length > 0;
+            }
+            return value !== '' && value !== 'fecha_solicitud' && value !== 'DESC';
+        });
+        
+        if (!hasActiveFilters) {
+            alert('No hay filtros activos para guardar');
+            return;
+        }
+        
+        // Solicitar nombre para el filtro
+        const filterName = prompt('Ingrese un nombre para este filtro:');
+        if (!filterName) return;
+        
+        // Obtener filtros guardados existentes
+        const savedFilters = JSON.parse(localStorage.getItem('ltb_leads_saved_filters') || '[]');
+        
+        // Crear nuevo filtro
+        const newFilter = {
+            id: 'filter_' + Date.now(),
+            name: filterName,
+            filters: { ...currentFilters }
+        };
+        
+        // Añadir a la lista y guardar
+        savedFilters.push(newFilter);
+        localStorage.setItem('ltb_leads_saved_filters', JSON.stringify(savedFilters));
+        
+        // Actualizar selector
+        loadSavedFilters();
+        
+        // Seleccionar el nuevo filtro
+        $savedFilterSelect.val(newFilter.id);
+        
+        alert('Filtro guardado correctamente');
+    }
     
     // Inicialización
     $(document).ready(function() {
