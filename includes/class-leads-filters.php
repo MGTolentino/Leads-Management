@@ -931,11 +931,29 @@ class LTB_Leads_Filters {
                                             echo '<option value="' . esc_attr($ubicacion) . '">' . esc_html($ubicacion) . '</option>';
                                         }
                                     } else {
-                                        // Intentar obtener de la taxonomía como segunda opción
-                                        $ubicaciones_tax = get_terms(array(
+                                        // Intentar obtener de las taxonomías como segunda opción
+                                        $ubicaciones_tax = array();
+                                        
+                                        // Intentar con hp_listing_ubicacion
+                                        $ubicaciones_tax_1 = get_terms(array(
                                             'taxonomy' => 'hp_listing_ubicacion',
                                             'hide_empty' => false,
                                         ));
+                                        
+                                        // Intentar con hp_listing_location
+                                        $ubicaciones_tax_2 = get_terms(array(
+                                            'taxonomy' => 'hp_listing_location',
+                                            'hide_empty' => false,
+                                        ));
+                                        
+                                        // Combinar resultados
+                                        if (!is_wp_error($ubicaciones_tax_1) && !empty($ubicaciones_tax_1)) {
+                                            $ubicaciones_tax = array_merge($ubicaciones_tax, $ubicaciones_tax_1);
+                                        }
+                                        
+                                        if (!is_wp_error($ubicaciones_tax_2) && !empty($ubicaciones_tax_2)) {
+                                            $ubicaciones_tax = array_merge($ubicaciones_tax, $ubicaciones_tax_2);
+                                        }
                                         
                                         if (!is_wp_error($ubicaciones_tax) && !empty($ubicaciones_tax)) {
                                             foreach ($ubicaciones_tax as $ubicacion) {
