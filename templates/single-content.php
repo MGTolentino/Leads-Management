@@ -391,6 +391,18 @@ $telefono_limpio = preg_replace('/[^0-9]/', '', $lead_data->lead_celular);
                     <?php endif; ?>
                 </div>
             </div>
+            
+            <!-- Panel de Calificación y Seguimiento -->
+            <div class="info-card">
+                <div class="card-header">
+                    <h3 class="card-title">Calificación y Seguimiento</h3>
+                </div>
+                
+                <?php 
+                // Cargar la plantilla de metadatos
+                include_once(LTB_LEADS_PLUGIN_DIR . 'templates/lead-metadata.php');
+                ?>
+            </div>
 
             <!-- Cotizaciones -->
 <div class="info-card">

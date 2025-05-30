@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('LTB_LEADS_VERSION', '1.0.0');
+define('LTB_LEADS_VERSION', '2.0.0');
 define('LTB_LEADS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('LTB_LEADS_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -44,7 +44,9 @@ class LTB_Leads_Management {
             'class-leads-followup-form.php',
             'class-leads-add.php',
             'class-leads-event-router.php',
-			'class-leads-status-utils.php'
+			'class-leads-status-utils.php',
+			'class-leads-metadata.php',
+			'class-leads-activator.php'
         );
 
         foreach ($files as $file) {
@@ -73,7 +75,12 @@ class LTB_Leads_Management {
                 LTB_Leads_Event_Router::get_instance();
             }
         new LTB_Leads_Followup_Form();
-        new LTB_Leads_Add(); 
+        new LTB_Leads_Add();
+        
+        // Inicializar sistema de metadatos si la clase existe
+        if (class_exists('LTB_Leads_Metadata')) {
+            new LTB_Leads_Metadata();
+        } 
         
         load_plugin_textdomain('ltb-leads', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
@@ -215,6 +222,14 @@ wp_localize_script('ltb-leads-pipeline', 'leadManagementConfig', array(
                 array(),
                 LTB_LEADS_VERSION
             );
+            
+            // Cargar estilos para metadatos
+            wp_enqueue_style(
+                'ltb-leads-metadata',
+                LTB_LEADS_PLUGIN_URL . 'assets/css/lead-metadata.css',
+                array(),
+                LTB_LEADS_VERSION
+            );
 
             wp_enqueue_script(
                 'ltb-leads-edit',
@@ -232,6 +247,21 @@ wp_localize_script('ltb-lead-edit', 'leadManagementConfig', array(
             wp_localize_script('ltb-leads-edit', 'ltbLeadEdit', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('ltb_lead_edit_nonce'),
+                'leadId' => $GLOBALS['ltb_lead_data']->lead_id ?? 0
+            ));
+            
+            // Script para manejo de metadatos
+            wp_enqueue_script(
+                'ltb-leads-metadata',
+                LTB_LEADS_PLUGIN_URL . 'assets/js/lead-metadata.js',
+                array('jquery', 'jquery-ui-datepicker', 'select2'),
+                LTB_LEADS_VERSION,
+                true
+            );
+            
+            wp_localize_script('ltb-leads-metadata', 'ltbLeadMetadata', array(
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('ltb_lead_metadata_nonce'),
                 'leadId' => $GLOBALS['ltb_lead_data']->lead_id ?? 0
             ));
             
@@ -325,11 +355,21 @@ wp_localize_script('ltb-lead-edit', 'leadManagementConfig', array(
 
         add_option('ltb_leads_version', LTB_LEADS_VERSION);
 
+        // Activar el enrutador
         $router_file = LTB_LEADS_PLUGIN_DIR . 'includes/class-leads-router.php';
         if (file_exists($router_file)) {
             require_once $router_file;
             if (class_exists('LTB_Leads_Router')) {
                 LTB_Leads_Router::activate();
+            }
+        }
+        
+        // Activar el sistema de metadatos
+        $activator_file = LTB_LEADS_PLUGIN_DIR . 'includes/class-leads-activator.php';
+        if (file_exists($activator_file)) {
+            require_once $activator_file;
+            if (class_exists('LTB_Leads_Activator')) {
+                LTB_Leads_Activator::activate();
             }
         }
         

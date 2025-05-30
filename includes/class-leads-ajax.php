@@ -15,17 +15,18 @@ class LTB_Leads_Ajax {
         add_action('wp_ajax_save_lead_data', array($this, 'handle_lead_save'));
         add_action('wp_ajax_nopriv_save_lead_data', array($this, 'handle_lead_save'));
 		add_action('wp_ajax_add_event_to_lead', array($this, 'handle_add_event_to_lead'));
-add_action('wp_ajax_nopriv_add_event_to_lead', array($this, 'handle_add_event_to_lead'));
+        add_action('wp_ajax_nopriv_add_event_to_lead', array($this, 'handle_add_event_to_lead'));
 		add_action('wp_ajax_check_existing_lead', array($this, 'check_existing_lead'));
-add_action('wp_ajax_nopriv_check_existing_lead', array($this, 'check_existing_lead'));
+        add_action('wp_ajax_nopriv_check_existing_lead', array($this, 'check_existing_lead'));
 		add_action('wp_ajax_delete_lead', array($this, 'handle_delete_lead'));
 		add_action('wp_ajax_search_services', array($this, 'handle_service_search'));
-add_action('wp_ajax_nopriv_search_services', array($this, 'handle_service_search'));
+        add_action('wp_ajax_nopriv_search_services', array($this, 'handle_service_search'));
 		// Añadir estos nuevos hooks
-add_action('wp_ajax_get_leads_by_status', array($this, 'get_leads_by_status'));
-add_action('wp_ajax_update_evento_status', array($this, 'update_evento_status'));
-		    add_action('wp_ajax_filter_leads', array($this, 'filter_leads'));
-
+        add_action('wp_ajax_get_leads_by_status', array($this, 'get_leads_by_status'));
+        add_action('wp_ajax_update_evento_status', array($this, 'update_evento_status'));
+		add_action('wp_ajax_filter_leads', array($this, 'filter_leads'));
+        // Nuevo hook para guardar metadatos
+        add_action('wp_ajax_save_lead_metadata', array($this, 'handle_save_lead_metadata'));
     }
 
     public function handle_lead_save() {
@@ -519,5 +520,83 @@ public function update_evento_status() {
     }
     
     wp_send_json_success(array('message' => 'Status actualizado correctamente'));
+}
+
+/**
+ * Maneja la actualización de metadatos de un lead
+ */
+public function handle_save_lead_metadata() {
+    // Verificar nonce
+    if (!check_ajax_referer('ltb_lead_metadata_nonce', 'nonce', false)) {
+        wp_send_json_error('Error de seguridad');
+        return;
+    }
+    
+    // Verificar permisos
+    if (!ltb_user_can_manage_leads()) {
+        wp_send_json_error('No tienes permisos para realizar esta acción');
+        return;
+    }
+    
+    $lead_id = isset($_POST['lead_id']) ? intval($_POST['lead_id']) : 0;
+    
+    if (!$lead_id) {
+        wp_send_json_error('ID de lead inválido');
+        return;
+    }
+    
+    // Preparar datos de metadatos
+    $metadata = array(
+        'lead_id' => $lead_id,
+        'prioridad' => isset($_POST['prioridad']) ? sanitize_text_field($_POST['prioridad']) : null,
+        'valor_potencial' => isset($_POST['valor_potencial']) ? sanitize_text_field($_POST['valor_potencial']) : null,
+        'probabilidad' => isset($_POST['probabilidad']) ? sanitize_text_field($_POST['probabilidad']) : null,
+        'responsable_id' => isset($_POST['responsable_id']) ? intval($_POST['responsable_id']) : null,
+        'ultima_interaccion' => isset($_POST['ultima_interaccion']) && !empty($_POST['ultima_interaccion']) ? 
+            date('Y-m-d H:i:s', strtotime($_POST['ultima_interaccion'])) : null,
+        'proxima_accion_fecha' => isset($_POST['proxima_accion_fecha']) && !empty($_POST['proxima_accion_fecha']) ? 
+            date('Y-m-d H:i:s', strtotime($_POST['proxima_accion_fecha'])) : null,
+        'fuente' => isset($_POST['fuente']) ? sanitize_text_field($_POST['fuente']) : null,
+        'campana' => isset($_POST['campana']) ? sanitize_text_field($_POST['campana']) : null,
+        'ubicacion' => isset($_POST['ubicacion']) ? sanitize_text_field($_POST['ubicacion']) : null,
+        'industria' => isset($_POST['industria']) ? sanitize_text_field($_POST['industria']) : null,
+        'estado_propuesta' => isset($_POST['estado_propuesta']) ? sanitize_text_field($_POST['estado_propuesta']) : null,
+        'rango_cotizacion' => isset($_POST['rango_cotizacion']) ? sanitize_text_field($_POST['rango_cotizacion']) : null,
+        'temporada' => isset($_POST['temporada']) ? sanitize_text_field($_POST['temporada']) : null,
+        'venue' => isset($_POST['venue']) ? sanitize_text_field($_POST['venue']) : null
+    );
+    
+    // Procesar servicios requeridos (array)
+    if (isset($_POST['servicios_requeridos']) && is_array($_POST['servicios_requeridos'])) {
+        $metadata['servicios_requeridos'] = array_map('sanitize_text_field', $_POST['servicios_requeridos']);
+    } else {
+        $metadata['servicios_requeridos'] = null;
+    }
+    
+    // Procesar etiquetas (array)
+    $etiquetas = isset($_POST['etiquetas']) ? $_POST['etiquetas'] : array();
+    if (!is_array($etiquetas)) {
+        $etiquetas = array();
+    }
+    
+    $metadata['etiquetas'] = array_map('sanitize_text_field', $etiquetas);
+    
+    // Verificar si existe la clase de metadatos
+    if (!class_exists('LTB_Leads_Metadata')) {
+        wp_send_json_error('Sistema de metadatos no disponible');
+        return;
+    }
+    
+    // Guardar metadatos
+    $metadata_handler = new LTB_Leads_Metadata();
+    $metadata_handler->save_lead_metadata($lead_id, $metadata);
+    
+    // Ejecutar acción para notificar a otros plugins
+    do_action('ltb_lead_metadata_updated', $lead_id, $metadata);
+    
+    wp_send_json_success(array(
+        'lead_id' => $lead_id,
+        'message' => 'Metadatos guardados correctamente'
+    ));
 }
 }

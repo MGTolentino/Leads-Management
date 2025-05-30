@@ -1,0 +1,209 @@
+/* Estilos para la sección de metadatos */
+.metadata-tabs {
+    margin-top: 20px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.metadata-tabs li {
+    margin-bottom: -1px;
+}
+
+.metadata-tab-link {
+    display: block;
+    padding: 10px 15px;
+    border: 1px solid transparent;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    color: #495057;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.metadata-tab-link:hover {
+    border-color: #e9ecef #e9ecef #dee2e6;
+    color: #0d6efd;
+}
+
+.metadata-tab-link.active {
+    color: #495057;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+    font-weight: 500;
+}
+
+.metadata-content {
+    padding: 20px;
+    border: 1px solid #dee2e6;
+    border-top: 0;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    background-color: #fff;
+}
+
+.metadata-tab-pane {
+    display: none;
+}
+
+.metadata-tab-pane.active {
+    display: block;
+}
+
+/* Formulario de metadatos */
+.metadata-form {
+    max-width: 100%;
+}
+
+.metadata-form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.metadata-form-group {
+    margin-bottom: 15px;
+}
+
+.metadata-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 14px;
+    color: #495057;
+}
+
+.metadata-form-group input,
+.metadata-form-group select,
+.metadata-form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.metadata-form-group input:focus,
+.metadata-form-group select:focus,
+.metadata-form-group textarea:focus {
+    border-color: #0d6efd;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(13,110,253,.25);
+}
+
+.metadata-form-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.metadata-form-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.metadata-form-section-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 15px;
+    color: #212529;
+    position: relative;
+    padding-left: 12px;
+}
+
+.metadata-form-section-title::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: #0d6efd;
+    border-radius: 4px;
+}
+
+.metadata-form-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.metadata-save-btn {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.metadata-save-btn:hover {
+    background-color: #0b5ed7;
+}
+
+/* Estilos específicos para las categorías */
+.metadata-form-section.calificacion .metadata-form-section-title::before {
+    background-color: #28a745; /* Verde */
+}
+
+.metadata-form-section.seguimiento .metadata-form-section-title::before {
+    background-color: #ffc107; /* Amarillo */
+}
+
+.metadata-form-section.origen .metadata-form-section-title::before {
+    background-color: #fd7e14; /* Naranja */
+}
+
+.metadata-form-section.demograficos .metadata-form-section-title::before {
+    background-color: #6f42c1; /* Morado */
+}
+
+.metadata-form-section.conversion .metadata-form-section-title::before {
+    background-color: #20c997; /* Verde agua */
+}
+
+/* Campos de fecha y hora */
+.metadata-form-datetime {
+    display: flex;
+    gap: 10px;
+}
+
+.metadata-form-datetime input {
+    flex: 1;
+}
+
+/* Indicadores visuales para campos requeridos */
+.metadata-form-group.required label::after {
+    content: " *";
+    color: #dc3545;
+}
+
+/* Responsivo */
+@media (max-width: 767px) {
+    .metadata-form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .metadata-form-datetime {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .metadata-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .metadata-tab-link {
+        white-space: nowrap;
+    }
+}
