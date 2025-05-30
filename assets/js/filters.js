@@ -37,6 +37,7 @@ jQuery(function($) {
     const $toggleFiltersBtn = $('#toggle_filters_btn');
     const $applyFiltersBtn = $('#aplicar_filtros');
     const $clearFiltersBtn = $('#limpiar_filtros');
+    const $clearBasicFiltersBtn = $('#limpiar_filtros_basicos');
     const $activeFiltersCount = $('#active_filters_count');
     const $activeFiltersContainer = $('#filtros_activos');
     
@@ -222,7 +223,7 @@ jQuery(function($) {
     // Selectores de año y mes para fecha de evento
     $('#anio_evento').on('change', function() {
         const anio = $(this).val();
-        const mes = $('#mes_evento').val();
+        const mes = $('#mes_evento_basic').val() || $('#mes_evento').val();
         
         if (anio) {
             if (mes) {
@@ -239,7 +240,7 @@ jQuery(function($) {
         }
     });
     
-    $('#mes_evento').on('change', function() {
+    $('#mes_evento, #mes_evento_basic').on('change', function() {
         const mes = $(this).val();
         const anio = $('#anio_evento').val() || new Date().getFullYear();
         
@@ -247,6 +248,19 @@ jQuery(function($) {
             const ultimoDia = new Date(anio, parseInt(mes), 0).getDate();
             $('#fecha_evento_inicio').val(`${anio}-${mes}-01`);
             $('#fecha_evento_fin').val(`${anio}-${mes}-${ultimoDia}`);
+            
+            // Sincronizar los dos selectores de mes
+            if (this.id === 'mes_evento') {
+                $('#mes_evento_basic').val(mes);
+            } else {
+                $('#mes_evento').val(mes);
+            }
+            
+            // Si no hay año seleccionado, seleccionarlo automáticamente
+            if (!$('#anio_evento').val()) {
+                $('#anio_evento').val(anio);
+            }
+            
             actualizarVisualizacionFechaEvento();
         }
     });
@@ -456,9 +470,20 @@ jQuery(function($) {
         }
     });
     
-    // Función para limpiar filtros
+    // Función para limpiar todos los filtros
     $clearFiltersBtn.on('click', function(e) {
         e.preventDefault();
+        limpiarTodosFiltros();
+    });
+    
+    // Función para limpiar solo los filtros básicos
+    $clearBasicFiltersBtn.on('click', function(e) {
+        e.preventDefault();
+        limpiarFiltrosBasicos();
+    });
+    
+    // Función para limpiar todos los filtros
+    function limpiarTodosFiltros() {
         
         // Limpiar campos de formulario - Categorización
         $('#fecha_ingreso_inicio, #fecha_ingreso_fin, #fecha_evento_inicio, #fecha_evento_fin').val('');
@@ -541,7 +566,38 @@ jQuery(function($) {
         // Limpiar chips de filtros activos
         actualizarChipsFiltrosActivos([]);
         actualizarContadorFiltros(0);
-    });
+    }
+    
+    // Función para limpiar solo los filtros básicos
+    function limpiarFiltrosBasicos() {
+        // Limpiar fechas de evento
+        $('#fecha_evento_inicio, #fecha_evento_fin').val('');
+        $('#anio_evento, #mes_evento_basic, #mes_evento').val('');
+        
+        // Limpiar búsqueda
+        $('#search_leads').val('');
+        
+        // Limpiar status y tipo de evento
+        $('#status_filter, #tipo_evento_filter').val(null).trigger('change');
+        
+        // Actualizar filtros relacionados
+        currentFilters.fecha_evento_inicio = '';
+        currentFilters.fecha_evento_fin = '';
+        currentFilters.search = '';
+        currentFilters.status = [];
+        currentFilters.tipo_evento = [];
+        currentFilters.paged = 1;
+        
+        // Actualizar tabla
+        updateTable();
+        
+        // Actualizar vista pipeline si está visible
+        if ($('.view-container[data-view="pipeline"]').is(':visible')) {
+            if (typeof window.refreshPipelineView === 'function') {
+                window.refreshPipelineView();
+            }
+        }
+    }
     
     // Actualizar tabla con los resultados
     function updateTable() {

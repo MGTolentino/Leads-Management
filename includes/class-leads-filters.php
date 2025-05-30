@@ -518,7 +518,7 @@ class LTB_Leads_Filters {
                                 <input type="text" id="fecha_evento_fin" class="datepicker-input" placeholder="Hasta..." readonly>
                             </div>
                             <div class="date-actions">
-                                <div class="year-selector">
+                                <div class="year-month-selectors">
                                     <select id="anio_evento" class="date-selector">
                                         <option value="">Año</option>
                                         <?php
@@ -527,6 +527,21 @@ class LTB_Leads_Filters {
                                             echo '<option value="' . $i . '">' . $i . '</option>';
                                         }
                                         ?>
+                                    </select>
+                                    <select id="mes_evento_basic" class="date-selector">
+                                        <option value="">Mes</option>
+                                        <option value="01">Enero</option>
+                                        <option value="02">Febrero</option>
+                                        <option value="03">Marzo</option>
+                                        <option value="04">Abril</option>
+                                        <option value="05">Mayo</option>
+                                        <option value="06">Junio</option>
+                                        <option value="07">Julio</option>
+                                        <option value="08">Agosto</option>
+                                        <option value="09">Septiembre</option>
+                                        <option value="10">Octubre</option>
+                                        <option value="11">Noviembre</option>
+                                        <option value="12">Diciembre</option>
                                     </select>
                                 </div>
                                 <div class="date-presets">
@@ -574,8 +589,12 @@ class LTB_Leads_Filters {
                         </div>
                     </div>
                     
-                    <!-- Más filtros (botón) -->
-                    <div class="advanced-filters-toggle">
+                    <!-- Acciones de filtros (botones de limpiar y más filtros) -->
+                    <div class="basic-filters-actions">
+                        <button id="limpiar_filtros_basicos" class="button">
+                            <span class="dashicons dashicons-dismiss"></span>
+                            Limpiar
+                        </button>
                         <button type="button" id="toggle_advanced_filters" class="toggle-advanced-btn">
                             <span class="toggle-text-show">Más filtros</span>
                             <span class="toggle-text-hide">Menos filtros</span>

@@ -46,7 +46,7 @@ class LTB_Leads_Query {
             l.lead_apellido,
             l.lead_celular,
             l.lead_e_mail,
-			e._ID as evento_id,
+            e._ID as evento_id,
             e.evento_status,
             e.fecha_de_evento,
             e.tipo_de_evento,
@@ -61,6 +61,9 @@ class LTB_Leads_Query {
             WHERE e2.lead_id IS NULL
         ) e ON e.lead_id = l._ID
     ";
+    
+    // Permitir que otros plugins modifiquen la consulta (como el de metadatos)
+    $query = apply_filters('ltb_leads_query_select', $query, $args);
 
     if (!empty($args['fecha_inicio'])) {
         $where[] = "l.cct_created >= %s";
@@ -323,12 +326,18 @@ class LTB_Leads_Query {
         }
     }
 
-    // Aplicar filtros personalizados de Events Staff Manager (si está activo)
+    // Aplicar filtros personalizados de Events Staff Manager y sistema de metadatos
     if (function_exists('apply_filters')) {
         $args = apply_filters('ltb_leads_query_args', $args);
         $where_custom = apply_filters('ltb_leads_query_where', '', $args);
         if (!empty($where_custom)) {
             $where[] = trim($where_custom);
+        }
+        
+        // Permitir modificar JOINs
+        $join_custom = apply_filters('ltb_leads_query_join', '', $args);
+        if (!empty($join_custom)) {
+            $query .= ' ' . trim($join_custom);
         }
     }
 
@@ -343,7 +352,11 @@ $order_columns = array(
     'nombre' => 'l.lead_nombre',
     'fecha_evento' => 'e.fecha_de_evento',
     'tipo_evento' => 'e.tipo_de_evento',
-    'status' => 'e.evento_status'
+    'status' => 'e.evento_status',
+    'prioridad' => 'm.prioridad',
+    'valor_potencial' => 'm.valor_potencial',
+    'probabilidad' => 'm.probabilidad',
+    'ultima_interaccion' => 'm.ultima_interaccion'
 );
 
 $orderby = isset($order_columns[$args['orderby']]) ? $order_columns[$args['orderby']] : 'l.cct_created';
@@ -529,6 +542,13 @@ foreach ($results as &$row) {
     
     $lead->eventos = $eventos;
     
+    // Obtener metadatos si existe la clase
+    if (class_exists('LTB_Leads_Metadata')) {
+        $metadata = new LTB_Leads_Metadata();
+        $lead_metadata = $metadata->get_lead_metadata($lead_id);
+        $lead->metadata = $lead_metadata;
+    }
+    
     return $lead;
 }
 	
@@ -606,6 +626,9 @@ public function get_leads_by_status($args = array()) {
         FROM {$this->leads_table} l
         LEFT JOIN {$this->eventos_table} e ON e.lead_id = l._ID
     ";
+    
+    // Permitir que otros plugins modifiquen la consulta (como el de metadatos)
+    $query = apply_filters('ltb_leads_query_select', $query, $args);
 
     if (!empty($args['fecha_inicio'])) {
         $where[] = "l.cct_created >= %s";
@@ -869,12 +892,18 @@ public function get_leads_by_status($args = array()) {
        }
    }
 
-   // Aplicar filtros personalizados de Events Staff Manager (si está activo)
+   // Aplicar filtros personalizados de Events Staff Manager y sistema de metadatos
    if (function_exists('apply_filters')) {
        $args = apply_filters('ltb_leads_query_args', $args);
        $where_custom = apply_filters('ltb_leads_query_where', '', $args);
        if (!empty($where_custom)) {
            $where[] = trim($where_custom);
+       }
+       
+       // Permitir modificar JOINs
+       $join_custom = apply_filters('ltb_leads_query_join', '', $args);
+       if (!empty($join_custom)) {
+           $query .= ' ' . trim($join_custom);
        }
    }
 
