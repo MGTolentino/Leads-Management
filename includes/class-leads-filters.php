@@ -956,9 +956,46 @@ class LTB_Leads_Filters {
                                         }
                                         
                                         if (!is_wp_error($ubicaciones_tax) && !empty($ubicaciones_tax)) {
+                                            // Crear un array para organizar padres e hijos
+                                            $ubicaciones_organizadas = array();
+                                            $padres_ids = array();
+                                            
+                                            // Primero identificar los términos padre
                                             foreach ($ubicaciones_tax as $ubicacion) {
-                                                // Solo mostrar términos padre o si no tienen padre
                                                 if ($ubicacion->parent == 0) {
+                                                    $ubicaciones_organizadas[$ubicacion->term_id] = array(
+                                                        'nombre' => $ubicacion->name,
+                                                        'slug' => $ubicacion->slug,
+                                                        'hijos' => array()
+                                                    );
+                                                    $padres_ids[] = $ubicacion->term_id;
+                                                }
+                                            }
+                                            
+                                            // Luego agregar los términos hijos
+                                            foreach ($ubicaciones_tax as $ubicacion) {
+                                                if ($ubicacion->parent != 0 && in_array($ubicacion->parent, $padres_ids)) {
+                                                    $ubicaciones_organizadas[$ubicacion->parent]['hijos'][] = array(
+                                                        'nombre' => $ubicacion->name,
+                                                        'slug' => $ubicacion->slug
+                                                    );
+                                                }
+                                            }
+                                            
+                                            // Mostrar todas las ubicaciones organizadas
+                                            foreach ($ubicaciones_organizadas as $id_padre => $padre) {
+                                                // Mostrar la categoría padre
+                                                echo '<option value="' . esc_attr($padre['slug']) . '">' . esc_html($padre['nombre']) . '</option>';
+                                                
+                                                // Mostrar sus hijos con indentación
+                                                foreach ($padre['hijos'] as $hijo) {
+                                                    echo '<option value="' . esc_attr($hijo['slug']) . '">— ' . esc_html($hijo['nombre']) . '</option>';
+                                                }
+                                            }
+                                            
+                                            // Mostrar términos huérfanos (que tienen padre pero su padre no existe)
+                                            foreach ($ubicaciones_tax as $ubicacion) {
+                                                if ($ubicacion->parent != 0 && !in_array($ubicacion->parent, $padres_ids)) {
                                                     echo '<option value="' . esc_attr($ubicacion->slug) . '">' . esc_html($ubicacion->name) . '</option>';
                                                 }
                                             }
