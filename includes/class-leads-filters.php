@@ -510,12 +510,17 @@ class LTB_Leads_Filters {
                 <div class="filters-main-actions">
                     <div class="saved-filters">
                         <select id="saved_filter_select">
-                            <option value="">Filtros guardados</option>
+                            <option value="">Cargar filtro guardado</option>
                             <!-- Opciones añadidas dinámicamente -->
                         </select>
-                        <button id="save_current_filter" class="button" title="Guardar filtro actual">
+                        <button id="save_current_filter" class="button" title="Guardar configuración actual de filtros para uso futuro">
                             <span class="dashicons dashicons-save"></span>
+                            Guardar filtro
                         </button>
+                        <div class="saved-filters-help">
+                            <span class="dashicons dashicons-info-outline"></span>
+                            <span class="tooltip-text">Guarda tu configuración actual de filtros para usarla después</span>
+                        </div>
                     </div>
                 </div>
 
@@ -618,6 +623,18 @@ class LTB_Leads_Filters {
                     <!-- Chips para filtros activos (movidos aquí para mejor visibilidad) -->
                     <div id="filtros_activos" class="active-filters">
                         <!-- Se generan dinámicamente por JS -->
+                    </div>
+                    
+                    <!-- Acciones principales de filtrado -->
+                    <div class="filter-actions primary-actions">
+                        <button id="limpiar_filtros" class="button">
+                            <span class="dashicons dashicons-dismiss"></span>
+                            Limpiar todo
+                        </button>
+                        <button id="aplicar_filtros" class="button button-primary button-hero">
+                            <span class="dashicons dashicons-filter"></span>
+                            Aplicar Filtros
+                        </button>
                     </div>
                 </div>
                 
@@ -1034,17 +1051,7 @@ class LTB_Leads_Filters {
                         </div>
                     </div>
                     
-                    <!-- Acciones principales de filtrado -->
-                    <div class="filter-actions primary-actions">
-                        <button id="limpiar_filtros" class="button">
-                            <span class="dashicons dashicons-dismiss"></span>
-                            Limpiar todo
-                        </button>
-                        <button id="aplicar_filtros" class="button button-primary button-hero">
-                            <span class="dashicons dashicons-filter"></span>
-                            Aplicar Filtros
-                        </button>
-                    </div>
+                    <!-- Los botones ya están definidos arriba, no es necesario duplicarlos -->
                 </div>
             </div>
         </div>

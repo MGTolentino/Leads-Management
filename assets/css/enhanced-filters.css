@@ -30,15 +30,59 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
     height: 38px;
-    padding: 0;
+    padding: 0 15px;
     border-radius: 4px;
     background-color: #f0f0f0;
+    font-weight: 500;
+}
+
+#save_current_filter .dashicons {
+    margin-right: 8px;
 }
 
 #save_current_filter:hover {
     background-color: #e0e0e0;
+}
+
+/* Estilos para información sobre guardar filtros */
+.saved-filters-help {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-left: 8px;
+    cursor: help;
+}
+
+.saved-filters-help .dashicons {
+    color: #777;
+    font-size: 18px;
+}
+
+.saved-filters-help .tooltip-text {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 12px;
+    z-index: 1000;
+    font-size: 12px;
+    line-height: 1.4;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.saved-filters-help:hover .tooltip-text {
+    opacity: 1;
+    visibility: visible;
 }
 
 /* Mejorar visibilidad de filtros activos */
@@ -74,6 +118,40 @@
 
 .filter-chip-close:hover {
     color: #01579b;
+}
+
+/* Mejorar estilo de botones de acción básicos */
+.basic-filters-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+#limpiar_filtros_basicos {
+    height: 36px;
+    padding: 0 15px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#toggle_advanced_filters {
+    height: 36px;
+    padding: 0 15px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#toggle_advanced_filters:hover {
+    background-color: #f0f0f0;
 }
 
 /* Mejorar jerarquía de acciones */
@@ -131,6 +209,81 @@
 
 .advanced-filters-container .section-content {
     padding: 15px;
+}
+
+/* Mejorar tamaño de inputs y botones de fecha */
+.date-range-inputs {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.datepicker-input {
+    height: 38px;
+    padding: 0 10px;
+    font-size: 14px;
+    width: 100%;
+    min-width: 120px;
+}
+
+.date-range-separator {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.year-month-selectors {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.date-selector {
+    height: 36px;
+    min-width: 100px;
+    font-size: 14px;
+    padding: 0 8px;
+}
+
+.date-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.date-preset-btn {
+    padding: 5px 10px;
+    height: 32px;
+    font-size: 13px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.date-preset-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* Mejorar apariencia de select e inputs */
+.filter-group {
+    margin-bottom: 15px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.filter-group select,
+.filter-group input {
+    width: 100%;
+    height: 38px;
+    padding: 0 10px;
+    font-size: 14px;
 }
 
 /* Botón toggle filters */
