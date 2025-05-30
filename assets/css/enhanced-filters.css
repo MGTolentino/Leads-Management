@@ -188,6 +188,14 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     cursor: pointer;
+    color: #333;
+    font-weight: 500;
+}
+
+#toggle_advanced_filters .toggle-text-show,
+#toggle_advanced_filters .toggle-text-hide {
+    color: #333;
+    font-weight: 500;
 }
 
 #toggle_advanced_filters:hover {
@@ -339,7 +347,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 5px;
 }
 
 .date-selector {
@@ -347,6 +355,10 @@
     min-width: 100px;
     font-size: 14px;
     padding: 0 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #333;
+    background-color: #fff;
 }
 
 .date-presets {
@@ -376,7 +388,8 @@
     width: 100%;
 }
 
-.filter-group.date-range-group {
+.filter-group.date-range-group, 
+.filter-group.year-month-group {
     margin-top: 0;
     width: 100%;
 }
