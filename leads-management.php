@@ -80,16 +80,20 @@ class LTB_Leads_Management {
 
     public function enqueue_scripts() {
 
+        // Solo continuar si estamos en una página de leads
         if (!$this->is_leads_page()) {
             return;
         }
-
-        wp_enqueue_style(
-            'ltb-leads-admin',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/admin.css',
-            array(),
-            LTB_LEADS_VERSION
-        );
+        
+        // Cargar admin.css solo en el admin
+        if (is_admin()) {
+            wp_enqueue_style(
+                'ltb-leads-admin',
+                LTB_LEADS_PLUGIN_URL . 'assets/css/admin.css',
+                array(),
+                LTB_LEADS_VERSION
+            );
+        }
         
         wp_enqueue_style(
             'ltb-leads-permissions',
