@@ -529,57 +529,11 @@ class LTB_Leads_Filters {
 
                 <!-- Filtros básicos siempre visibles -->
                 <div class="filters-section basic-filters">
-                    <div class="filters-grid-two-columns">
-                        <!-- COLUMNA IZQUIERDA: FECHAS -->
-                        <div class="filters-column">
-                            <!-- Filtros de fecha de evento (versión compacta) -->
-                            <div class="filter-group date-range-group">
-                                <label>Fecha de Evento</label>
-                                <div class="date-range-inputs">
-                                    <input type="text" id="fecha_evento_inicio" class="datepicker-input" placeholder="Desde..." readonly>
-                                    <span class="date-range-separator">➔</span>
-                                    <input type="text" id="fecha_evento_fin" class="datepicker-input" placeholder="Hasta..." readonly>
-                                </div>
-                                <div class="date-actions">
-                                    <div class="year-month-selectors">
-                                        <select id="anio_evento" class="date-selector">
-                                            <option value="">Año</option>
-                                            <?php
-                                            $current_year = date('Y');
-                                            for ($i = $current_year + 5; $i >= 2000; $i--) {
-                                                echo '<option value="' . $i . '">' . $i . '</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                        <select id="mes_evento_basic" class="date-selector">
-                                            <option value="">Mes</option>
-                                            <option value="01">Enero</option>
-                                            <option value="02">Febrero</option>
-                                            <option value="03">Marzo</option>
-                                            <option value="04">Abril</option>
-                                            <option value="05">Mayo</option>
-                                            <option value="06">Junio</option>
-                                            <option value="07">Julio</option>
-                                            <option value="08">Agosto</option>
-                                            <option value="09">Septiembre</option>
-                                            <option value="10">Octubre</option>
-                                            <option value="11">Noviembre</option>
-                                            <option value="12">Diciembre</option>
-                                        </select>
-                                    </div>
-                                    <div class="date-presets">
-                                        <button type="button" id="btn_hoy" class="date-preset-btn">Hoy</button>
-                                        <button type="button" id="btn_mes" class="date-preset-btn">Mes</button>
-                                        <button type="button" id="btn_anio" class="date-preset-btn">Año</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- COLUMNA DERECHA: BUSQUEDA Y FILTROS PRIORITARIOS -->
-                        <div class="filters-column">
+                    <div class="filters-rows">
+                        <!-- FILA 1: BÚSQUEDA Y STATUS -->
+                        <div class="filters-row">
                             <!-- Búsqueda -->
-                            <div class="filter-group">
+                            <div class="filter-group search-group">
                                 <label for="search_leads">Buscar</label>
                                 <div class="search-input-wrapper">
                                     <span class="dashicons dashicons-search"></span>
@@ -602,7 +556,10 @@ class LTB_Leads_Filters {
                                     ?>
                                 </select>
                             </div>
-                            
+                        </div>
+                        
+                        <!-- FILA 2: TIPO DE EVENTO Y VALOR -->
+                        <div class="filters-row">
                             <!-- Tipo de evento (Prioridad comercial alta) -->
                             <div class="filter-group priority-filter">
                                 <label for="tipo_evento_filter">Tipo de Evento</label>
@@ -627,6 +584,60 @@ class LTB_Leads_Filters {
                                     <span class="dashicons dashicons-info-outline"></span>
                                     <span class="tooltip-text">Filtra leads por valor potencial de negocio</span>
                                 </div>
+                            </div>
+                        </div>
+                        
+                        <!-- FILA 3: FECHA DE EVENTO -->
+                        <div class="filters-row">
+                            <!-- Filtros de fecha de evento -->
+                            <div class="filter-group date-range-group">
+                                <label>Fecha de Evento</label>
+                                <div class="date-range-inputs">
+                                    <input type="text" id="fecha_evento_inicio" class="datepicker-input" placeholder="Desde..." readonly>
+                                    <span class="date-range-separator">➔</span>
+                                    <input type="text" id="fecha_evento_fin" class="datepicker-input" placeholder="Hasta..." readonly>
+                                </div>
+                                <div class="date-actions">
+                                    <div class="date-presets">
+                                        <button type="button" id="btn_hoy" class="date-preset-btn">Hoy</button>
+                                        <button type="button" id="btn_mes" class="date-preset-btn">Mes</button>
+                                        <button type="button" id="btn_anio" class="date-preset-btn">Año</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Espacio adicional para mantener la fila con un solo elemento ancho -->
+                            <div class="filter-group filter-spacer" style="visibility: hidden;">
+                                <label>&nbsp;</label>
+                                <div style="height: 38px;"></div>
+                            </div>
+                            
+                            <!-- Selectores de año y mes (ahora ocultos en UI principal) -->
+                            <div class="year-month-selectors" style="display: none;">
+                                <select id="anio_evento" class="date-selector">
+                                    <option value="">Año</option>
+                                    <?php
+                                    $current_year = date('Y');
+                                    for ($i = $current_year + 5; $i >= 2000; $i--) {
+                                        echo '<option value="' . $i . '">' . $i . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                                <select id="mes_evento_basic" class="date-selector">
+                                    <option value="">Mes</option>
+                                    <option value="01">Enero</option>
+                                    <option value="02">Febrero</option>
+                                    <option value="03">Marzo</option>
+                                    <option value="04">Abril</option>
+                                    <option value="05">Mayo</option>
+                                    <option value="06">Junio</option>
+                                    <option value="07">Julio</option>
+                                    <option value="08">Agosto</option>
+                                    <option value="09">Septiembre</option>
+                                    <option value="10">Octubre</option>
+                                    <option value="11">Noviembre</option>
+                                    <option value="12">Diciembre</option>
+                                </select>
                             </div>
                         </div>
                     </div>

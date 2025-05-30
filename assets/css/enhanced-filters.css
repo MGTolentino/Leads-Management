@@ -254,7 +254,7 @@
 /* Resaltar filtros básicos */
 .filters-section.basic-filters {
     background-color: #f5f5f5;
-    padding: 15px;
+    padding: 20px;
     border-radius: 8px;
     margin-bottom: 20px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -284,23 +284,24 @@
     padding: 15px;
 }
 
-/* Nuevo layout de dos columnas */
-.filters-grid-two-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+/* Nuevo layout de filas */
+.filters-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
     margin-bottom: 20px;
 }
 
-.filters-column {
-    display: flex;
-    flex-direction: column;
-    padding: 5px;
+.filters-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    width: 100%;
 }
 
-/* Ajustar espaciado vertical en la primera columna */
-.filters-column:first-child .filter-group {
-    margin-bottom: 15px;
+/* Grupo de búsqueda puede ser más ancho */
+.search-group {
+    min-width: 250px;
 }
 
 /* Mejorar tamaño de inputs y botones de fecha */
@@ -310,6 +311,7 @@
     align-items: center;
     margin-bottom: 15px;
     margin-top: 5px;
+    width: 100%;
 }
 
 /* Mejorar controles de fecha */
@@ -370,11 +372,13 @@
 
 /* Mejorar apariencia de select e inputs */
 .filter-group {
-    margin-bottom: 25px;
+    margin-bottom: 15px;
+    width: 100%;
 }
 
 .filter-group.date-range-group {
-    margin-top: 5px;
+    margin-top: 0;
+    width: 100%;
 }
 
 .filter-group label {
