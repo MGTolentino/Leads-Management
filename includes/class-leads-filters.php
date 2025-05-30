@@ -905,27 +905,46 @@ class LTB_Leads_Filters {
                                 <label for="ubicacion_filter">Ubicación</label>
                                 <select id="ubicacion_filter" multiple="multiple" class="select2-multi">
                                     <?php
-                                    // Obtener términos de la taxonomía hp_listing_ubicacion
-                                    $ubicaciones = get_terms(array(
-                                        'taxonomy' => 'hp_listing_ubicacion',
-                                        'hide_empty' => false,
-                                    ));
+                                    // Obtener ubicaciones dinámicamente de eventos existentes
+                                    global $wpdb;
+                                    $eventos_table = $wpdb->prefix . 'jet_cct_eventos';
                                     
-                                    if (!is_wp_error($ubicaciones) && !empty($ubicaciones)) {
-                                        foreach ($ubicaciones as $ubicacion) {
-                                            // Solo mostrar términos padre o si no tienen padre
-                                            if ($ubicacion->parent == 0) {
-                                                echo '<option value="' . esc_attr($ubicacion->slug) . '">' . esc_html($ubicacion->name) . '</option>';
-                                            }
+                                    // Primero intentar obtener desde los eventos
+                                    $ubicaciones_eventos = $wpdb->get_col("
+                                        SELECT DISTINCT ubicacion_evento 
+                                        FROM {$eventos_table} 
+                                        WHERE ubicacion_evento != '' 
+                                        ORDER BY ubicacion_evento ASC
+                                    ");
+                                    
+                                    if (!empty($ubicaciones_eventos)) {
+                                        // Usar ubicaciones de eventos existentes
+                                        foreach ($ubicaciones_eventos as $ubicacion) {
+                                            echo '<option value="' . esc_attr($ubicacion) . '">' . esc_html($ubicacion) . '</option>';
                                         }
                                     } else {
-                                        // Opciones de respaldo si no hay taxonomías
-                                        echo '<option value="cdmx">Ciudad de México</option>';
-                                        echo '<option value="guadalajara">Guadalajara</option>';
-                                        echo '<option value="monterrey">Monterrey</option>';
-                                        echo '<option value="puebla">Puebla</option>';
-                                        echo '<option value="queretaro">Querétaro</option>';
-                                        echo '<option value="otra">Otra</option>';
+                                        // Intentar obtener de la taxonomía como segunda opción
+                                        $ubicaciones_tax = get_terms(array(
+                                            'taxonomy' => 'hp_listing_ubicacion',
+                                            'hide_empty' => false,
+                                        ));
+                                        
+                                        if (!is_wp_error($ubicaciones_tax) && !empty($ubicaciones_tax)) {
+                                            foreach ($ubicaciones_tax as $ubicacion) {
+                                                // Solo mostrar términos padre o si no tienen padre
+                                                if ($ubicacion->parent == 0) {
+                                                    echo '<option value="' . esc_attr($ubicacion->slug) . '">' . esc_html($ubicacion->name) . '</option>';
+                                                }
+                                            }
+                                        } else {
+                                            // Opciones de respaldo si no hay datos de ninguna fuente
+                                            echo '<option value="cdmx">Ciudad de México</option>';
+                                            echo '<option value="guadalajara">Guadalajara</option>';
+                                            echo '<option value="monterrey">Monterrey</option>';
+                                            echo '<option value="puebla">Puebla</option>';
+                                            echo '<option value="queretaro">Querétaro</option>';
+                                            echo '<option value="otra">Otra</option>';
+                                        }
                                     }
                                     ?>
                                 </select>

@@ -298,6 +298,11 @@
     padding: 5px;
 }
 
+/* Ajustar espaciado vertical en la primera columna */
+.filters-column:first-child .filter-group {
+    margin-bottom: 15px;
+}
+
 /* Mejorar tamaño de inputs y botones de fecha */
 .date-range-inputs {
     display: flex;
@@ -305,6 +310,14 @@
     align-items: center;
     margin-bottom: 15px;
     margin-top: 5px;
+}
+
+/* Mejorar controles de fecha */
+.date-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
 .datepicker-input {
@@ -321,9 +334,10 @@
 }
 
 .year-month-selectors {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
 }
 
 .date-selector {
@@ -334,9 +348,9 @@
 }
 
 .date-presets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
     margin-bottom: 10px;
 }
 
