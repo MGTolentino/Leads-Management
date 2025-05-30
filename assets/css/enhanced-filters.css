@@ -26,6 +26,21 @@
     font-size: 14px;
 }
 
+.saved-filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
+
+#saved_filter_select {
+    flex: 1;
+    min-width: 200px;
+    height: 38px;
+    font-size: 14px;
+    border-color: #ddd;
+}
+
 #save_current_filter {
     display: flex;
     align-items: center;
@@ -33,8 +48,11 @@
     height: 38px;
     padding: 0 15px;
     border-radius: 4px;
-    background-color: #f0f0f0;
     font-weight: 500;
+    white-space: nowrap;
+    background-color: #2271b1;
+    color: white;
+    border-color: #2271b1;
 }
 
 #save_current_filter .dashicons {
@@ -42,11 +60,25 @@
 }
 
 #save_current_filter:hover {
-    background-color: #e0e0e0;
+    background-color: #135e96;
 }
 
-/* Estilos para información sobre guardar filtros */
-.saved-filters-help {
+/* Estilos para cabecera de filtros guardados */
+.saved-filters-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.saved-filters-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #23282d;
+}
+
+/* Estilos para tooltips de información */
+.filter-info-tooltip {
     position: relative;
     display: flex;
     align-items: center;
@@ -54,12 +86,12 @@
     cursor: help;
 }
 
-.saved-filters-help .dashicons {
+.filter-info-tooltip .dashicons {
     color: #777;
-    font-size: 18px;
+    font-size: 16px;
 }
 
-.saved-filters-help .tooltip-text {
+.filter-info-tooltip .tooltip-text {
     position: absolute;
     top: 100%;
     left: 50%;
@@ -77,12 +109,20 @@
     visibility: hidden;
     transition: opacity 0.3s;
     pointer-events: none;
-    white-space: nowrap;
+    white-space: normal;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-.saved-filters-help:hover .tooltip-text {
+.filter-info-tooltip:hover .tooltip-text {
     opacity: 1;
     visibility: visible;
+}
+
+/* Destacar filtros prioritarios */
+.priority-filter {
+    border-left: 3px solid #2271b1;
+    padding-left: 12px;
+    background-color: #f8f9fa;
 }
 
 /* Mejorar visibilidad de filtros activos */
@@ -157,7 +197,7 @@
 /* Mejorar jerarquía de acciones */
 .primary-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 15px;
     margin-top: 20px;
     padding-top: 15px;
@@ -167,16 +207,47 @@
 }
 
 #aplicar_filtros {
-    min-width: 150px;
+    min-width: 180px;
     height: 45px;
     font-size: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    background-color: #2271b1;
+    color: white;
+    border-color: #2271b1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-#aplicar_filtros .dashicons {
+#aplicar_filtros:hover {
+    background-color: #135e96;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+#limpiar_filtros {
+    min-width: 120px;
+    height: 45px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: #f0f0f0;
+    border-color: #ccc;
+    transition: all 0.2s ease;
+}
+
+#limpiar_filtros:hover {
+    background-color: #e0e0e0;
+}
+
+#aplicar_filtros .dashicons,
+#limpiar_filtros .dashicons {
     font-size: 18px;
 }
 
@@ -224,6 +295,7 @@
 .filters-column {
     display: flex;
     flex-direction: column;
+    padding: 5px;
 }
 
 /* Mejorar tamaño de inputs y botones de fecha */
@@ -231,7 +303,8 @@
     display: flex;
     gap: 8px;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    margin-top: 5px;
 }
 
 .datepicker-input {
@@ -283,14 +356,21 @@
 
 /* Mejorar apariencia de select e inputs */
 .filter-group {
-    margin-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.filter-group.date-range-group {
+    margin-top: 5px;
 }
 
 .filter-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     font-weight: 500;
     font-size: 14px;
+    white-space: nowrap;
+    overflow: visible;
+    line-height: 1.4;
 }
 
 .filter-group select,
@@ -346,7 +426,11 @@
 @media (max-width: 768px) {
     .filters-grid-two-columns {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 0;
+    }
+    
+    .filters-column {
+        margin-bottom: 20px;
     }
     
     .filters-grid {
@@ -390,5 +474,16 @@
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 5px;
+    }
+    
+    /* Ajustes específicos para etiquetas en móvil */
+    .filter-group label {
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+    
+    /* Más espacio entre componentes en móvil */
+    .filter-group {
+        margin-bottom: 30px;
     }
 }

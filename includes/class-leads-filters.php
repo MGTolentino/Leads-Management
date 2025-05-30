@@ -508,19 +508,22 @@ class LTB_Leads_Filters {
             <div class="filters-container" id="filters_container">
                 <!-- Acciones principales para filtros -->
                 <div class="filters-main-actions">
+                    <div class="saved-filters-header">
+                        <h3>Mis Filtros</h3>
+                        <div class="filter-info-tooltip">
+                            <span class="dashicons dashicons-info-outline"></span>
+                            <span class="tooltip-text">Guarda y carga configuraciones de filtros frecuentes para ahorrar tiempo</span>
+                        </div>
+                    </div>
                     <div class="saved-filters">
                         <select id="saved_filter_select">
-                            <option value="">Cargar filtro guardado</option>
+                            <option value="">Seleccione un filtro guardado</option>
                             <!-- Opciones añadidas dinámicamente -->
                         </select>
-                        <button id="save_current_filter" class="button" title="Guardar configuración actual de filtros para uso futuro">
+                        <button id="save_current_filter" class="button button-primary" title="Guardar configuración actual como un filtro reutilizable">
                             <span class="dashicons dashicons-save"></span>
-                            Guardar filtro
+                            Guardar configuración actual
                         </button>
-                        <div class="saved-filters-help">
-                            <span class="dashicons dashicons-info-outline"></span>
-                            <span class="tooltip-text">Guarda tu configuración actual de filtros para usarla después</span>
-                        </div>
                     </div>
                 </div>
 
@@ -573,7 +576,7 @@ class LTB_Leads_Filters {
                             </div>
                         </div>
                         
-                        <!-- COLUMNA DERECHA: BUSQUEDA Y FILTROS -->
+                        <!-- COLUMNA DERECHA: BUSQUEDA Y FILTROS PRIORITARIOS -->
                         <div class="filters-column">
                             <!-- Búsqueda -->
                             <div class="filter-group">
@@ -584,8 +587,8 @@ class LTB_Leads_Filters {
                                 </div>
                             </div>
                             
-                            <!-- Filtros comunes -->
-                            <div class="filter-group">
+                            <!-- Status (Prioridad comercial alta) -->
+                            <div class="filter-group priority-filter">
                                 <label for="status_filter">Status</label>
                                 <select id="status_filter" multiple="multiple" class="select2-multi">
                                     <?php
@@ -600,8 +603,8 @@ class LTB_Leads_Filters {
                                 </select>
                             </div>
                             
-                            <!-- Tipo de evento -->
-                            <div class="filter-group">
+                            <!-- Tipo de evento (Prioridad comercial alta) -->
+                            <div class="filter-group priority-filter">
                                 <label for="tipo_evento_filter">Tipo de Evento</label>
                                 <select id="tipo_evento_filter" multiple="multiple" class="select2-multi">
                                     <option value="Bodas">Bodas</option>
@@ -609,6 +612,21 @@ class LTB_Leads_Filters {
                                     <option value="Empresarial">Empresarial</option>
                                     <option value="Otros">Otros</option>
                                 </select>
+                            </div>
+                            
+                            <!-- Valor Potencial (Prioridad comercial alta) -->
+                            <div class="filter-group priority-filter">
+                                <label for="valor_potencial_filter">Valor Potencial</label>
+                                <select id="valor_potencial_filter">
+                                    <option value="">Cualquier valor</option>
+                                    <option value="bajo">Bajo (< $10,000)</option>
+                                    <option value="medio">Medio ($10,000 - $50,000)</option>
+                                    <option value="alto">Alto (> $50,000)</option>
+                                </select>
+                                <div class="filter-info-tooltip">
+                                    <span class="dashicons dashicons-info-outline"></span>
+                                    <span class="tooltip-text">Filtra leads por valor potencial de negocio</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -795,29 +813,28 @@ class LTB_Leads_Filters {
                                 </select>
                             </div>
                             
-                            <!-- Última interacción -->
+                            <!-- Actividad del Lead (Consolidado) -->
                             <div class="filter-group">
-                                <label for="ultima_interaccion_filter">Última Interacción</label>
+                                <label for="ultima_interaccion_filter">Actividad del Lead</label>
                                 <select id="ultima_interaccion_filter">
-                                    <option value="">Cualquier fecha</option>
-                                    <option value="hoy">Hoy</option>
-                                    <option value="semana">Esta semana</option>
-                                    <option value="mes">Este mes</option>
-                                    <option value="trimestre">Último trimestre</option>
-                                    <option value="mas_3_meses">Más de 3 meses</option>
+                                    <option value="">Cualquier actividad</option>
+                                    <optgroup label="Última interacción">
+                                        <option value="hoy">Hoy</option>
+                                        <option value="semana">Esta semana</option>
+                                        <option value="mes">Este mes</option>
+                                        <option value="trimestre">Último trimestre</option>
+                                    </optgroup>
+                                    <optgroup label="Sin actividad por">
+                                        <option value="7d">Más de 7 días</option>
+                                        <option value="15d">Más de 15 días</option>
+                                        <option value="30d">Más de 30 días</option>
+                                        <option value="90d">Más de 90 días</option>
+                                    </optgroup>
                                 </select>
-                            </div>
-                            
-                            <!-- Tiempo sin actividad -->
-                            <div class="filter-group">
-                                <label for="tiempo_sin_actividad_filter">Tiempo sin Actividad</label>
-                                <select id="tiempo_sin_actividad_filter">
-                                    <option value="">Cualquier tiempo</option>
-                                    <option value="7d">Más de 7 días</option>
-                                    <option value="15d">Más de 15 días</option>
-                                    <option value="30d">Más de 30 días</option>
-                                    <option value="90d">Más de 90 días</option>
-                                </select>
+                                <div class="filter-info-tooltip">
+                                    <span class="dashicons dashicons-info-outline"></span>
+                                    <span class="tooltip-text">Filtra por actividad reciente o leads sin seguimiento</span>
+                                </div>
                             </div>
                             
                             <!-- Próxima acción programada -->
@@ -883,30 +900,34 @@ class LTB_Leads_Filters {
                     
                     <div id="demograficos-filters" class="section-content">
                         <div class="filters-grid">
-                            <!-- Ubicación -->
+                            <!-- Ubicación (Dinámica) -->
                             <div class="filter-group">
                                 <label for="ubicacion_filter">Ubicación</label>
                                 <select id="ubicacion_filter" multiple="multiple" class="select2-multi">
-                                    <option value="cdmx">Ciudad de México</option>
-                                    <option value="guadalajara">Guadalajara</option>
-                                    <option value="monterrey">Monterrey</option>
-                                    <option value="puebla">Puebla</option>
-                                    <option value="queretaro">Querétaro</option>
-                                    <option value="otra">Otra</option>
-                                </select>
-                            </div>
-                            
-                            <!-- Industria (para empresariales) -->
-                            <div class="filter-group">
-                                <label for="industria_filter">Industria</label>
-                                <select id="industria_filter" multiple="multiple" class="select2-multi">
-                                    <option value="tecnologia">Tecnología</option>
-                                    <option value="finanzas">Finanzas</option>
-                                    <option value="salud">Salud</option>
-                                    <option value="educacion">Educación</option>
-                                    <option value="manufactura">Manufactura</option>
-                                    <option value="retail">Retail</option>
-                                    <option value="otro">Otro</option>
+                                    <?php
+                                    // Obtener términos de la taxonomía hp_listing_ubicacion
+                                    $ubicaciones = get_terms(array(
+                                        'taxonomy' => 'hp_listing_ubicacion',
+                                        'hide_empty' => false,
+                                    ));
+                                    
+                                    if (!is_wp_error($ubicaciones) && !empty($ubicaciones)) {
+                                        foreach ($ubicaciones as $ubicacion) {
+                                            // Solo mostrar términos padre o si no tienen padre
+                                            if ($ubicacion->parent == 0) {
+                                                echo '<option value="' . esc_attr($ubicacion->slug) . '">' . esc_html($ubicacion->name) . '</option>';
+                                            }
+                                        }
+                                    } else {
+                                        // Opciones de respaldo si no hay taxonomías
+                                        echo '<option value="cdmx">Ciudad de México</option>';
+                                        echo '<option value="guadalajara">Guadalajara</option>';
+                                        echo '<option value="monterrey">Monterrey</option>';
+                                        echo '<option value="puebla">Puebla</option>';
+                                        echo '<option value="queretaro">Querétaro</option>';
+                                        echo '<option value="otra">Otra</option>';
+                                    }
+                                    ?>
                                 </select>
                             </div>
                         </div>
