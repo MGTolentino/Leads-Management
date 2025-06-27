@@ -773,13 +773,12 @@
         initializeEvents();
         initializeDragAndDrop();
         
-        // Inicializar date range picker y proceder si es exitoso
-        if (initializeDateRangePicker()) {
-            loadEventTypes();
-            loadPipelineData();
-        } else {
-            console.error('Failed to initialize DateRangePicker');
-        }
+        // Inicializar date range picker
+        initializeDateRangePicker();
+        
+        // Cargar datos independientemente del DateRangePicker
+        loadEventTypes();
+        loadPipelineData();
     });
     }
     
