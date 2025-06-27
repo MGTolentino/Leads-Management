@@ -50,6 +50,22 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                 <!-- Se cargarán dinámicamente -->
             </select>
             
+            <select id="event_month_filter" class="filter-select">
+                <option value="">Todos los meses</option>
+                <option value="01">Enero</option>
+                <option value="02">Febrero</option>
+                <option value="03">Marzo</option>
+                <option value="04">Abril</option>
+                <option value="05">Mayo</option>
+                <option value="06">Junio</option>
+                <option value="07">Julio</option>
+                <option value="08">Agosto</option>
+                <option value="09">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+            
             <select id="priority_filter" class="filter-select">
                 <option value="">Prioridad</option>
                 <option value="alta">Alta</option>

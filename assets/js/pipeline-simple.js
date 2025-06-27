@@ -269,6 +269,7 @@
         currentFilters = {
             search: $('#quick_search').val(),
             tipo_evento: $('#event_type_filter').val() ? [$('#event_type_filter').val()] : [],
+            mes_evento: $('#event_month_filter').val(),
             prioridad: $('#priority_filter').val(),
             valor_potencial: $('#value_filter').val(),
             fecha_inicio: fechaInicio,
@@ -291,6 +292,7 @@
         $('#quick_search').val('');
         $('#period_filter').val('');
         $('#event_type_filter').val('');
+        $('#event_month_filter').val('');
         $('#priority_filter').val('');
         $('#value_filter').val('');
         $('#date_from').val('');

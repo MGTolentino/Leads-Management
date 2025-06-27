@@ -475,6 +475,19 @@ public function get_leads_by_status() {
         unset($filters['fecha_evento']);
     }
     
+    // Procesar filtro de mes específico
+    if (isset($filters['mes_evento']) && !empty($filters['mes_evento'])) {
+        $year = date('Y'); // Usar año actual por defecto
+        $month = $filters['mes_evento'];
+        
+        // Crear rango de fechas para el mes completo
+        $filters['fecha_evento_inicio'] = $year . '-' . $month . '-01';
+        $last_day = date('t', strtotime($filters['fecha_evento_inicio']));
+        $filters['fecha_evento_fin'] = $year . '-' . $month . '-' . $last_day;
+        
+        unset($filters['mes_evento']);
+    }
+    
     // Obtener datos
     $query_handler = new LTB_Leads_Query();
     $leads_by_status = $query_handler->get_leads_by_status($filters);
@@ -604,11 +617,11 @@ public function get_event_types() {
     try {
         // Obtener tipos de evento únicos desde la tabla de eventos
         $tipos = $wpdb->get_col("
-            SELECT DISTINCT evento_tipo 
+            SELECT DISTINCT tipo_de_evento 
             FROM {$wpdb->prefix}jet_cct_eventos 
-            WHERE evento_tipo IS NOT NULL 
-            AND evento_tipo != '' 
-            ORDER BY evento_tipo ASC
+            WHERE tipo_de_evento IS NOT NULL 
+            AND tipo_de_evento != '' 
+            ORDER BY tipo_de_evento ASC
         ");
         
         $result = array();
