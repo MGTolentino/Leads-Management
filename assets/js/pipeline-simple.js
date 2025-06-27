@@ -341,15 +341,8 @@
         if (lead.fecha_evento) {
             card.append($('<div class="lead-info">').text('Fecha: ' + lead.fecha_evento));
         }
-        if (lead.evento_servicio_de_interes) {
-            // Extraer solo el nombre del servicio de la URL si es necesario
-            let servicioNombre = lead.evento_servicio_de_interes;
-            if (servicioNombre.includes('/')) {
-                // Si es una URL, extraer el último segmento
-                servicioNombre = servicioNombre.split('/').pop().replace(/-/g, ' ');
-                servicioNombre = servicioNombre.charAt(0).toUpperCase() + servicioNombre.slice(1);
-            }
-            card.append($('<div class="lead-info service-info">').text('Servicio: ' + servicioNombre));
+        if (lead.servicio_titulo) {
+            card.append($('<div class="lead-info service-info">').text('Servicio: ' + lead.servicio_titulo));
         }
         
         // Enlaces de ver detalles
