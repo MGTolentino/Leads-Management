@@ -271,25 +271,72 @@
     border-top: 1px solid #eee;
 }
 
-/* Estados específicos - colores mínimos */
+/* Estados específicos - colores funcionales para identificación rápida */
+.pipeline-column[data-status="nuevo-no-contactado"] {
+    background-color: #f0f8ff;
+}
 .pipeline-column[data-status="nuevo-no-contactado"] .column-header {
-    border-top: 3px solid #17a2b8;
+    background-color: #cfe2ff;
+    border-top: 3px solid #0d6efd;
 }
 
+.pipeline-column[data-status="contactado-interesado"] {
+    background-color: #fff8e1;
+}
 .pipeline-column[data-status="contactado-interesado"] .column-header {
+    background-color: #ffe082;
     border-top: 3px solid #ffc107;
 }
 
+.pipeline-column[data-status="reservado"] {
+    background-color: #f1f8e9;
+}
 .pipeline-column[data-status="reservado"] .column-header {
-    border-top: 3px solid #28a745;
+    background-color: #c8e6c9;
+    border-top: 3px solid #4caf50;
 }
 
+.pipeline-column[data-status="cerrado"] {
+    background-color: #f3e5f5;
+}
 .pipeline-column[data-status="cerrado"] .column-header {
-    border-top: 3px solid #6f42c1;
+    background-color: #ce93d8;
+    border-top: 3px solid #9c27b0;
 }
 
+.pipeline-column[data-status="cancelado"] {
+    background-color: #ffeef0;
+}
 .pipeline-column[data-status="cancelado"] .column-header {
-    border-top: 3px solid #dc3545;
+    background-color: #ffcdd2;
+    border-top: 3px solid #f44336;
+}
+
+.pipeline-column[data-status="con-presupuesto"] {
+    background-color: #e8f5e9;
+}
+.pipeline-column[data-status="con-presupuesto"] .column-header {
+    background-color: #a5d6a7;
+    border-top: 3px solid #66bb6a;
+}
+
+.pipeline-column[data-status="por-cerrar"] {
+    background-color: #e3f2fd;
+}
+.pipeline-column[data-status="por-cerrar"] .column-header {
+    background-color: #90caf9;
+    border-top: 3px solid #2196f3;
+}
+
+/* Estilos para drag & drop */
+.lead-card.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.pipeline-column.drag-over {
+    background-color: #e8f4f8;
+    border: 2px dashed #0073aa;
 }
 
 /* Scrollbar personalizado para columnas */

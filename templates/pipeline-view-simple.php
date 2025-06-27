@@ -19,6 +19,44 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
         <div class="inline-filters">
             <input type="text" id="quick_search" placeholder="Buscar..." class="filter-input">
             
+            <select id="period_filter" class="filter-select">
+                <option value="">Todos los períodos</option>
+                <option value="today">Hoy</option>
+                <option value="this_week">Esta semana</option>
+                <option value="this_month">Este mes</option>
+                <option value="this_year">Este año</option>
+                <option value="custom">Rango personalizado</option>
+            </select>
+            
+            <div id="custom_date_range" style="display:none;">
+                <input type="date" id="date_from" class="filter-input" title="Fecha desde">
+                <input type="date" id="date_to" class="filter-input" title="Fecha hasta">
+            </div>
+            
+            <select id="event_type_filter" class="filter-select">
+                <option value="">Todos los tipos</option>
+                <option value="Bodas">Bodas</option>
+                <option value="XV años">XV años</option>
+                <option value="Empresarial">Empresarial</option>
+                <option value="Otros">Otros</option>
+            </select>
+            
+            <select id="event_month_filter" class="filter-select">
+                <option value="">Todos los meses</option>
+                <option value="01">Enero</option>
+                <option value="02">Febrero</option>
+                <option value="03">Marzo</option>
+                <option value="04">Abril</option>
+                <option value="05">Mayo</option>
+                <option value="06">Junio</option>
+                <option value="07">Julio</option>
+                <option value="08">Agosto</option>
+                <option value="09">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+            </select>
+            
             <select id="status_filter" class="filter-select">
                 <option value="">Todos los estados</option>
                 <?php
@@ -27,9 +65,6 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                     <option value="<?php echo esc_attr($value); ?>"><?php echo esc_html($label); ?></option>
                 <?php endforeach; ?>
             </select>
-            
-            <input type="date" id="date_from" class="filter-input" placeholder="Desde">
-            <input type="date" id="date_to" class="filter-input" placeholder="Hasta">
             
             <button id="apply_filters" class="btn-secondary">Filtrar</button>
             <button id="clear_filters" class="btn-text">Limpiar</button>
