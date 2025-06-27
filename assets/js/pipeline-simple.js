@@ -78,19 +78,51 @@
             }
         });
         
-        // Manejar selección de mes/año
-        $('#month_selector, #year_selector').on('change', function() {
-            const year = $('#year_selector').val();
-            const month = $('#month_selector').val();
+        // Manejar selección de mes/año - MEJORADO CON MEJOR SINCRONIZACIÓN
+        $('#month_selector, #year_selector, #anio_evento, #mes_evento, #mes_evento_basic').on('change.pipeline', function() {
+            console.log('[PIPELINE DEBUG] Date selector changed:', this.id, this.value);
+            
+            // Determinar qué selectores usar
+            let year, month;
+            
+            // Para pipeline simple
+            if (this.id === 'year_selector' || this.id === 'month_selector') {
+                year = $('#year_selector').val();
+                month = $('#month_selector').val();
+            }
+            // Para filtros principales
+            else if (this.id === 'anio_evento' || this.id.includes('mes_evento')) {
+                year = $('#anio_evento').val();
+                month = $('#mes_evento_basic').val() || $('#mes_evento').val();
+                
+                // Sincronizar con selectores de pipeline si existen
+                if ($('#year_selector').length && $('#month_selector').length) {
+                    $('#year_selector').val(year);
+                    $('#month_selector').val(month);
+                }
+            }
+            
+            console.log('[PIPELINE DEBUG] Final values:', { year, month });
             
             // Timeout aumentado para asegurar inicialización completa
             setTimeout(function() {
                 if (year && month) {
                     // Usar moment.js para calcular fechas
-                    const firstDay = moment(`${year}-${month}-01`, 'YYYY-MM-DD');
+                    const firstDay = moment(`${year}-${month.padStart(2, '0')}-01`, 'YYYY-MM-DD');
                     const lastDay = moment(firstDay).endOf('month');
                     
+                    console.log('[PIPELINE DEBUG] Calculated dates:', {
+                        firstDay: firstDay.format('YYYY-MM-DD'),
+                        lastDay: lastDay.format('YYYY-MM-DD'),
+                        valid: firstDay.isValid() && lastDay.isValid()
+                    });
+                    
                     if (firstDay.isValid() && lastDay.isValid()) {
+                        // Actualizar campos ocultos de fecha
+                        $('#fecha_evento_inicio').val(firstDay.format('YYYY-MM-DD'));
+                        $('#fecha_evento_fin').val(lastDay.format('YYYY-MM-DD'));
+                        
+                        // Actualizar daterangepicker si existe
                         const dateRangePicker = $('#daterange_picker').data('daterangepicker');
                         if (dateRangePicker && typeof dateRangePicker.setStartDate === 'function') {
                             try {
@@ -98,53 +130,83 @@
                                 dateRangePicker.setEndDate(lastDay);
                                 $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
                                 
-                                // Aplicar filtros automáticamente
-                                applyFilters();
+                                console.log('[PIPELINE DEBUG] DateRangePicker updated successfully');
                             } catch (error) {
-                                console.error('Error setting daterangepicker dates:', error);
-                                // Fallback: set the value directly and apply filters
+                                console.error('[PIPELINE DEBUG] Error setting daterangepicker dates:', error);
+                                // Fallback: set the value directly
                                 $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
-                                applyFilters();
                             }
                         } else {
-                            console.warn('DateRangePicker not fully initialized, trying direct approach');
-                            $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
-                            applyFilters();
+                            console.warn('[PIPELINE DEBUG] DateRangePicker not available, setting value directly');
+                            if ($('#daterange_picker').length) {
+                                $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
+                            }
                         }
+                        
+                        // Trigger main filter system update if available
+                        if (typeof window.actualizarVisualizacionFechaEvento === 'function') {
+                            window.actualizarVisualizacionFechaEvento();
+                        }
+                        
+                        // Actualizar currentFilters directamente y aplicar
+                        currentFilters.fecha_evento_inicio = firstDay.format('YYYY-MM-DD');
+                        currentFilters.fecha_evento_fin = lastDay.format('YYYY-MM-DD');
+                        
+                        console.log('[PIPELINE DEBUG] Updated currentFilters:', currentFilters);
+                        
+                        // Aplicar filtros directamente
+                        loadPipelineData();
                     } else {
-                        console.error('Invalid dates generated from month/year selection');
+                        console.error('[PIPELINE DEBUG] Invalid dates generated from month/year selection');
                     }
                 } else if (year && !month) {
                     // Solo año seleccionado - todo el año
                     const firstDay = moment(`${year}-01-01`, 'YYYY-MM-DD');
                     const lastDay = moment(`${year}-12-31`, 'YYYY-MM-DD');
                     
+                    console.log('[PIPELINE DEBUG] Year-only selection:', {
+                        firstDay: firstDay.format('YYYY-MM-DD'),
+                        lastDay: lastDay.format('YYYY-MM-DD')
+                    });
+                    
                     if (firstDay.isValid() && lastDay.isValid()) {
+                        // Actualizar campos ocultos de fecha
+                        $('#fecha_evento_inicio').val(firstDay.format('YYYY-MM-DD'));
+                        $('#fecha_evento_fin').val(lastDay.format('YYYY-MM-DD'));
+                        
+                        // Actualizar daterangepicker
                         const dateRangePicker = $('#daterange_picker').data('daterangepicker');
                         if (dateRangePicker && typeof dateRangePicker.setStartDate === 'function') {
                             try {
                                 dateRangePicker.setStartDate(firstDay);
                                 dateRangePicker.setEndDate(lastDay);
                                 $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
-                                
-                                // Aplicar filtros automáticamente
-                                applyFilters();
                             } catch (error) {
-                                console.error('Error setting daterangepicker dates for year:', error);
-                                // Fallback: set the value directly and apply filters
+                                console.error('[PIPELINE DEBUG] Error setting daterangepicker dates for year:', error);
                                 $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
-                                applyFilters();
                             }
-                        } else {
-                            console.warn('DateRangePicker not fully initialized for year selection, trying direct approach');
+                        } else if ($('#daterange_picker').length) {
                             $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
-                            applyFilters();
                         }
+                        
+                        // Trigger main filter system update if available
+                        if (typeof window.actualizarVisualizacionFechaEvento === 'function') {
+                            window.actualizarVisualizacionFechaEvento();
+                        }
+                        
+                        // Actualizar currentFilters directamente y aplicar para año
+                        currentFilters.fecha_evento_inicio = firstDay.format('YYYY-MM-DD');
+                        currentFilters.fecha_evento_fin = lastDay.format('YYYY-MM-DD');
+                        
+                        console.log('[PIPELINE DEBUG] Updated currentFilters for year:', currentFilters);
+                        
+                        // Aplicar filtros directamente
+                        loadPipelineData();
                     } else {
-                        console.error('Invalid dates generated from year selection');
+                        console.error('[PIPELINE DEBUG] Invalid dates generated from year selection');
                     }
                 }
-            }, 500); // Increased delay to ensure daterangepicker is fully ready
+            }, 100); // Minimal delay for DOM updates
         });
         
         // Formulario de lead
@@ -215,6 +277,8 @@
     function loadPipelineData() {
         $('.pipeline-board').addClass('loading');
         
+        console.log('[PIPELINE DEBUG] Loading pipeline data with filters:', currentFilters);
+        
         $.ajax({
             url: ltb_leads.ajax_url,
             type: 'POST',
@@ -224,16 +288,22 @@
                 filters: currentFilters
             },
             success: function(response) {
+                console.log('[PIPELINE DEBUG] AJAX response received:', response);
                 if (response.success) {
                     renderPipeline(response.data);
                     allLeads = response.data;
+                    console.log('[PIPELINE DEBUG] Pipeline rendered successfully');
+                } else {
+                    console.error('[PIPELINE DEBUG] AJAX response failed:', response);
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error('[PIPELINE DEBUG] AJAX request failed:', { xhr, status, error });
                 alert('Error al cargar los datos');
             },
             complete: function() {
                 $('.pipeline-board').removeClass('loading');
+                console.log('[PIPELINE DEBUG] AJAX request completed');
             }
         });
     }
@@ -310,8 +380,17 @@
         let fechaInicio = '';
         let fechaFin = '';
         
-        // Calcular fechas según el período seleccionado
-        if (period && period !== 'custom') {
+        console.log('[PIPELINE DEBUG] applyFilters called with period:', period);
+        console.log('[PIPELINE DEBUG] Current currentFilters before processing:', currentFilters);
+        
+        // Si ya hay fechas en currentFilters, priorizarlas sobre el period selector
+        if (currentFilters.fecha_evento_inicio && currentFilters.fecha_evento_fin) {
+            fechaInicio = currentFilters.fecha_evento_inicio;
+            fechaFin = currentFilters.fecha_evento_fin;
+            console.log('[PIPELINE DEBUG] Using existing dates from currentFilters:', { fechaInicio, fechaFin });
+        }
+        // Calcular fechas según el período seleccionado solo si no hay fechas ya establecidas
+        else if (period && period !== 'custom') {
             const today = new Date();
             const year = today.getFullYear();
             const month = today.getMonth();
@@ -358,13 +437,24 @@
                     break;
             }
         } else if (period === 'custom') {
-            const daterangePicker = $('#daterange_picker').data('daterangepicker');
-            const inputValue = $('#daterange_picker').val();
+            // Priorizar campos ocultos de fecha para mejor sincronización
+            const hiddenStartDate = $('#fecha_evento_inicio').val();
+            const hiddenEndDate = $('#fecha_evento_fin').val();
             
-            if (daterangePicker && daterangePicker.startDate && daterangePicker.endDate) {
-                fechaInicio = daterangePicker.startDate.format('YYYY-MM-DD');
-                fechaFin = daterangePicker.endDate.format('YYYY-MM-DD');
-            } else if (inputValue && inputValue.trim()) {
+            if (hiddenStartDate && hiddenEndDate) {
+                fechaInicio = hiddenStartDate;
+                fechaFin = hiddenEndDate;
+                console.log('[PIPELINE DEBUG] Using hidden date fields:', { fechaInicio, fechaFin });
+            } else {
+                // Fallback a daterangepicker
+                const daterangePicker = $('#daterange_picker').data('daterangepicker');
+                const inputValue = $('#daterange_picker').val();
+                
+                if (daterangePicker && daterangePicker.startDate && daterangePicker.endDate) {
+                    fechaInicio = daterangePicker.startDate.format('YYYY-MM-DD');
+                    fechaFin = daterangePicker.endDate.format('YYYY-MM-DD');
+                    console.log('[PIPELINE DEBUG] Using daterangepicker data:', { fechaInicio, fechaFin });
+                } else if (inputValue && inputValue.trim()) {
                 // Parse input value as fallback
                 const parts = inputValue.split(' - ');
                 if (parts.length === 2) {
@@ -384,14 +474,20 @@
             }
         }
         
+        // Preserve existing date values if they exist and no new dates were calculated
+        const finalFechaInicio = fechaInicio || currentFilters.fecha_evento_inicio || '';
+        const finalFechaFin = fechaFin || currentFilters.fecha_evento_fin || '';
+        
         currentFilters = {
             search: $('#quick_search').val(),
             tipo_evento: $('#event_type_filter').val() ? [$('#event_type_filter').val()] : [],
             prioridad: $('#priority_filter').val(),
             valor_potencial: $('#value_filter').val(),
-            fecha_evento_inicio: fechaInicio,
-            fecha_evento_fin: fechaFin
+            fecha_evento_inicio: finalFechaInicio,
+            fecha_evento_fin: finalFechaFin
         };
+        
+        console.log('[PIPELINE DEBUG] Final filters after applyFilters:', currentFilters);
         
         loadPipelineData();
     }
@@ -512,17 +608,21 @@
         });
     }
     
-    // Inicializar date range picker
+    // Inicializar date range picker - MEJORADO
     function initializeDateRangePicker() {
+        console.log('[PIPELINE DEBUG] Initializing DateRangePicker...');
+        
         if (typeof moment === 'undefined') {
-            console.error('Moment.js not loaded');
+            console.error('[PIPELINE DEBUG] Moment.js not loaded');
             return false;
         }
         
         if (!$('#daterange_picker').length) {
-            console.error('DateRangePicker element not found');
-            return false;
+            console.log('[PIPELINE DEBUG] DateRangePicker element not found - this is OK for some views');
+            return true; // Return true to continue initialization even without daterangepicker
         }
+        
+        console.log('[PIPELINE DEBUG] DateRangePicker element found, proceeding with initialization...');
         
         try {
             $('#daterange_picker').daterangepicker({
@@ -560,13 +660,45 @@
                 }
             });
 
-            // Actualizar input cuando se selecciona rango
+            // Actualizar input cuando se selecciona rango - MEJORADO
             $('#daterange_picker').on('apply.daterangepicker', function(ev, picker) {
+                console.log('[PIPELINE DEBUG] DateRangePicker apply event:', {
+                    startDate: picker.startDate.format('YYYY-MM-DD'),
+                    endDate: picker.endDate.format('YYYY-MM-DD'),
+                    singleDate: picker.singleDatePicker
+                });
+                
+                // Actualizar campos ocultos para sincronización con filtros principales
+                if (picker.startDate && picker.endDate) {
+                    $('#fecha_evento_inicio').val(picker.startDate.format('YYYY-MM-DD'));
+                    $('#fecha_evento_fin').val(picker.endDate.format('YYYY-MM-DD'));
+                    
+                    // Actualizar selectores de año/mes si la fecha es del mismo mes
+                    if (picker.startDate.isSame(picker.endDate, 'month')) {
+                        const year = picker.startDate.format('YYYY');
+                        const month = picker.startDate.format('MM');
+                        
+                        $('#anio_evento').val(year);
+                        $('#mes_evento, #mes_evento_basic').val(month);
+                        $('#year_selector').val(year);
+                        $('#month_selector').val(month);
+                        
+                        console.log('[PIPELINE DEBUG] Synchronized selectors:', { year, month });
+                    }
+                }
+                
+                // Actualizar valor mostrado
                 if (picker.singleDatePicker) {
                     $(this).val(picker.startDate.format('DD/MM/YYYY'));
                 } else {
                     $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
                 }
+                
+                // Trigger main filter system update if available
+                if (typeof window.actualizarVisualizacionFechaEvento === 'function') {
+                    window.actualizarVisualizacionFechaEvento();
+                }
+                
                 applyFilters();
             });
 
@@ -594,9 +726,31 @@
             // Set initial placeholder
             $('#daterange_picker').attr('placeholder', 'Seleccionar rango de fechas (doble-click para fecha única)');
             
+            console.log('[PIPELINE DEBUG] DateRangePicker initialized successfully');
+            
+            // Exponer la función para que pueda ser llamada desde filters.js
+            window.updateDaterangepicker = function() {
+                const startDate = $('#fecha_evento_inicio').val();
+                const endDate = $('#fecha_evento_fin').val();
+                
+                if (startDate && endDate) {
+                    const startMoment = moment(startDate, 'YYYY-MM-DD');
+                    const endMoment = moment(endDate, 'YYYY-MM-DD');
+                    
+                    if (startMoment.isValid() && endMoment.isValid()) {
+                        const drpInstance = $('#daterange_picker').data('daterangepicker');
+                        if (drpInstance) {
+                            drpInstance.setStartDate(startMoment);
+                            drpInstance.setEndDate(endMoment);
+                            $('#daterange_picker').val(startMoment.format('DD/MM/YYYY') + ' - ' + endMoment.format('DD/MM/YYYY'));
+                        }
+                    }
+                }
+            };
+            
             return true;
         } catch (error) {
-            console.error('DateRangePicker initialization failed:', error);
+            console.error('[PIPELINE DEBUG] DateRangePicker initialization failed:', error);
             return false;
         }
     }

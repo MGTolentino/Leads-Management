@@ -608,6 +608,9 @@ public function get_leads_by_status($args = array()) {
     $args = wp_parse_args($args, $defaults);
     $where = array('1=1');
     $values = array();
+    
+    // Debug: Log the arguments received
+    error_log('[QUERY DEBUG] get_leads_by_status args: ' . print_r($args, true));
 
     $query = "
         SELECT 
@@ -739,6 +742,7 @@ public function get_leads_by_status($args = array()) {
     else if (!empty($args['fecha_evento_inicio']) && !empty($args['fecha_evento_fin'])) {
         $fecha_inicio = $args['fecha_evento_inicio'];
         $fecha_fin = $args['fecha_evento_fin'];
+        error_log('[QUERY DEBUG] Processing date range filter: ' . $fecha_inicio . ' to ' . $fecha_fin);
         
         // Procesar fecha de inicio
         $inicio_timestamp = null;
@@ -964,6 +968,10 @@ public function get_leads_by_status($args = array()) {
            $grouped_leads['sin-evento'][] = $lead_event;
        }
    }
+
+   error_log('[QUERY DEBUG] Final grouped_leads count: ' . count($grouped_leads));
+   error_log('[QUERY DEBUG] Final WHERE conditions: ' . implode(' AND ', $where));
+   error_log('[QUERY DEBUG] Final query values: ' . print_r($values, true));
 
    return $grouped_leads;
 }
