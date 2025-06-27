@@ -564,10 +564,26 @@ class LTB_Leads_Filters {
                             <div class="filter-group priority-filter">
                                 <label for="tipo_evento_filter">Tipo de Evento</label>
                                 <select id="tipo_evento_filter" multiple="multiple" class="select2-multi">
-                                    <option value="Bodas">Bodas</option>
-                                    <option value="XV años">XV años</option>
-                                    <option value="Empresarial">Empresarial</option>
-                                    <option value="Otros">Otros</option>
+                                    <?php
+                                    // Obtener tipos de evento únicos desde la base de datos
+                                    global $wpdb;
+                                    $tipos_evento = $wpdb->get_col("
+                                        SELECT DISTINCT tipo_de_evento 
+                                        FROM {$wpdb->prefix}jet_cct_eventos 
+                                        WHERE tipo_de_evento IS NOT NULL 
+                                        AND tipo_de_evento != '' 
+                                        ORDER BY tipo_de_evento ASC
+                                    ");
+                                    
+                                    // Si no hay tipos en la base de datos, usar valores por defecto
+                                    if (empty($tipos_evento)) {
+                                        $tipos_evento = array('Bodas', 'XV años', 'Empresarial', 'Otros');
+                                    }
+                                    
+                                    foreach ($tipos_evento as $tipo) {
+                                        echo '<option value="' . esc_attr($tipo) . '">' . esc_html($tipo) . '</option>';
+                                    }
+                                    ?>
                                 </select>
                             </div>
                             
@@ -593,9 +609,15 @@ class LTB_Leads_Filters {
                             <div class="filter-group date-range-group">
                                 <label>Fecha de Evento</label>
                                 <div class="date-range-inputs">
-                                    <input type="text" id="fecha_evento_inicio" class="datepicker-input" placeholder="Desde..." readonly>
+                                    <div class="date-input-wrapper">
+                                        <label class="date-input-label">Desde:</label>
+                                        <input type="text" id="fecha_evento_inicio" class="datepicker-input" placeholder="Fecha inicio" readonly>
+                                    </div>
                                     <span class="date-range-separator">➔</span>
-                                    <input type="text" id="fecha_evento_fin" class="datepicker-input" placeholder="Hasta..." readonly>
+                                    <div class="date-input-wrapper">
+                                        <label class="date-input-label">Hasta:</label>
+                                        <input type="text" id="fecha_evento_fin" class="datepicker-input" placeholder="Fecha fin" readonly>
+                                    </div>
                                 </div>
                                 <div class="date-actions">
                                     <div class="date-presets">
@@ -685,9 +707,15 @@ class LTB_Leads_Filters {
                                 <div class="filter-group">
                                     <label for="fecha_ingreso">Fecha de Ingreso</label>
                                     <div class="date-range-inputs">
-                                        <input type="text" id="fecha_ingreso_inicio" class="datepicker-input" placeholder="Desde..." readonly>
+                                        <div class="date-input-wrapper">
+                                            <label class="date-input-label">Desde:</label>
+                                            <input type="text" id="fecha_ingreso_inicio" class="datepicker-input" placeholder="Fecha inicio" readonly>
+                                        </div>
                                         <span class="date-range-separator">➔</span>
-                                        <input type="text" id="fecha_ingreso_fin" class="datepicker-input" placeholder="Hasta..." readonly>
+                                        <div class="date-input-wrapper">
+                                            <label class="date-input-label">Hasta:</label>
+                                            <input type="text" id="fecha_ingreso_fin" class="datepicker-input" placeholder="Fecha fin" readonly>
+                                        </div>
                                     </div>
                                     <div class="year-month-selectors">
                                         <select id="anio_ingreso" class="date-selector">

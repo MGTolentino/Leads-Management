@@ -604,11 +604,11 @@ public function get_event_types() {
     try {
         // Obtener tipos de evento únicos desde la tabla de eventos
         $tipos = $wpdb->get_col("
-            SELECT DISTINCT evento_tipo 
+            SELECT DISTINCT tipo_de_evento 
             FROM {$wpdb->prefix}jet_cct_eventos 
-            WHERE evento_tipo IS NOT NULL 
-            AND evento_tipo != '' 
-            ORDER BY evento_tipo ASC
+            WHERE tipo_de_evento IS NOT NULL 
+            AND tipo_de_evento != '' 
+            ORDER BY tipo_de_evento ASC
         ");
         
         $result = array();
