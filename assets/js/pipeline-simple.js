@@ -22,7 +22,6 @@
         
         initializeEvents();
         initializeDragAndDrop();
-<<<<<<< HEAD
         
         // Inicializar date range picker y proceder si es exitoso
         if (initializeDateRangePicker()) {
@@ -31,10 +30,6 @@
         } else {
             console.error('Failed to initialize DateRangePicker');
         }
-=======
-        loadEventTypes();
-        loadPipelineData();
->>>>>>> parent of 4ca2e04 (Datepicker corercto)
     });
     
     // Función debounce para búsqueda
@@ -109,11 +104,11 @@
             $('#month_year_selectors').hide();
             
             if (value === 'custom') {
-                $('#custom_date_range').show().css('display', 'flex');
+                $('#custom_date_range').show();
             } else if (value === 'month_year') {
                 $('#month_year_selectors').show().css('display', 'flex');
             } else {
-                $('#date_from, #date_to').val('');
+                $('#daterange_picker').val('');
                 $('#year_selector, #month_selector').val('');
             }
         });
@@ -122,7 +117,6 @@
         $('#month_selector, #year_selector, #anio_evento, #mes_evento, #mes_evento_basic').on('change.pipeline', function() {
             console.log('[PIPELINE DEBUG] Date selector changed:', this.id, this.value);
             
-<<<<<<< HEAD
             // Determinar qué selectores usar
             let year, month;
             
@@ -130,29 +124,6 @@
             if (this.id === 'year_selector' || this.id === 'month_selector') {
                 year = $('#year_selector').val();
                 month = $('#month_selector').val();
-=======
-            if (year && month) {
-                // Calcular primer y último día del mes
-                const firstDay = `${year}-${month}-01`;
-                const lastDay = new Date(year, parseInt(month), 0).getDate();
-                const lastDayFormatted = `${year}-${month}-${lastDay.toString().padStart(2, '0')}`;
-                
-                $('#date_from').val(firstDay);
-                $('#date_to').val(lastDayFormatted);
-                
-                // Aplicar filtros automáticamente
-                applyFilters();
-            } else if (year && !month) {
-                // Solo año seleccionado - todo el año
-                const firstDay = `${year}-01-01`;
-                const lastDay = `${year}-12-31`;
-                
-                $('#date_from').val(firstDay);
-                $('#date_to').val(lastDay);
-                
-                // Aplicar filtros automáticamente
-                applyFilters();
->>>>>>> parent of 4ca2e04 (Datepicker corercto)
             }
             // Para filtros principales
             else if (this.id === 'anio_evento' || this.id.includes('mes_evento')) {
@@ -501,7 +472,6 @@
                     break;
             }
         } else if (period === 'custom') {
-<<<<<<< HEAD
             // Priorizar campos ocultos de fecha para mejor sincronización
             const hiddenStartDate = $('#fecha_evento_inicio').val();
             const hiddenEndDate = $('#fecha_evento_fin').val();
@@ -537,10 +507,6 @@
                     }
                 }
             }
-=======
-            fechaInicio = $('#date_from').val();
-            fechaFin = $('#date_to').val();
->>>>>>> parent of 4ca2e04 (Datepicker corercto)
         }
         
         // Preserve existing date values if they exist and no new dates were calculated
@@ -552,13 +518,8 @@
             tipo_evento: $('#event_type_filter').val() ? [$('#event_type_filter').val()] : [],
             prioridad: $('#priority_filter').val(),
             valor_potencial: $('#value_filter').val(),
-<<<<<<< HEAD
             fecha_evento_inicio: finalFechaInicio,
             fecha_evento_fin: finalFechaFin
-=======
-            fecha_inicio: fechaInicio,
-            fecha_fin: fechaFin
->>>>>>> parent of 4ca2e04 (Datepicker corercto)
         };
         
         console.log('[PIPELINE DEBUG] Final filters after applyFilters:', currentFilters);
@@ -574,23 +535,6 @@
         return `${year}-${month}-${day}`;
     }
     
-<<<<<<< HEAD
-=======
-    // Limpiar filtros
-    function clearFilters() {
-        $('#quick_search').val('');
-        $('#period_filter').val('');
-        $('#event_type_filter').val('');
-        $('#priority_filter').val('');
-        $('#value_filter').val('');
-        $('#date_from').val('');
-        $('#date_to').val('');
-        $('#custom_date_range').hide().css('display', 'none');
-        currentFilters = {};
-        loadPipelineData();
-    }
-    
->>>>>>> parent of 4ca2e04 (Datepicker corercto)
     // Cargar tipos de evento dinámicamente
     function loadEventTypes() {
         $.ajax({
@@ -654,7 +598,7 @@
             url: ltb_leads.ajax_url,
             type: 'POST',
             data: {
-                action: 'update_event_status',
+                action: 'update_evento_status',
                 nonce: ltb_leads.nonce,
                 evento_id: eventoId,
                 lead_id: leadId,
@@ -677,7 +621,6 @@
         });
     }
     
-<<<<<<< HEAD
     // Inicializar date range picker - MEJORADO
     function initializeDateRangePicker() {
         console.log('[PIPELINE DEBUG] Initializing DateRangePicker...');
@@ -825,8 +768,6 @@
         }
     }
     
-=======
->>>>>>> parent of 4ca2e04 (Datepicker corercto)
     // Actualizar contadores de columnas
     function updateColumnCounts() {
         $('.pipeline-column').each(function() {
