@@ -162,36 +162,11 @@ class LTB_Leads_Management {
                 true
             );
             
-            // Cargar Moment.js
-            wp_enqueue_script(
-                'moment-js',
-                'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js',
-                array(),
-                '2.29.4',
-                true
-            );
-            
-            // Cargar DateRangePicker
-            wp_enqueue_style(
-                'daterangepicker-css',
-                'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css',
-                array(),
-                '3.1.0'
-            );
-            
-            wp_enqueue_script(
-                'daterangepicker-js',
-                'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js',
-                array('jquery', 'moment-js'),
-                '3.1.0',
-                true
-            );
-            
             // Solo cargar el JavaScript simplificado del pipeline
             wp_enqueue_script(
                 'ltb-pipeline-simple',
                 LTB_LEADS_PLUGIN_URL . 'assets/js/pipeline-simple.js',
-                array('jquery', 'ltb-lead-add', 'moment-js', 'daterangepicker-js'),
+                array('jquery', 'jquery-ui-autocomplete', 'moment-js', 'daterangepicker-js', 'ltb-lead-add'),
                 LTB_LEADS_VERSION,
                 true
             );

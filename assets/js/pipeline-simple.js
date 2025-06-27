@@ -1,6 +1,13 @@
 (function($) {
     'use strict';
     
+    // Prevenir conflictos con otros sistemas JS
+    if (window.pipelineSimpleLoaded) {
+        console.warn('Pipeline Simple ya está cargado, evitando duplicación');
+        return;
+    }
+    window.pipelineSimpleLoaded = true;
+    
     // Variables globales
     let currentFilters = {};
     let allLeads = [];
@@ -10,10 +17,69 @@
     // Inicialización
     $(document).ready(function() {
         validateLibraries();
+        loadEventTypes(); // Cargar tipos de evento dinámicamente
         initializeEvents();
         initializeDragAndDrop();
         loadPipelineData();
     });
+    
+    // Cargar tipos de evento dinámicamente
+    function loadEventTypes() {
+        $.ajax({
+            url: ltb_leads.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'get_event_types',
+                nonce: ltb_leads.nonce
+            },
+            success: function(response) {
+                if (response.success && response.data.length > 0) {
+                    const $eventTypeFilter = $('#event_type_filter');
+                    
+                    // Limpiar opciones existentes excepto "Todos los tipos"
+                    $eventTypeFilter.find('option:not(:first)').remove();
+                    
+                    // Agregar tipos dinámicos
+                    response.data.forEach(function(tipo) {
+                        $eventTypeFilter.append(
+                            $('<option>', {
+                                value: tipo.value,
+                                text: tipo.label
+                            })
+                        );
+                    });
+                } else {
+                    // Fallback a tipos por defecto si no hay datos
+                    const defaultTypes = ['Bodas', 'XV años', 'Empresarial', 'Otros'];
+                    const $eventTypeFilter = $('#event_type_filter');
+                    
+                    defaultTypes.forEach(function(tipo) {
+                        $eventTypeFilter.append(
+                            $('<option>', {
+                                value: tipo,
+                                text: tipo
+                            })
+                        );
+                    });
+                }
+            },
+            error: function() {
+                console.error('Error al cargar tipos de evento, usando valores por defecto');
+                // Fallback en caso de error
+                const defaultTypes = ['Bodas', 'XV años', 'Empresarial', 'Otros'];
+                const $eventTypeFilter = $('#event_type_filter');
+                
+                defaultTypes.forEach(function(tipo) {
+                    $eventTypeFilter.append(
+                        $('<option>', {
+                            value: tipo,
+                            text: tipo
+                        })
+                    );
+                });
+            }
+        });
+    }
     
     // Validar que las librerías requeridas estén cargadas
     function validateLibraries() {
@@ -46,45 +112,71 @@
     
     // Configurar eventos
     function initializeEvents() {
+        // Limpiar eventos existentes para evitar duplicación
+        $('#add_lead_btn').off('click.pipeline');
+        $('#period_filter').off('change.pipeline');
+        $('#mes_evento_basic, #anio_evento').off('change.pipeline');
+        $('.close-modal').off('click.pipeline');
+        $('#include_event').off('change.pipeline');
+        $('#apply_filters').off('click.pipeline');
+        $('#clear_filters').off('click.pipeline');
+        $('#quick_search').off('keyup.pipeline');
+        $('#lead_form').off('submit.pipeline');
+        
         // Botón agregar lead
-        $('#add_lead_btn').on('click', function() {
+        $('#add_lead_btn').on('click.pipeline', function() {
             $('#lead_modal').addClass('active');
         });
         
         // Cerrar modal
-        $('.close-modal').on('click', function() {
+        $('.close-modal').on('click.pipeline', function() {
             $('#lead_modal').removeClass('active');
             $('#lead_form')[0].reset();
             $('#event_fields').hide();
         });
         
         // Toggle campos de evento
-        $('#include_event').on('change', function() {
+        $('#include_event').on('change.pipeline', function() {
             $('#event_fields').toggle(this.checked);
         });
         
         // Aplicar filtros
-        $('#apply_filters').on('click', applyFilters);
-        $('#clear_filters').on('click', clearFilters);
+        $('#apply_filters').on('click.pipeline', applyFilters);
+        $('#clear_filters').on('click.pipeline', clearFilters);
         
         // Búsqueda en tiempo real
-        $('#quick_search').on('keyup', debounce(function() {
+        $('#quick_search').on('keyup.pipeline', debounce(function() {
             applyFilters();
         }, 300));
         
-        // Mostrar/ocultar rango de fechas personalizado
-        $('#period_filter').on('change', function() {
-            if ($(this).val() === 'custom') {
+        // Mostrar/ocultar filtros de fecha
+        $('#period_filter').on('change.pipeline', function() {
+            const value = $(this).val();
+            
+            // Ocultar todos los contenedores de fecha
+            $('#custom_date_range').hide();
+            $('#specific_month_range').hide();
+            
+            if (value === 'custom') {
                 $('#custom_date_range').show();
                 initializeDateRangePicker();
+            } else if (value === 'specific_month') {
+                $('#specific_month_range').show();
             } else {
-                $('#custom_date_range').hide();
+                // Limpiar valores
                 $('#date_range').val('');
+                $('#mes_evento_basic').val('');
+                $('#anio_evento').val('');
             }
         });
         
+        // Eventos para filtros de mes/año específico
+        $('#mes_evento_basic, #anio_evento').on('change.pipeline', function() {
+            applyFilters();
+        });
+        
         // Formulario de lead
-        $('#lead_form').on('submit', function(e) {
+        $('#lead_form').on('submit.pipeline', function(e) {
             e.preventDefault();
             saveLead();
         });
@@ -99,9 +191,13 @@
         });
         
         // Inicializar autocomplete para servicios cuando se muestra el modal
-        $('#add_lead_btn').on('click', function() {
-            // Inicializar autocomplete después de mostrar el modal
-            setTimeout(initializeServicesAutocomplete, 100);
+        $('#add_lead_btn').on('click.pipeline-autocomplete', function() {
+            // Asegurar que el modal esté completamente visible antes de inicializar
+            setTimeout(function() {
+                if ($('#lead_modal').hasClass('active')) {
+                    initializeServicesAutocomplete();
+                }
+            }, 200);
         });
     }
     
@@ -283,13 +379,26 @@
                 fechaInicio = dates[0];
                 fechaFin = dates[1];
             }
+        } else if (period === 'specific_month') {
+            const mes = $('#mes_evento_basic').val();
+            const anio = $('#anio_evento').val();
+            
+            if (mes && anio) {
+                // Crear rango para el mes específico del año específico
+                fechaInicio = `${anio}-${mes}-01`;
+                const lastDay = new Date(anio, mes, 0).getDate();
+                fechaFin = `${anio}-${mes}-${lastDay.toString().padStart(2, '0')}`;
+            } else if (anio && !mes) {
+                // Solo año seleccionado - todo el año
+                fechaInicio = `${anio}-01-01`;
+                fechaFin = `${anio}-12-31`;
+            }
         }
         
         currentFilters = {
             search: $('#quick_search').val(),
             status: $('#status_filter').val() ? [$('#status_filter').val()] : [],
             tipo_evento: $('#event_type_filter').val() ? [$('#event_type_filter').val()] : [],
-            mes_evento: $('#event_month_filter').val(),
             fecha_inicio: fechaInicio,
             fecha_fin: fechaFin
         };
@@ -310,10 +419,12 @@
         $('#quick_search').val('');
         $('#period_filter').val('');
         $('#event_type_filter').val('');
-        $('#event_month_filter').val('');
         $('#status_filter').val('');
         $('#date_range').val('');
+        $('#mes_evento_basic').val('');
+        $('#anio_evento').val('');
         $('#custom_date_range').hide();
+        $('#specific_month_range').hide();
         currentFilters = {};
         loadPipelineData();
     }
@@ -397,35 +508,69 @@
         
         $('#date_range').daterangepicker({
             autoUpdateInput: false,
+            autoApply: true, // Auto-aplicar sin botones
             locale: {
-                cancelLabel: 'Limpiar',
-                applyLabel: 'Aplicar',
                 format: 'YYYY-MM-DD',
                 separator: ' - ',
                 daysOfWeek: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
                 monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
                            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
                 firstDay: 1
-            }
+            },
+            // Permitir seleccionar la misma fecha (doble click)
+            singleDatePicker: false
         });
         
+        // Auto-aplicar filtros cuando se selecciona el rango
         $('#date_range').on('apply.daterangepicker', function(ev, picker) {
             $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+            // Disparar filtros automáticamente
+            applyFilters();
         });
         
+        // Limpiar y aplicar cuando se cancela
         $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
             $(this).val('');
+            applyFilters();
+        });
+        
+        // Detectar doble click en el mismo día
+        $('#date_range').on('show.daterangepicker', function(ev, picker) {
+            picker.container.find('.calendar td').on('dblclick', function() {
+                const date = $(this).attr('data-title');
+                if (date) {
+                    const selectedDate = moment(date, 'r MMM DD, YYYY');
+                    if (selectedDate.isValid()) {
+                        $('#date_range').val(selectedDate.format('YYYY-MM-DD') + ' - ' + selectedDate.format('YYYY-MM-DD'));
+                        picker.hide();
+                        applyFilters();
+                    }
+                }
+            });
         });
     }
     
     // Inicializar autocomplete para servicios
     function initializeServicesAutocomplete() {
+        const $input = $('#servicio_autocomplete');
+        
+        // Verificar que el elemento existe y jQuery UI está disponible
+        if ($input.length === 0) {
+            console.error('Campo #servicio_autocomplete no encontrado');
+            return;
+        }
+        
         if (typeof $.fn.autocomplete === 'undefined') {
             console.error('jQuery UI Autocomplete no está disponible');
             return;
         }
         
-        $('#servicio_autocomplete').autocomplete({
+        // Destruir autocomplete existente si ya está inicializado
+        if ($input.hasClass('ui-autocomplete-input')) {
+            $input.autocomplete('destroy');
+        }
+        
+        $input.autocomplete({
             source: function(request, response) {
                 $.ajax({
                     url: ltb_leads.ajax_url,
@@ -436,27 +581,38 @@
                         nonce: ltb_leads.nonce
                     },
                     success: function(data) {
-                        if (data.success) {
+                        if (data.success && data.data) {
                             response(data.data);
                         } else {
+                            console.log('No se encontraron servicios o respuesta vacía');
                             response([]);
                         }
                     },
-                    error: function() {
+                    error: function(xhr, status, error) {
+                        console.error('Error en búsqueda de servicios:', error);
                         response([]);
                     }
                 });
             },
             minLength: 2,
+            delay: 300,
             select: function(event, ui) {
-                $(this).val(ui.item.url);
+                // Usar la URL del servicio como valor
+                $(this).val(ui.item.url || ui.item.value);
                 return false;
             },
             focus: function(event, ui) {
-                $(this).val(ui.item.label);
+                // Mostrar el label mientras navega
+                $(this).val(ui.item.label || ui.item.value);
                 return false;
+            },
+            open: function() {
+                // Asegurar que el dropdown se vea correctamente
+                $(this).autocomplete('widget').css('z-index', 10000);
             }
         });
+        
+        console.log('Autocomplete de servicios inicializado correctamente');
     }
     
     // Función debounce para búsqueda
