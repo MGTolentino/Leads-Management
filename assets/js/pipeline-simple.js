@@ -7,7 +7,65 @@
     let draggedElement = null;
     let sourceColumn = null;
     
-    // Definiciones de funciones
+    // Inicialización
+    $(document).ready(function() {
+        // Validar librerías requeridas
+        if (typeof moment === 'undefined') {
+            console.error('Moment.js is required but not loaded');
+            return;
+        }
+        
+        if (typeof $.fn.daterangepicker === 'undefined') {
+            console.error('DateRangePicker is required but not loaded');
+            return;
+        }
+        
+        initializeEvents();
+        initializeDragAndDrop();
+        
+        // Inicializar date range picker y proceder si es exitoso
+        if (initializeDateRangePicker()) {
+            loadEventTypes();
+            loadPipelineData();
+        } else {
+            console.error('Failed to initialize DateRangePicker');
+        }
+    });
+    
+    // Función debounce para búsqueda
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    
+    // Limpiar filtros
+    function clearFilters() {
+        $('#quick_search').val('');
+        $('#period_filter').val('');
+        $('#event_type_filter').val('');
+        $('#priority_filter').val('');
+        $('#value_filter').val('');
+        $('#date_from').val('');
+        $('#date_to').val('');
+        $('#custom_date_range').hide();
+        $('#month_year_selectors').hide();
+        
+        const dateRangePicker = $('#daterange_picker').data('daterangepicker');
+        if (dateRangePicker && typeof moment !== 'undefined') {
+            dateRangePicker.setStartDate(moment());
+            dateRangePicker.setEndDate(moment());
+        }
+        $('#daterange_picker').val('');
+        currentFilters = {};
+        loadPipelineData();
+    }
     
     // Configurar eventos
     function initializeEvents() {
@@ -477,28 +535,6 @@
         return `${year}-${month}-${day}`;
     }
     
-    // Limpiar filtros
-    function clearFilters() {
-        $('#quick_search').val('');
-        $('#period_filter').val('');
-        $('#event_type_filter').val('');
-        $('#priority_filter').val('');
-        $('#value_filter').val('');
-        $('#date_from').val('');
-        $('#date_to').val('');
-        $('#custom_date_range').hide();
-        $('#month_year_selectors').hide();
-        
-        const dateRangePicker = $('#daterange_picker').data('daterangepicker');
-        if (dateRangePicker && typeof moment !== 'undefined') {
-            dateRangePicker.setStartDate(moment());
-            dateRangePicker.setEndDate(moment());
-        }
-        $('#daterange_picker').val('');
-        currentFilters = {};
-        loadPipelineData();
-    }
-    
     // Cargar tipos de evento dinámicamente
     function loadEventTypes() {
         $.ajax({
@@ -744,42 +780,6 @@
         $('#total_leads').text(total);
     }
     
-    // Función debounce para búsqueda
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-    
-    // Inicialización
-    $(document).ready(function() {
-        // Validar librerías requeridas
-        if (typeof moment === 'undefined') {
-            console.error('Moment.js is required but not loaded');
-            return;
-        }
-        
-        if (typeof $.fn.daterangepicker === 'undefined') {
-            console.error('DateRangePicker is required but not loaded');
-            return;
-        }
-        
-        initializeEvents();
-        initializeDragAndDrop();
-        
-        // Inicializar date range picker
-        initializeDateRangePicker();
-        
-        // Cargar datos independientemente del DateRangePicker
-        loadEventTypes();
-        loadPipelineData();
-    });
     }
     
 })(jQuery);
