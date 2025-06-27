@@ -25,7 +25,7 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                 <option value="this_week">Esta semana</option>
                 <option value="this_month">Este mes</option>
                 <option value="this_year">Este año</option>
-                <option value="specific_month">Mes específico</option>
+                <option value="specific_month">Mes/Año específico</option>
                 <option value="custom">Rango personalizado</option>
             </select>
             
@@ -66,13 +66,11 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                 <!-- Los tipos se cargarán dinámicamente -->
             </select>
             
-            <select id="status_filter" class="filter-select">
-                <option value="">Todos los estados</option>
-                <?php
-                $status_options = LTB_Leads_Status_Utils::get_active_status_options();
-                foreach ($status_options as $status_value => $status_label) : ?>
-                    <option value="<?php echo esc_attr($status_value); ?>"><?php echo esc_html($status_label); ?></option>
-                <?php endforeach; ?>
+            <select id="priority_filter" class="filter-select">
+                <option value="">Todas las prioridades</option>
+                <option value="alta">Alta</option>
+                <option value="media">Media</option>
+                <option value="baja">Baja</option>
             </select>
             
             <button id="apply_filters" class="btn-secondary">Filtrar</button>

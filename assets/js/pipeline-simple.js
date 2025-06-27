@@ -122,6 +122,7 @@
         $('#clear_filters').off('click.pipeline');
         $('#quick_search').off('keyup.pipeline');
         $('#lead_form').off('submit.pipeline');
+        $('#priority_filter').off('change.pipeline');
         
         // Botón agregar lead
         $('#add_lead_btn').on('click.pipeline', function() {
@@ -175,6 +176,11 @@
             applyFilters();
         });
         
+        // Evento para filtro de prioridad
+        $('#priority_filter').on('change.pipeline', function() {
+            applyFilters();
+        });
+        
         // Formulario de lead
         $('#lead_form').on('submit.pipeline', function(e) {
             e.preventDefault();
@@ -197,7 +203,14 @@
                 if ($('#lead_modal').hasClass('active')) {
                     initializeServicesAutocomplete();
                 }
-            }, 200);
+            }, 300);
+        });
+        
+        // También inicializar cuando se muestra el checkbox de evento
+        $('#include_event').on('change.pipeline', function() {
+            if (this.checked) {
+                setTimeout(initializeServicesAutocomplete, 100);
+            }
         });
     }
     
@@ -331,10 +344,28 @@
         if (lead.lead_celular) {
             card.append($('<div class="lead-info">').text('Tel: ' + lead.lead_celular));
         }
+        if (lead.evento_servicio_de_interes) {
+            // Extraer solo el nombre del servicio de la URL si es necesario
+            let servicioNombre = lead.evento_servicio_de_interes;
+            if (servicioNombre.includes('/')) {
+                // Si es una URL, extraer el último segmento
+                servicioNombre = servicioNombre.split('/').pop().replace(/-/g, ' ');
+                servicioNombre = servicioNombre.charAt(0).toUpperCase() + servicioNombre.slice(1);
+            }
+            card.append($('<div class="lead-info service-info">').text('Servicio: ' + servicioNombre));
+        }
         
-        // Solo mostrar enlace de ver detalles
+        // Enlaces de ver detalles
         const actions = $('<div class="lead-actions">');
-        actions.append($('<a href="#">').text('Ver detalles'));
+        const leadUrl = ltb_leads.site_url + '/lead-details/lead-' + lead.lead_id;
+        actions.append($('<a>').attr('href', leadUrl).attr('target', '_blank').text('Ver lead'));
+        
+        // Si hay evento, agregar enlace al evento
+        if (lead.evento_id) {
+            const eventoUrl = ltb_leads.site_url + '/event-details/event-' + lead.evento_id;
+            actions.append($('<a>').attr('href', eventoUrl).attr('target', '_blank').text('Ver evento'));
+        }
+        
         card.append(actions);
         
         return card;
@@ -397,7 +428,7 @@
         
         currentFilters = {
             search: $('#quick_search').val(),
-            status: $('#status_filter').val() ? [$('#status_filter').val()] : [],
+            prioridad: $('#priority_filter').val(),
             tipo_evento: $('#event_type_filter').val() ? [$('#event_type_filter').val()] : [],
             fecha_inicio: fechaInicio,
             fecha_fin: fechaFin
@@ -419,7 +450,7 @@
         $('#quick_search').val('');
         $('#period_filter').val('');
         $('#event_type_filter').val('');
-        $('#status_filter').val('');
+        $('#priority_filter').val('');
         $('#date_range').val('');
         $('#mes_evento_basic').val('');
         $('#anio_evento').val('');
@@ -572,6 +603,7 @@
         
         $input.autocomplete({
             source: function(request, response) {
+                console.log('Buscando servicios para:', request.term);
                 $.ajax({
                     url: ltb_leads.ajax_url,
                     type: 'GET',
@@ -581,27 +613,42 @@
                         nonce: ltb_leads.nonce
                     },
                     success: function(data) {
-                        if (data.success && data.data) {
+                        console.log('Respuesta del servidor:', data);
+                        if (data.success && data.data && data.data.length > 0) {
                             response(data.data);
                         } else {
-                            console.log('No se encontraron servicios o respuesta vacía');
-                            response([]);
+                            console.log('No se encontraron servicios');
+                            response([{
+                                label: 'No se encontraron servicios',
+                                value: '',
+                                disabled: true
+                            }]);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Error en búsqueda de servicios:', error);
-                        response([]);
+                        console.error('Error en búsqueda de servicios:', error, xhr.responseText);
+                        response([{
+                            label: 'Error al buscar servicios',
+                            value: '',
+                            disabled: true
+                        }]);
                     }
                 });
             },
             minLength: 2,
             delay: 300,
             select: function(event, ui) {
+                if (ui.item.disabled) {
+                    return false;
+                }
                 // Usar la URL del servicio como valor
                 $(this).val(ui.item.url || ui.item.value);
                 return false;
             },
             focus: function(event, ui) {
+                if (ui.item.disabled) {
+                    return false;
+                }
                 // Mostrar el label mientras navega
                 $(this).val(ui.item.label || ui.item.value);
                 return false;
