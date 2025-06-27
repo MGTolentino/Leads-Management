@@ -307,7 +307,7 @@ function createStatusOptionsHTML() {
     // Este será llenado por PHP de forma dinámica
     const statusOptions = window.leadManagementConfig?.statusOptions || {
         'nuevo': 'Nuevo',
-        'con-presupuesto': 'Con Cotización',
+        'con-presupuesto': 'Con presupuesto',
         'por-cerrar': 'Por cerrar',
         'con-contrato': 'Con contrato',
         'perdido': 'Perdido'

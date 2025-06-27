@@ -108,11 +108,23 @@ class LTB_Leads_Management {
         );
 
         if ($this->is_leads_listing_page()) {
+            // Cargar jQuery UI para autocomplete
+            wp_enqueue_script('jquery-ui-autocomplete');
+            
+            // Cargar lead-add.js para funcionalidad de autocomplete
+            wp_enqueue_script(
+                'ltb-lead-add',
+                LTB_LEADS_PLUGIN_URL . 'assets/js/lead-add.js',
+                array('jquery', 'jquery-ui-autocomplete'),
+                LTB_LEADS_VERSION,
+                true
+            );
+            
             // Solo cargar el JavaScript simplificado del pipeline
             wp_enqueue_script(
                 'ltb-pipeline-simple',
                 LTB_LEADS_PLUGIN_URL . 'assets/js/pipeline-simple.js',
-                array('jquery'),
+                array('jquery', 'ltb-lead-add'),
                 LTB_LEADS_VERSION,
                 true
             );
@@ -121,6 +133,12 @@ class LTB_Leads_Management {
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('ltb_leads_nonce'),
                 'site_url' => site_url()
+            ));
+            
+            // Localizar script para lead-add (necesario para autocomplete)
+            wp_localize_script('ltb-lead-add', 'ltbLeadAdd', array(
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('ltb_lead_add_nonce')
             ));
             
             $status_options = LTB_Leads_Status_Utils::get_status_options();

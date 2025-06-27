@@ -183,7 +183,8 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                         </div>
                         <div class="form-field">
                             <label>Servicio de Interés</label>
-                            <input type="text" name="evento_servicio_de_interes" placeholder="Servicio requerido">
+                            <input type="text" id="evento_servicio_search" class="service-search" placeholder="Buscar servicio...">
+                            <input type="hidden" id="evento_servicio" name="evento_servicio_de_interes">
                         </div>
                     </div>
                     

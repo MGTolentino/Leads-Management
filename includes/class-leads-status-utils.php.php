@@ -56,16 +56,20 @@ public static function get_active_status_options() {
                 }
             }
             
-            // Si no se encontraron opciones, usar predeterminadas
-            if (empty($options)) {
-                $options = array(
-                    'nuevo' => 'Nuevo',
-                    'con-presupuesto' => 'Con Cotización',
-                    'por-cerrar' => 'Por cerrar',
-                    'con-contrato' => 'Con contrato',
-                    'perdido' => 'Perdido'
-                );
-            }
+            // Always use predefined options to ensure consistency
+            // This fixes the "Con presupuesto" vs "Con Cotización" issue
+            $options = array(
+                'nuevo' => 'Nuevo',
+                'con-presupuesto' => 'Con Cotización',
+                'por-cerrar' => 'Por cerrar',
+                'con-contrato' => 'Con contrato',
+                'perdido' => 'Perdido'
+            );
+            
+            // Optionally merge with database options if needed
+            // if (empty($options)) {
+            //     // fallback code here
+            // }
             
             $cached_options = $options;
         }
