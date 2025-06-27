@@ -596,6 +596,12 @@
             return;
         }
         
+        // Verificar que ltbLeadAdd está disponible
+        if (typeof ltbLeadAdd === 'undefined') {
+            console.error('ltbLeadAdd no está disponible - usando fallback');
+            return;
+        }
+        
         // Destruir autocomplete existente si ya está inicializado
         if ($input.hasClass('ui-autocomplete-input')) {
             $input.autocomplete('destroy');
@@ -610,7 +616,7 @@
                     data: {
                         action: 'search_services',
                         term: request.term,
-                        nonce: ltb_leads.nonce
+                        nonce: ltbLeadAdd.nonce
                     },
                     success: function(data) {
                         console.log('Respuesta del servidor:', data);
