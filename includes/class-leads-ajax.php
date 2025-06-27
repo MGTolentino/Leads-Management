@@ -475,9 +475,6 @@ public function get_leads_by_status() {
     // Obtener filtros
     $filters = isset($_POST['filters']) ? $_POST['filters'] : array();
     
-    // Debug: Log received filters
-    error_log('[PIPELINE BACKEND DEBUG] Filters received: ' . print_r($filters, true));
-    
     // Si los filtros usan el campo antiguo fecha_evento, convertirlo a los nuevos
     if (isset($filters['fecha_evento']) && !empty($filters['fecha_evento'])) {
         $filters['fecha_evento_inicio'] = $filters['fecha_evento'];
@@ -485,11 +482,22 @@ public function get_leads_by_status() {
         unset($filters['fecha_evento']);
     }
     
+    // Procesar filtro de mes específico
+    if (isset($filters['mes_evento']) && !empty($filters['mes_evento'])) {
+        $year = date('Y'); // Usar año actual por defecto
+        $month = $filters['mes_evento'];
+        
+        // Crear rango de fechas para el mes completo
+        $filters['fecha_evento_inicio'] = $year . '-' . $month . '-01';
+        $last_day = date('t', strtotime($filters['fecha_evento_inicio']));
+        $filters['fecha_evento_fin'] = $year . '-' . $month . '-' . $last_day;
+        
+        unset($filters['mes_evento']);
+    }
+    
     // Obtener datos
     $query_handler = new LTB_Leads_Query();
     $leads_by_status = $query_handler->get_leads_by_status($filters);
-    
-    error_log('[PIPELINE BACKEND DEBUG] Query result count: ' . (is_array($leads_by_status) ? count($leads_by_status) : 'not array'));
     
     wp_send_json_success($leads_by_status);
 }

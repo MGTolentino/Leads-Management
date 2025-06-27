@@ -20,84 +20,50 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
             <input type="text" id="quick_search" placeholder="Buscar..." class="filter-input">
             
             <select id="period_filter" class="filter-select">
-                <option value="">Período</option>
+                <option value="">Todos los períodos</option>
                 <option value="today">Hoy</option>
                 <option value="this_week">Esta semana</option>
                 <option value="this_month">Este mes</option>
                 <option value="this_year">Este año</option>
-                <option value="january">Enero</option>
-                <option value="february">Febrero</option>
-                <option value="march">Marzo</option>
-                <option value="april">Abril</option>
-                <option value="may">Mayo</option>
-                <option value="june">Junio</option>
-                <option value="july">Julio</option>
-                <option value="august">Agosto</option>
-                <option value="september">Septiembre</option>
-                <option value="october">Octubre</option>
-                <option value="november">Noviembre</option>
-                <option value="december">Diciembre</option>
-                <option value="month_year">Mes/Año específico</option>
                 <option value="custom">Rango personalizado</option>
             </select>
             
-            <!-- Selectores de mes y año -->
-            <div id="month_year_selectors" style="display:none;" class="month-year-filter">
-                <select id="year_selector" class="filter-select">
-                    <option value="">Año</option>
-                    <?php
-                    $current_year = date('Y');
-                    for ($i = $current_year; $i >= 2020; $i--) {
-                        echo "<option value=\"$i\">$i</option>";
-                    }
-                    ?>
-                </select>
-                <select id="month_selector" class="filter-select">
-                    <option value="">Mes</option>
-                    <option value="01">Enero</option>
-                    <option value="02">Febrero</option>
-                    <option value="03">Marzo</option>
-                    <option value="04">Abril</option>
-                    <option value="05">Mayo</option>
-                    <option value="06">Junio</option>
-                    <option value="07">Julio</option>
-                    <option value="08">Agosto</option>
-                    <option value="09">Septiembre</option>
-                    <option value="10">Octubre</option>
-                    <option value="11">Noviembre</option>
-                    <option value="12">Diciembre</option>
-                </select>
-            </div>
-            
-            <div id="custom_date_range" class="date-range-inputs" style="display:none;">
-                <div class="date-input-wrapper">
-                    <label class="date-input-label" for="date_from">Desde:</label>
-                    <input type="date" id="date_from" class="filter-input datepicker-input">
-                </div>
-                <div class="date-input-wrapper">
-                    <label class="date-input-label" for="date_to">Hasta:</label>
-                    <input type="date" id="date_to" class="filter-input datepicker-input">
-                </div>
+            <div id="custom_date_range" style="display:none;">
+                <input type="date" id="date_from" class="filter-input" title="Fecha desde">
+                <input type="date" id="date_to" class="filter-input" title="Fecha hasta">
             </div>
             
             <select id="event_type_filter" class="filter-select">
-                <option value="">Tipo de evento</option>
-                <!-- Se cargarán dinámicamente -->
+                <option value="">Todos los tipos</option>
+                <option value="Bodas">Bodas</option>
+                <option value="XV años">XV años</option>
+                <option value="Empresarial">Empresarial</option>
+                <option value="Otros">Otros</option>
             </select>
             
-            <select id="priority_filter" class="filter-select">
-                <option value="">Prioridad</option>
-                <option value="alta">Alta</option>
-                <option value="media">Media</option>
-                <option value="baja">Baja</option>
+            <select id="event_month_filter" class="filter-select">
+                <option value="">Todos los meses</option>
+                <option value="01">Enero</option>
+                <option value="02">Febrero</option>
+                <option value="03">Marzo</option>
+                <option value="04">Abril</option>
+                <option value="05">Mayo</option>
+                <option value="06">Junio</option>
+                <option value="07">Julio</option>
+                <option value="08">Agosto</option>
+                <option value="09">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
             </select>
             
-            <select id="value_filter" class="filter-select">
-                <option value="">Valor potencial</option>
-                <option value="menos_10k">Menos $10K</option>
-                <option value="10k_30k">$10K - $30K</option>
-                <option value="30k_50k">$30K - $50K</option>
-                <option value="50k_mas">$50K+</option>
+            <select id="status_filter" class="filter-select">
+                <option value="">Todos los estados</option>
+                <?php
+                $status_options = LTB_Leads_Status_Utils::get_active_status_options();
+                foreach ($status_options as $status_value => $status_label) : ?>
+                    <option value="<?php echo esc_attr($status_value); ?>"><?php echo esc_html($status_label); ?></option>
+                <?php endforeach; ?>
             </select>
             
             <button id="apply_filters" class="btn-secondary">Filtrar</button>
@@ -202,25 +168,6 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                                     <option value="<?php echo esc_attr($value); ?>"><?php echo esc_html($label); ?></option>
                                 <?php endforeach; ?>
                             </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-field">
-                            <label>Dirección</label>
-                            <input type="text" name="evento_direccion" placeholder="Dirección del evento">
-                        </div>
-                        <div class="form-field">
-                            <label>Servicio de Interés</label>
-                            <input type="text" id="evento_servicio_search" class="service-search" placeholder="Buscar servicio...">
-                            <input type="hidden" id="evento_servicio" name="evento_servicio_de_interes">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-field full-width">
-                            <label>Comentarios</label>
-                            <textarea name="evento_comentarios" rows="3" placeholder="Comentarios adicionales"></textarea>
                         </div>
                     </div>
                 </div>
