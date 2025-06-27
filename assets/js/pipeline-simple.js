@@ -9,13 +9,27 @@
     
     // Inicialización
     $(document).ready(function() {
+        // Validar librerías requeridas
+        if (typeof moment === 'undefined') {
+            console.error('Moment.js is required but not loaded');
+            return;
+        }
+        
+        if (typeof $.fn.daterangepicker === 'undefined') {
+            console.error('DateRangePicker is required but not loaded');
+            return;
+        }
+        
         initializeEvents();
         initializeDragAndDrop();
-        // Inicializar date range picker
-        initializeDateRangePicker();
         
-        loadEventTypes();
-        loadPipelineData();
+        // Inicializar date range picker y proceder si es exitoso
+        if (initializeDateRangePicker()) {
+            loadEventTypes();
+            loadPipelineData();
+        } else {
+            console.error('Failed to initialize DateRangePicker');
+        }
     });
     
     // Configurar eventos
@@ -65,33 +79,42 @@
         });
         
         // Manejar selección de mes/año
-        $('#year_selector, #month_selector').on('change', function() {
+        $('#month_selector, #year_selector').on('change', function() {
             const year = $('#year_selector').val();
             const month = $('#month_selector').val();
             
             if (year && month) {
-                // Calcular primer y último día del mes
-                const firstDay = `${year}-${month}-01`;
-                const lastDay = new Date(year, parseInt(month), 0).getDate();
-                const lastDayFormatted = `${year}-${month}-${lastDay.toString().padStart(2, '0')}`;
+                // Usar moment.js para calcular fechas
+                const firstDay = moment(`${year}-${month}-01`, 'YYYY-MM-DD');
+                const lastDay = moment(firstDay).endOf('month');
                 
-                // Actualizar el date range picker con el rango seleccionado
-                $('#daterange_picker').data('daterangepicker').setStartDate(firstDay);
-                $('#daterange_picker').data('daterangepicker').setEndDate(lastDayFormatted);
-                
-                // Aplicar filtros automáticamente
-                applyFilters();
+                const dateRangePicker = $('#daterange_picker').data('daterangepicker');
+                if (dateRangePicker && firstDay.isValid() && lastDay.isValid()) {
+                    dateRangePicker.setStartDate(firstDay);
+                    dateRangePicker.setEndDate(lastDay);
+                    $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
+                    
+                    // Aplicar filtros automáticamente
+                    applyFilters();
+                } else {
+                    console.error('DateRangePicker not available or invalid dates');
+                }
             } else if (year && !month) {
                 // Solo año seleccionado - todo el año
-                const firstDay = `${year}-01-01`;
-                const lastDay = `${year}-12-31`;
+                const firstDay = moment(`${year}-01-01`, 'YYYY-MM-DD');
+                const lastDay = moment(`${year}-12-31`, 'YYYY-MM-DD');
                 
-                // Actualizar el date range picker con el rango del año
-                $('#daterange_picker').data('daterangepicker').setStartDate(firstDay);
-                $('#daterange_picker').data('daterangepicker').setEndDate(lastDay);
-                
-                // Aplicar filtros automáticamente
-                applyFilters();
+                const dateRangePicker = $('#daterange_picker').data('daterangepicker');
+                if (dateRangePicker && firstDay.isValid() && lastDay.isValid()) {
+                    dateRangePicker.setStartDate(firstDay);
+                    dateRangePicker.setEndDate(lastDay);
+                    $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
+                    
+                    // Aplicar filtros automáticamente
+                    applyFilters();
+                } else {
+                    console.error('DateRangePicker not available or invalid dates');
+                }
             }
         });
         
@@ -343,8 +366,14 @@
         $('#date_from').val('');
         $('#date_to').val('');
         $('#custom_date_range').hide();
-        $('#daterange_picker').val('').data('daterangepicker').setStartDate(moment());
-        $('#daterange_picker').data('daterangepicker').setEndDate(moment());
+        $('#month_year_selectors').hide();
+        
+        const dateRangePicker = $('#daterange_picker').data('daterangepicker');
+        if (dateRangePicker && typeof moment !== 'undefined') {
+            dateRangePicker.setStartDate(moment());
+            dateRangePicker.setEndDate(moment());
+        }
+        $('#daterange_picker').val('');
         currentFilters = {};
         loadPipelineData();
     }
@@ -437,41 +466,58 @@
     
     // Inicializar date range picker
     function initializeDateRangePicker() {
-        $('#daterange_picker').daterangepicker({
-            startDate: moment(),
-            endDate: moment(),
-            locale: {
-                format: 'DD/MM/YYYY',
-                separator: ' - ',
-                applyLabel: 'Aplicar',
-                cancelLabel: 'Cancelar',
-                fromLabel: 'Desde',
-                toLabel: 'Hasta',
-                customRangeLabel: 'Rango personalizado',
-                daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
-                           'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-                firstDay: 1
-            },
-            opens: 'left',
-            drops: 'down',
-            showDropdowns: true,
-            showWeekNumbers: false,
-            showISOWeekNumbers: false,
-            autoUpdateInput: false
-        });
+        if (typeof moment === 'undefined') {
+            console.error('Moment.js not loaded');
+            return false;
+        }
+        
+        if (!$('#daterange_picker').length) {
+            console.error('DateRangePicker element not found');
+            return false;
+        }
+        
+        try {
+            $('#daterange_picker').daterangepicker({
+                startDate: moment(),
+                endDate: moment(),
+                locale: {
+                    format: 'DD/MM/YYYY',
+                    separator: ' - ',
+                    applyLabel: 'Aplicar',
+                    cancelLabel: 'Cancelar',
+                    fromLabel: 'Desde',
+                    toLabel: 'Hasta',
+                    customRangeLabel: 'Rango personalizado',
+                    daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                    monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                               'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                    firstDay: 1
+                },
+                opens: 'left',
+                drops: 'down',
+                showDropdowns: true,
+                showWeekNumbers: false,
+                showISOWeekNumbers: false,
+                autoUpdateInput: false
+            });
 
-        // Actualizar input cuando se selecciona rango
-        $('#daterange_picker').on('apply.daterangepicker', function(ev, picker) {
-            $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
-            applyFilters();
-        });
+            // Actualizar input cuando se selecciona rango
+            $('#daterange_picker').on('apply.daterangepicker', function(ev, picker) {
+                $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+                applyFilters();
+            });
 
-        // Limpiar input cuando se cancela
-        $('#daterange_picker').on('cancel.daterangepicker', function(ev, picker) {
-            $(this).val('');
-            applyFilters();
-        });
+            // Limpiar input cuando se cancela
+            $('#daterange_picker').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+                applyFilters();
+            });
+            
+            return true;
+        } catch (error) {
+            console.error('DateRangePicker initialization failed:', error);
+            return false;
+        }
     }
     
     // Actualizar contadores de columnas
