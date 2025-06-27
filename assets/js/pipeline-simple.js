@@ -780,6 +780,4 @@
         $('#total_leads').text(total);
     }
     
-    }
-    
 })(jQuery);
