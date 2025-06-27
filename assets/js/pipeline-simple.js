@@ -341,9 +341,6 @@
         if (lead.fecha_evento) {
             card.append($('<div class="lead-info">').text('Fecha: ' + lead.fecha_evento));
         }
-        if (lead.lead_celular) {
-            card.append($('<div class="lead-info">').text('Tel: ' + lead.lead_celular));
-        }
         if (lead.evento_servicio_de_interes) {
             // Extraer solo el nombre del servicio de la URL si es necesario
             let servicioNombre = lead.evento_servicio_de_interes;
@@ -358,12 +355,16 @@
         // Enlaces de ver detalles
         const actions = $('<div class="lead-actions">');
         const leadUrl = ltb_leads.site_url + '/lead-details/lead-' + lead.lead_id;
-        actions.append($('<a>').attr('href', leadUrl).attr('target', '_blank').text('Ver lead'));
+        actions.append($('<a>').attr('href', leadUrl).attr('target', '_blank').text('Ver lead').on('click', function(e) {
+            e.stopPropagation(); // Evitar que se dispare el click del card
+        }));
         
         // Si hay evento, agregar enlace al evento
         if (lead.evento_id) {
             const eventoUrl = ltb_leads.site_url + '/event-details/event-' + lead.evento_id;
-            actions.append($('<a>').attr('href', eventoUrl).attr('target', '_blank').text('Ver evento'));
+            actions.append($('<a>').attr('href', eventoUrl).attr('target', '_blank').text('Ver evento').on('click', function(e) {
+                e.stopPropagation(); // Evitar que se dispare el click del card
+            }));
         }
         
         card.append(actions);
