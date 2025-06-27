@@ -1,0 +1,83 @@
+/* Custom styling for daterangepicker integration */
+#daterange_picker {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 200px;
+}
+
+#daterange_picker:focus {
+    outline: none;
+    border-color: #007cba;
+    box-shadow: 0 0 0 2px rgba(0, 124, 186, 0.1);
+}
+
+/* Ensure daterangepicker appears above other elements */
+.daterangepicker {
+    z-index: 10000 !important;
+}
+
+/* Style the daterangepicker for better integration */
+.daterangepicker .drp-calendar {
+    max-width: 270px;
+}
+
+.daterangepicker .drp-buttons {
+    text-align: right;
+    padding: 8px;
+}
+
+.daterangepicker .btn {
+    padding: 6px 12px;
+    margin-left: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+}
+
+.daterangepicker .btn-success {
+    background-color: #007cba;
+    border-color: #007cba;
+    color: white;
+}
+
+.daterangepicker .btn-success:hover {
+    background-color: #005a87;
+    border-color: #005a87;
+}
+
+/* Month/year selector styling */
+.month-year-filter {
+    gap: 10px;
+    align-items: center;
+}
+
+.month-year-filter select {
+    min-width: 120px;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    #daterange_picker {
+        min-width: 160px;
+        font-size: 13px;
+    }
+    
+    .month-year-filter {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .month-year-filter select {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .daterangepicker {
+        width: 300px !important;
+    }
+}

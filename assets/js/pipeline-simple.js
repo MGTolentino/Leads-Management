@@ -11,6 +11,9 @@
     $(document).ready(function() {
         initializeEvents();
         initializeDragAndDrop();
+        // Inicializar date range picker
+        initializeDateRangePicker();
+        
         loadEventTypes();
         loadPipelineData();
     });
@@ -52,11 +55,11 @@
             $('#month_year_selectors').hide();
             
             if (value === 'custom') {
-                $('#custom_date_range').show().css('display', 'flex');
+                $('#custom_date_range').show();
             } else if (value === 'month_year') {
                 $('#month_year_selectors').show().css('display', 'flex');
             } else {
-                $('#date_from, #date_to').val('');
+                $('#daterange_picker').val('');
                 $('#year_selector, #month_selector').val('');
             }
         });
@@ -72,8 +75,9 @@
                 const lastDay = new Date(year, parseInt(month), 0).getDate();
                 const lastDayFormatted = `${year}-${month}-${lastDay.toString().padStart(2, '0')}`;
                 
-                $('#date_from').val(firstDay);
-                $('#date_to').val(lastDayFormatted);
+                // Actualizar el date range picker con el rango seleccionado
+                $('#daterange_picker').data('daterangepicker').setStartDate(firstDay);
+                $('#daterange_picker').data('daterangepicker').setEndDate(lastDayFormatted);
                 
                 // Aplicar filtros automáticamente
                 applyFilters();
@@ -82,8 +86,9 @@
                 const firstDay = `${year}-01-01`;
                 const lastDay = `${year}-12-31`;
                 
-                $('#date_from').val(firstDay);
-                $('#date_to').val(lastDay);
+                // Actualizar el date range picker con el rango del año
+                $('#daterange_picker').data('daterangepicker').setStartDate(firstDay);
+                $('#daterange_picker').data('daterangepicker').setEndDate(lastDay);
                 
                 // Aplicar filtros automáticamente
                 applyFilters();
@@ -301,8 +306,11 @@
                     break;
             }
         } else if (period === 'custom') {
-            fechaInicio = $('#date_from').val();
-            fechaFin = $('#date_to').val();
+            const daterangePicker = $('#daterange_picker').data('daterangepicker');
+            if (daterangePicker && daterangePicker.startDate && daterangePicker.endDate) {
+                fechaInicio = daterangePicker.startDate.format('YYYY-MM-DD');
+                fechaFin = daterangePicker.endDate.format('YYYY-MM-DD');
+            }
         }
         
         currentFilters = {
@@ -310,8 +318,8 @@
             tipo_evento: $('#event_type_filter').val() ? [$('#event_type_filter').val()] : [],
             prioridad: $('#priority_filter').val(),
             valor_potencial: $('#value_filter').val(),
-            fecha_inicio: fechaInicio,
-            fecha_fin: fechaFin
+            fecha_evento_inicio: fechaInicio,
+            fecha_evento_fin: fechaFin
         };
         
         loadPipelineData();
@@ -334,7 +342,9 @@
         $('#value_filter').val('');
         $('#date_from').val('');
         $('#date_to').val('');
-        $('#custom_date_range').hide().css('display', 'none');
+        $('#custom_date_range').hide();
+        $('#daterange_picker').val('').data('daterangepicker').setStartDate(moment());
+        $('#daterange_picker').data('daterangepicker').setEndDate(moment());
         currentFilters = {};
         loadPipelineData();
     }
@@ -402,7 +412,7 @@
             url: ltb_leads.ajax_url,
             type: 'POST',
             data: {
-                action: 'update_event_status',
+                action: 'update_evento_status',
                 nonce: ltb_leads.nonce,
                 evento_id: eventoId,
                 lead_id: leadId,
@@ -422,6 +432,45 @@
                 alert('Error de conexión');
                 loadPipelineData();
             }
+        });
+    }
+    
+    // Inicializar date range picker
+    function initializeDateRangePicker() {
+        $('#daterange_picker').daterangepicker({
+            startDate: moment(),
+            endDate: moment(),
+            locale: {
+                format: 'DD/MM/YYYY',
+                separator: ' - ',
+                applyLabel: 'Aplicar',
+                cancelLabel: 'Cancelar',
+                fromLabel: 'Desde',
+                toLabel: 'Hasta',
+                customRangeLabel: 'Rango personalizado',
+                daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                           'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                firstDay: 1
+            },
+            opens: 'left',
+            drops: 'down',
+            showDropdowns: true,
+            showWeekNumbers: false,
+            showISOWeekNumbers: false,
+            autoUpdateInput: false
+        });
+
+        // Actualizar input cuando se selecciona rango
+        $('#daterange_picker').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+            applyFilters();
+        });
+
+        // Limpiar input cuando se cancela
+        $('#daterange_picker').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+            applyFilters();
         });
     }
     

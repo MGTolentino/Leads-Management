@@ -482,6 +482,15 @@ public function get_leads_by_status() {
         unset($filters['fecha_evento']);
     }
     
+    // Procesar filtros de prioridad y valor potencial
+    if (isset($filters['prioridad']) && !empty($filters['prioridad'])) {
+        // Mantener el filtro de prioridad para procesamiento posterior
+    }
+    
+    if (isset($filters['valor_potencial']) && !empty($filters['valor_potencial'])) {
+        // Mantener el filtro de valor potencial para procesamiento posterior
+    }
+    
     // Obtener datos
     $query_handler = new LTB_Leads_Query();
     $leads_by_status = $query_handler->get_leads_by_status($filters);

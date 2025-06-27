@@ -43,15 +43,6 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
             
             <!-- Selectores de mes y año -->
             <div id="month_year_selectors" style="display:none;" class="month-year-filter">
-                <select id="year_selector" class="filter-select">
-                    <option value="">Año</option>
-                    <?php
-                    $current_year = date('Y');
-                    for ($i = $current_year; $i >= 2020; $i--) {
-                        echo "<option value=\"$i\">$i</option>";
-                    }
-                    ?>
-                </select>
                 <select id="month_selector" class="filter-select">
                     <option value="">Mes</option>
                     <option value="01">Enero</option>
@@ -67,17 +58,19 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                     <option value="11">Noviembre</option>
                     <option value="12">Diciembre</option>
                 </select>
+                <select id="year_selector" class="filter-select">
+                    <option value="">Año</option>
+                    <?php
+                    $current_year = date('Y');
+                    for ($i = $current_year; $i >= 2020; $i--) {
+                        echo "<option value=\"$i\">$i</option>";
+                    }
+                    ?>
+                </select>
             </div>
             
-            <div id="custom_date_range" class="date-range-inputs" style="display:none;">
-                <div class="date-input-wrapper">
-                    <label class="date-input-label" for="date_from">Desde:</label>
-                    <input type="date" id="date_from" class="filter-input datepicker-input">
-                </div>
-                <div class="date-input-wrapper">
-                    <label class="date-input-label" for="date_to">Hasta:</label>
-                    <input type="date" id="date_to" class="filter-input datepicker-input">
-                </div>
+            <div id="custom_date_range" style="display:none;">
+                <input type="text" id="daterange_picker" class="filter-input" placeholder="Seleccionar rango de fechas..." readonly>
             </div>
             
             <select id="event_type_filter" class="filter-select">
