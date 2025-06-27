@@ -485,6 +485,7 @@ public function get_leads_by_status() {
         unset($filters['fecha_evento']);
     }
     
+<<<<<<< HEAD
     // Procesar filtros de prioridad y valor potencial
     if (isset($filters['prioridad']) && !empty($filters['prioridad'])) {
         // Mantener el filtro de prioridad para procesamiento posterior
@@ -496,6 +497,8 @@ public function get_leads_by_status() {
     
     error_log('[PIPELINE BACKEND DEBUG] Processed filters: ' . print_r($filters, true));
     
+=======
+>>>>>>> parent of 4ca2e04 (Datepicker corercto)
     // Obtener datos
     $query_handler = new LTB_Leads_Query();
     $leads_by_status = $query_handler->get_leads_by_status($filters);

@@ -114,14 +114,6 @@ class LTB_Leads_Management {
             array(),
             LTB_LEADS_VERSION
         );
-        
-        // Cargar daterangepicker custom CSS
-        wp_enqueue_style(
-            'ltb-daterangepicker-custom',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/daterangepicker-custom.css',
-            array('daterangepicker-css'),
-            LTB_LEADS_VERSION
-        );
 
         if ($this->is_leads_listing_page()) {
             // Cargar jQuery UI CSS para autocomplete y datepicker
@@ -132,35 +124,9 @@ class LTB_Leads_Management {
                 '1.13.2'
             );
             
-            // Cargar Date Range Picker CSS
-            wp_enqueue_style(
-                'daterangepicker-css',
-                'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css',
-                array(),
-                '3.1'
-            );
-            
             // Cargar jQuery UI para autocomplete y datepicker
             wp_enqueue_script('jquery-ui-autocomplete');
             wp_enqueue_script('jquery-ui-datepicker');
-            
-            // Cargar Moment.js (requerido por daterangepicker)
-            wp_enqueue_script(
-                'moment-js',
-                'https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js',
-                array(),
-                '2.29.4',
-                true
-            );
-            
-            // Cargar Date Range Picker
-            wp_enqueue_script(
-                'daterangepicker-js',
-                'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js',
-                array('jquery', 'moment-js'),
-                '3.1',
-                true
-            );
             
             // Cargar lead-add.js para funcionalidad de autocomplete
             wp_enqueue_script(
@@ -175,7 +141,7 @@ class LTB_Leads_Management {
             wp_enqueue_script(
                 'ltb-pipeline-simple',
                 LTB_LEADS_PLUGIN_URL . 'assets/js/pipeline-simple.js',
-                array('jquery', 'ltb-lead-add', 'daterangepicker-js'),
+                array('jquery', 'ltb-lead-add'),
                 LTB_LEADS_VERSION,
                 true
             );
