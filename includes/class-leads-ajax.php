@@ -485,20 +485,6 @@ public function get_leads_by_status() {
         unset($filters['fecha_evento']);
     }
     
-<<<<<<< HEAD
-    // Procesar filtros de prioridad y valor potencial
-    if (isset($filters['prioridad']) && !empty($filters['prioridad'])) {
-        // Mantener el filtro de prioridad para procesamiento posterior
-    }
-    
-    if (isset($filters['valor_potencial']) && !empty($filters['valor_potencial'])) {
-        // Mantener el filtro de valor potencial para procesamiento posterior
-    }
-    
-    error_log('[PIPELINE BACKEND DEBUG] Processed filters: ' . print_r($filters, true));
-    
-=======
->>>>>>> parent of 4ca2e04 (Datepicker corercto)
     // Obtener datos
     $query_handler = new LTB_Leads_Query();
     $leads_by_status = $query_handler->get_leads_by_status($filters);
