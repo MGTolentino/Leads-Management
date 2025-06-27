@@ -91,136 +91,34 @@ class LTB_Leads_Management {
             return;
         }
 
+        // Solo cargar el CSS minimalista del pipeline
         wp_enqueue_style(
-            'ltb-leads-admin',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/admin.css',
-            array(),
-            LTB_LEADS_VERSION
-        );
-        
-        wp_enqueue_style(
-            'ltb-leads-permissions',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/permissions.css',
-            array(),
-            LTB_LEADS_VERSION
-        );
-
-        wp_enqueue_style(
-            'ltb-leads-responsive',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/responsive.css',
-            array(),
-            LTB_LEADS_VERSION
-        );
-        
-        // Nuevos estilos para filtros mejorados
-        wp_enqueue_style(
-            'ltb-leads-filters',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/filters.css',
-            array(),
-            LTB_LEADS_VERSION
-        );
-        
-        // Estilos mejorados para filtros
-        wp_enqueue_style(
-            'ltb-enhanced-filters',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/enhanced-filters.css',
-            array('ltb-leads-filters'),
-            LTB_LEADS_VERSION
-        );
-        
-        // Select2 para selección múltiple
-        wp_enqueue_style(
-            'select2',
-            'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css',
-            array(),
-            '4.1.0-rc.0'
-        );
-        
-        wp_enqueue_script(
-            'select2',
-            'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js',
-            array('jquery'),
-            '4.1.0-rc.0',
-            true
-        );
-
-        // jQuery UI para datepicker y autocomplete
-        wp_enqueue_style(
-            'jquery-ui-style',
-            'https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css',
-            array(),
-            '1.13.2'
-        );
-
-        wp_enqueue_script('jquery-ui-autocomplete');
-        wp_enqueue_script('jquery-ui-datepicker');
-        
-        wp_enqueue_script(
-            'ltb-leads-filters',
-            LTB_LEADS_PLUGIN_URL . 'assets/js/filters.js',
-            array('jquery', 'jquery-ui-datepicker', 'select2'),
-            LTB_LEADS_VERSION,
-            true
-        );
-        
-        // Nuevo script para gestión de filtros avanzados
-        wp_enqueue_script(
-            'ltb-advanced-filters',
-            LTB_LEADS_PLUGIN_URL . 'assets/js/advanced-filters.js',
-            array('jquery', 'select2'),
-            LTB_LEADS_VERSION,
-            true
-        );
-        
-        wp_enqueue_script(
-            'ltb-lead-add',
-            LTB_LEADS_PLUGIN_URL . 'assets/js/lead-add.js',
-            array('jquery', 'jquery-ui-datepicker'),
-            LTB_LEADS_VERSION,
-            true
-        );
-
-        wp_localize_script('ltb-lead-add', 'ltbLeadAdd', array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('ltb_lead_add_nonce')
-        ));
-        
-        wp_enqueue_style(
-            'ltb-lead-add-css',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/lead-add.css',
+            'ltb-pipeline-simple',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/pipeline-simple.css',
             array(),
             LTB_LEADS_VERSION
         );
 
         if ($this->is_leads_listing_page()) {
-
-            wp_register_script(
-                'ltb-leads-pipeline',
-                plugin_dir_url(__FILE__) . 'assets/js/pipeline-view.js',
-                array('jquery', 'jquery-ui-datepicker'),
+            // Solo cargar el JavaScript simplificado del pipeline
+            wp_enqueue_script(
+                'ltb-pipeline-simple',
+                LTB_LEADS_PLUGIN_URL . 'assets/js/pipeline-simple.js',
+                array('jquery'),
                 LTB_LEADS_VERSION,
                 true
             );
-
-            wp_enqueue_script('ltb-leads-pipeline');
             
-            wp_localize_script('ltb-leads-pipeline', 'ltb_leads', array(
+            wp_localize_script('ltb-pipeline-simple', 'ltb_leads', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('ltb_leads_nonce'),
                 'site_url' => site_url()
             ));
-			
-			$status_options = LTB_Leads_Status_Utils::get_status_options();
-wp_localize_script('ltb-leads-pipeline', 'leadManagementConfig', array(
-    'statusOptions' => $status_options
-));
             
-            wp_enqueue_style(
-                'ltb-pipeline-view',
-                LTB_LEADS_PLUGIN_URL . 'assets/css/pipeline-view.css',
-                array('ltb-leads-admin'),
-                LTB_LEADS_VERSION
-            );
+            $status_options = LTB_Leads_Status_Utils::get_status_options();
+            wp_localize_script('ltb-pipeline-simple', 'leadManagementConfig', array(
+                'statusOptions' => $status_options
+            ));
         }
 
         if ($this->is_lead_details_page()) {
@@ -335,18 +233,9 @@ wp_localize_script('ltb-lead-edit', 'leadManagementConfig', array(
 
         ob_start();
 
-        if ($this->is_leads_listing_page() && $this->filters_handler) {
-            echo $this->filters_handler->render_filters();
-        }
-
         if ($this->is_leads_listing_page()) {
-
-            $template_path = LTB_LEADS_PLUGIN_DIR . 'templates/table-view.php';
-            if (file_exists($template_path)) {
-                include $template_path;
-            }
-            
-            $pipeline_template_path = LTB_LEADS_PLUGIN_DIR . 'templates/pipeline-view.php';
+            // Solo cargar la vista pipeline simplificada
+            $pipeline_template_path = LTB_LEADS_PLUGIN_DIR . 'templates/pipeline-view-simple.php';
             if (file_exists($pipeline_template_path)) {
                 include $pipeline_template_path;
             }
