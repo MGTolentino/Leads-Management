@@ -127,6 +127,7 @@ jQuery(function($) {
             source: function(request, response) {
                 $.ajax({
                     url: ltbLeadEdit.ajaxurl,
+                    type: 'GET',
                     dataType: 'json',
                     data: {
                         action: 'search_services',
@@ -134,20 +135,36 @@ jQuery(function($) {
                         term: request.term
                     },
                     success: function(data) {
+                        console.log('Autocomplete response (edit mode):', data); // Debug
                         if (data.success) {
                             response(data.data);
                         } else {
+                            console.log('Error en respuesta:', data);
                             response([]);
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error AJAX:', error); // Debug
+                        console.error('Response Text:', xhr.responseText); // Debug
+                        response([]);
                     }
                 });
             },
             minLength: 2,
+            delay: 300,
+            appendTo: 'body',
+            position: { collision: 'flip' },
             select: function(event, ui) {
                 $(this).siblings('input[name="evento_servicio_de_interes"]').val(ui.item.url);
                 $(this).val(ui.item.label);
                 markAsModified(eventoId, 'evento_servicio_de_interes');
                 return false;
+            },
+            open: function() {
+                console.log('Autocomplete abierto (edit mode)'); // Debug
+            },
+            close: function() {
+                console.log('Autocomplete cerrado (edit mode)'); // Debug
             }
         });
         
@@ -754,6 +771,7 @@ if (field === 'evento_servicio_de_interes') {
             source: function(request, response) {
                 $.ajax({
                     url: ltbLeadEdit.ajaxurl,
+                    type: 'GET',
                     dataType: 'json',
                     data: {
                         action: 'search_services',
@@ -761,19 +779,35 @@ if (field === 'evento_servicio_de_interes') {
                         term: request.term
                     },
                     success: function(data) {
+                        console.log('Autocomplete response (modal):', data); // Debug
                         if (data.success) {
                             response(data.data);
                         } else {
+                            console.log('Error en respuesta:', data);
                             response([]);
                         }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error AJAX:', error); // Debug
+                        console.error('Response Text:', xhr.responseText); // Debug
+                        response([]);
                     }
                 });
             },
             minLength: 2,
+            delay: 300,
+            appendTo: 'body',
+            position: { collision: 'flip' },
             select: function(event, ui) {
                 $('#evento_servicio').val(ui.item.url);
                 $(this).val(ui.item.label);
                 return false;
+            },
+            open: function() {
+                console.log('Autocomplete abierto (modal)'); // Debug
+            },
+            close: function() {
+                console.log('Autocomplete cerrado (modal)'); // Debug
             }
         });
         
@@ -1035,13 +1069,14 @@ if (field === 'evento_servicio_de_interes') {
             max-height: 200px;
             overflow-y: auto;
             overflow-x: hidden;
-            background: white;
-            border: 1px solid #ddd;
+            background: white !important;
+            border: 1px solid #ddd !important;
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 10000;
+            z-index: 999999 !important;
             padding: 0;
             list-style: none;
+            position: absolute !important;
         }
 
         .ui-autocomplete .ui-menu-item {

@@ -1,4 +1,12 @@
 jQuery(function($) {
+    // Verificar dependencias
+    console.log('jQuery UI autocomplete disponible:', typeof $.fn.autocomplete !== 'undefined');
+    console.log('ltbLeadAdd disponible:', typeof ltbLeadAdd !== 'undefined');
+    if (typeof ltbLeadAdd !== 'undefined') {
+        console.log('ltbLeadAdd.ajaxurl:', ltbLeadAdd.ajaxurl);
+        console.log('ltbLeadAdd.nonce:', ltbLeadAdd.nonce);
+    }
+
     // Variables globales
     const addLeadBtn = $('#add_lead_btn');
     const modalContainer = $('#lead_add_modal');
@@ -11,12 +19,17 @@ jQuery(function($) {
 	
 	
 	// Inicializar autocompletado de servicios
-$('#evento_servicio_search').autocomplete({
+// Verificar si el elemento existe
+console.log('Elemento #evento_servicio_search encontrado:', $('#evento_servicio_search').length);
+
+if ($('#evento_servicio_search').length > 0 && typeof $.fn.autocomplete !== 'undefined') {
+    $('#evento_servicio_search').autocomplete({
     source: function(request, response) {
-		        console.log('Buscando:', request.term); // Debug
+        console.log('Buscando:', request.term); // Debug
 
         $.ajax({
             url: ltbLeadAdd.ajaxurl,
+            type: 'GET',
             dataType: 'json',
             data: {
                 action: 'search_services',
@@ -24,29 +37,46 @@ $('#evento_servicio_search').autocomplete({
                 term: request.term
             },
             success: function(data) {
-				                console.log('Respuesta:', data); // Debug
+                console.log('Respuesta:', data); // Debug
+                console.log('Data type:', typeof data); // Debug
+                console.log('Data structure:', data); // Debug
 
-                if (data.success) {
+                if (data.success && Array.isArray(data.data)) {
+                    console.log('Enviando al autocomplete:', data.data); // Debug
                     response(data.data);
                 } else {
+                    console.log('Error en respuesta:', data);
                     response([]);
                 }
             },
-			 error: function(xhr, status, error) {
-                console.error('Error:', error); // Debug
+            error: function(xhr, status, error) {
+                console.error('Error AJAX:', error); // Debug
+                console.error('Response Text:', xhr.responseText); // Debug
                 response([]);
             }
         });
     },
     minLength: 2,
+    delay: 300,
+    appendTo: 'body',
+    position: { collision: 'flip' },
     select: function(event, ui) {
-		        console.log('Seleccionado:', ui.item); // Debug
+        console.log('Seleccionado:', ui.item); // Debug
 
         $('#evento_servicio').val(ui.item.url);
         $(this).val(ui.item.label);
         return false;
+    },
+    open: function() {
+        console.log('Autocomplete abierto'); // Debug
+    },
+    close: function() {
+        console.log('Autocomplete cerrado'); // Debug
     }
-});
+    });
+} else {
+    console.warn('No se pudo inicializar el autocomplete. Element:', $('#evento_servicio_search').length, 'Autocomplete:', typeof $.fn.autocomplete);
+}
     
     // Inicializar datepicker
     $('.datepicker-input').datepicker({
@@ -552,5 +582,72 @@ function submitEventToExistingLead(eventData) {
 }
 	// Agregar después de otras inicializaciones
 setupRealTimeValidation();
+
+    // Añadir estilos CSS para el autocomplete
+    const autocompleteStyles = `
+    <style id="autocomplete-styles">
+        .ui-autocomplete {
+            max-height: 200px !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            background: white !important;
+            border: 1px solid #ddd !important;
+            border-radius: 4px !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+            z-index: 999999 !important;
+            padding: 0 !important;
+            list-style: none !important;
+            position: absolute !important;
+            font-family: inherit !important;
+        }
+
+        .ui-autocomplete .ui-menu-item {
+            padding: 8px 12px !important;
+            cursor: pointer !important;
+            transition: background-color 0.2s !important;
+            border: none !important;
+            margin: 0 !important;
+            display: block !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .ui-autocomplete .ui-menu-item:hover,
+        .ui-autocomplete .ui-menu-item.ui-state-focus {
+            background-color: #f8f9fa !important;
+            color: inherit !important;
+        }
+
+        .ui-autocomplete .ui-state-active,
+        .ui-autocomplete .ui-widget-content .ui-state-active {
+            background: #e9ecef !important;
+            border: none !important;
+            margin: 0 !important;
+            font-weight: normal !important;
+            color: inherit !important;
+        }
+
+        .ui-autocomplete .ui-menu-item-wrapper {
+            padding: 0 !important;
+            display: block !important;
+            width: 100% !important;
+        }
+        
+        /* Asegurar que el input sea visible */
+        #evento_servicio_search {
+            width: 100% !important;
+            padding: 8px 10px !important;
+            border: 1px solid #ced4da !important;
+            border-radius: 4px !important;
+            font-size: 14px !important;
+            background: white !important;
+        }
+    </style>
+    `;
+    
+    // Añadir estilos al DOM si no existen
+    if (!$('#autocomplete-styles').length) {
+        $('head').append(autocompleteStyles);
+    }
 	
 });

@@ -425,6 +425,9 @@ public function handle_service_search() {
         return;
     }
     
+    // Debug: Log para verificar funcionamiento
+    error_log('Service search for term: ' . $search_term);
+    
     // Buscar posts
     $args = array(
         'post_type' => 'hp_listing',
@@ -451,6 +454,10 @@ public function handle_service_search() {
     }
     
     wp_reset_postdata();
+    
+    // Debug: Log para verificar resultados
+    error_log('Service search results: ' . print_r($results, true));
+    
     wp_send_json_success($results);
 }
 	
