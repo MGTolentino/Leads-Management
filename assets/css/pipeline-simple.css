@@ -272,60 +272,72 @@
 }
 
 /* Estados específicos - colores funcionales para identificación rápida */
+/* Estados nuevos/iniciales - Azul */
+.pipeline-column[data-status="nuevo"],
 .pipeline-column[data-status="nuevo-no-contactado"] {
     background-color: #f0f8ff;
 }
+.pipeline-column[data-status="nuevo"] .column-header,
 .pipeline-column[data-status="nuevo-no-contactado"] .column-header {
     background-color: #cfe2ff;
     border-top: 3px solid #0d6efd;
 }
 
+/* Estados en progreso - Verde claro */
+.pipeline-column[data-status="con-presupuesto"],
+.pipeline-column[data-status="con-cotizacion"],
 .pipeline-column[data-status="contactado-interesado"] {
+    background-color: #e8f5e9;
+}
+.pipeline-column[data-status="con-presupuesto"] .column-header,
+.pipeline-column[data-status="con-cotizacion"] .column-header,
+.pipeline-column[data-status="contactado-interesado"] .column-header {
+    background-color: #a5d6a7;
+    border-top: 3px solid #66bb6a;
+}
+
+/* Estados avanzados - Amarillo */
+.pipeline-column[data-status="por-cerrar"],
+.pipeline-column[data-status="reservado"] {
     background-color: #fff8e1;
 }
-.pipeline-column[data-status="contactado-interesado"] .column-header {
+.pipeline-column[data-status="por-cerrar"] .column-header,
+.pipeline-column[data-status="reservado"] .column-header {
     background-color: #ffe082;
     border-top: 3px solid #ffc107;
 }
 
-.pipeline-column[data-status="reservado"] {
-    background-color: #f1f8e9;
+/* Estados cerrados exitosos - Verde oscuro */
+.pipeline-column[data-status="con-contrato"],
+.pipeline-column[data-status="cerrado"] {
+    background-color: #e8f5e9;
 }
-.pipeline-column[data-status="reservado"] .column-header {
-    background-color: #c8e6c9;
+.pipeline-column[data-status="con-contrato"] .column-header,
+.pipeline-column[data-status="cerrado"] .column-header {
+    background-color: #81c784;
     border-top: 3px solid #4caf50;
 }
 
-.pipeline-column[data-status="cerrado"] {
-    background-color: #f3e5f5;
-}
-.pipeline-column[data-status="cerrado"] .column-header {
-    background-color: #ce93d8;
-    border-top: 3px solid #9c27b0;
-}
-
+/* Estados negativos - Rojo */
+.pipeline-column[data-status="perdido"],
 .pipeline-column[data-status="cancelado"] {
     background-color: #ffeef0;
 }
+.pipeline-column[data-status="perdido"] .column-header,
 .pipeline-column[data-status="cancelado"] .column-header {
     background-color: #ffcdd2;
     border-top: 3px solid #f44336;
 }
 
-.pipeline-column[data-status="con-presupuesto"] {
-    background-color: #e8f5e9;
+/* Estados especiales - Gris */
+.pipeline-column[data-status="sin-evento"],
+.pipeline-column[data-status="otros"] {
+    background-color: #f8f9fa;
 }
-.pipeline-column[data-status="con-presupuesto"] .column-header {
-    background-color: #a5d6a7;
-    border-top: 3px solid #66bb6a;
-}
-
-.pipeline-column[data-status="por-cerrar"] {
-    background-color: #e3f2fd;
-}
-.pipeline-column[data-status="por-cerrar"] .column-header {
-    background-color: #90caf9;
-    border-top: 3px solid #2196f3;
+.pipeline-column[data-status="sin-evento"] .column-header,
+.pipeline-column[data-status="otros"] .column-header {
+    background-color: #e9ecef;
+    border-top: 3px solid #6c757d;
 }
 
 /* Estilos para drag & drop */

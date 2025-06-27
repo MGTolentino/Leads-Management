@@ -60,7 +60,7 @@ public static function get_active_status_options() {
             if (empty($options)) {
                 $options = array(
                     'nuevo' => 'Nuevo',
-                    'con-presupuesto' => 'Con Presupuesto',
+                    'con-presupuesto' => 'Con Cotización',
                     'por-cerrar' => 'Por cerrar',
                     'con-contrato' => 'Con contrato',
                     'perdido' => 'Perdido'

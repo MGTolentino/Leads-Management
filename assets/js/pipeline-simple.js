@@ -11,6 +11,7 @@
     $(document).ready(function() {
         initializeEvents();
         initializeDragAndDrop();
+        loadEventTypes();
         loadPipelineData();
     });
     
@@ -238,6 +239,27 @@
                     fechaInicio = formatDate(new Date(year, 0, 1));
                     fechaFin = formatDate(new Date(year, 11, 31));
                     break;
+                case 'january':
+                case 'february':
+                case 'march':
+                case 'april':
+                case 'may':
+                case 'june':
+                case 'july':
+                case 'august':
+                case 'september':
+                case 'october':
+                case 'november':
+                case 'december':
+                    const monthMap = {
+                        'january': 0, 'february': 1, 'march': 2, 'april': 3,
+                        'may': 4, 'june': 5, 'july': 6, 'august': 7,
+                        'september': 8, 'october': 9, 'november': 10, 'december': 11
+                    };
+                    const monthIndex = monthMap[period];
+                    fechaInicio = formatDate(new Date(year, monthIndex, 1));
+                    fechaFin = formatDate(new Date(year, monthIndex + 1, 0));
+                    break;
             }
         } else if (period === 'custom') {
             fechaInicio = $('#date_from').val();
@@ -246,9 +268,9 @@
         
         currentFilters = {
             search: $('#quick_search').val(),
-            status: $('#status_filter').val() ? [$('#status_filter').val()] : [],
             tipo_evento: $('#event_type_filter').val() ? [$('#event_type_filter').val()] : [],
-            mes_evento: $('#event_month_filter').val(),
+            prioridad: $('#priority_filter').val(),
+            valor_potencial: $('#value_filter').val(),
             fecha_inicio: fechaInicio,
             fecha_fin: fechaFin
         };
@@ -269,13 +291,41 @@
         $('#quick_search').val('');
         $('#period_filter').val('');
         $('#event_type_filter').val('');
-        $('#event_month_filter').val('');
-        $('#status_filter').val('');
+        $('#priority_filter').val('');
+        $('#value_filter').val('');
         $('#date_from').val('');
         $('#date_to').val('');
         $('#custom_date_range').hide();
         currentFilters = {};
         loadPipelineData();
+    }
+    
+    // Cargar tipos de evento dinámicamente
+    function loadEventTypes() {
+        $.ajax({
+            url: ltb_leads.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'get_event_types',
+                nonce: ltb_leads.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    const $select = $('#event_type_filter');
+                    $select.find('option:not(:first)').remove(); // Mantener la primera opción
+                    
+                    response.data.forEach(function(tipo) {
+                        $select.append($('<option>', {
+                            value: tipo.value,
+                            text: tipo.label
+                        }));
+                    });
+                }
+            },
+            error: function() {
+                console.log('Error al cargar tipos de evento');
+            }
+        });
     }
     
     // Guardar lead

@@ -27,6 +27,9 @@ class LTB_Leads_Ajax {
 		add_action('wp_ajax_filter_leads', array($this, 'filter_leads'));
         // Nuevo hook para guardar metadatos
         add_action('wp_ajax_save_lead_metadata', array($this, 'handle_save_lead_metadata'));
+        // Hook para obtener tipos de evento dinámicamente
+        add_action('wp_ajax_get_event_types', array($this, 'get_event_types'));
+        add_action('wp_ajax_nopriv_get_event_types', array($this, 'get_event_types'));
     }
 
     public function handle_lead_save() {
@@ -590,5 +593,38 @@ public function handle_save_lead_metadata() {
         'lead_id' => $lead_id,
         'message' => 'Metadatos guardados correctamente'
     ));
+}
+
+/**
+ * Obtiene los tipos de evento disponibles dinámicamente desde la base de datos
+ */
+public function get_event_types() {
+    global $wpdb;
+    
+    try {
+        // Obtener tipos de evento únicos desde la tabla de eventos
+        $tipos = $wpdb->get_col("
+            SELECT DISTINCT evento_tipo 
+            FROM {$wpdb->prefix}jet_cct_eventos 
+            WHERE evento_tipo IS NOT NULL 
+            AND evento_tipo != '' 
+            ORDER BY evento_tipo ASC
+        ");
+        
+        $result = array();
+        foreach ($tipos as $tipo) {
+            if (!empty(trim($tipo))) {
+                $result[] = array(
+                    'value' => $tipo,
+                    'label' => $tipo
+                );
+            }
+        }
+        
+        wp_send_json_success($result);
+        
+    } catch (Exception $e) {
+        wp_send_json_error('Error al obtener tipos de evento: ' . $e->getMessage());
+    }
 }
 }
