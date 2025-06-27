@@ -779,5 +779,5 @@
         const total = $('.lead-card').length;
         $('#total_leads').text(total);
     }
-    
+
 })(jQuery);
