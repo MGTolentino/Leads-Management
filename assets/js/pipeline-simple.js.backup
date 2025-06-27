@@ -779,6 +779,5 @@
             timeout = setTimeout(later, wait);
         };
     }
-    }
     
 })(jQuery);
