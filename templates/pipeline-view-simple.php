@@ -37,8 +37,37 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                 <option value="october">Octubre</option>
                 <option value="november">Noviembre</option>
                 <option value="december">Diciembre</option>
+                <option value="month_year">Mes/Año específico</option>
                 <option value="custom">Rango personalizado</option>
             </select>
+            
+            <!-- Selectores de mes y año -->
+            <div id="month_year_selectors" style="display:none;" class="month-year-filter">
+                <select id="year_selector" class="filter-select">
+                    <option value="">Año</option>
+                    <?php
+                    $current_year = date('Y');
+                    for ($i = $current_year; $i >= 2020; $i--) {
+                        echo "<option value=\"$i\">$i</option>";
+                    }
+                    ?>
+                </select>
+                <select id="month_selector" class="filter-select">
+                    <option value="">Mes</option>
+                    <option value="01">Enero</option>
+                    <option value="02">Febrero</option>
+                    <option value="03">Marzo</option>
+                    <option value="04">Abril</option>
+                    <option value="05">Mayo</option>
+                    <option value="06">Junio</option>
+                    <option value="07">Julio</option>
+                    <option value="08">Agosto</option>
+                    <option value="09">Septiembre</option>
+                    <option value="10">Octubre</option>
+                    <option value="11">Noviembre</option>
+                    <option value="12">Diciembre</option>
+                </select>
+            </div>
             
             <div id="custom_date_range" class="date-range-inputs" style="display:none;">
                 <div class="date-input-wrapper">

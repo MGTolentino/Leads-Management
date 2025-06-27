@@ -1,0 +1,51 @@
+/* Autocomplete dropdown styling fixes */
+.ui-autocomplete {
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    background: white !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    z-index: 99999 !important;
+    position: fixed !important;
+    font-family: inherit !important;
+}
+
+.ui-autocomplete .ui-menu-item {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.ui-autocomplete .ui-menu-item .ui-menu-item-wrapper {
+    padding: 8px 12px !important;
+    border: none !important;
+    color: #333 !important;
+    text-decoration: none !important;
+    display: block !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+}
+
+.ui-autocomplete .ui-menu-item .ui-menu-item-wrapper:hover,
+.ui-autocomplete .ui-menu-item .ui-menu-item-wrapper.ui-state-active {
+    background: #f0f0f0 !important;
+    color: #333 !important;
+    border: none !important;
+}
+
+.ui-autocomplete .ui-menu-item .ui-menu-item-wrapper.ui-state-focus {
+    background: #007cba !important;
+    color: white !important;
+    border: none !important;
+}
+
+/* Ensure autocomplete appears above modal */
+.modal .ui-autocomplete {
+    z-index: 10001 !important;
+}
+
+/* Service search input styling */
+.service-search {
+    position: relative;
+    z-index: 1;
+}

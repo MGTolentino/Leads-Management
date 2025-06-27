@@ -106,16 +106,33 @@ class LTB_Leads_Management {
             array(),
             LTB_LEADS_VERSION
         );
+        
+        // Cargar autocomplete fixes CSS
+        wp_enqueue_style(
+            'ltb-autocomplete-fixes',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/autocomplete-fixes.css',
+            array(),
+            LTB_LEADS_VERSION
+        );
 
         if ($this->is_leads_listing_page()) {
-            // Cargar jQuery UI para autocomplete
+            // Cargar jQuery UI CSS para autocomplete y datepicker
+            wp_enqueue_style(
+                'jquery-ui-css',
+                'https://code.jquery.com/ui/1.13.2/themes/ui-lightness/jquery-ui.css',
+                array(),
+                '1.13.2'
+            );
+            
+            // Cargar jQuery UI para autocomplete y datepicker
             wp_enqueue_script('jquery-ui-autocomplete');
+            wp_enqueue_script('jquery-ui-datepicker');
             
             // Cargar lead-add.js para funcionalidad de autocomplete
             wp_enqueue_script(
                 'ltb-lead-add',
                 LTB_LEADS_PLUGIN_URL . 'assets/js/lead-add.js',
-                array('jquery', 'jquery-ui-autocomplete'),
+                array('jquery', 'jquery-ui-autocomplete', 'jquery-ui-datepicker'),
                 LTB_LEADS_VERSION,
                 true
             );

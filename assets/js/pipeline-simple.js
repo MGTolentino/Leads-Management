@@ -43,13 +43,50 @@
             applyFilters();
         }, 300));
         
-        // Mostrar/ocultar rango de fechas personalizado
+        // Mostrar/ocultar rango de fechas personalizado y selectores mes/año
         $('#period_filter').on('change', function() {
-            if ($(this).val() === 'custom') {
+            const value = $(this).val();
+            
+            // Ocultar todos los selectores primero
+            $('#custom_date_range').hide();
+            $('#month_year_selectors').hide();
+            
+            if (value === 'custom') {
                 $('#custom_date_range').show().css('display', 'flex');
+            } else if (value === 'month_year') {
+                $('#month_year_selectors').show().css('display', 'flex');
             } else {
-                $('#custom_date_range').hide();
                 $('#date_from, #date_to').val('');
+                $('#year_selector, #month_selector').val('');
+            }
+        });
+        
+        // Manejar selección de mes/año
+        $('#year_selector, #month_selector').on('change', function() {
+            const year = $('#year_selector').val();
+            const month = $('#month_selector').val();
+            
+            if (year && month) {
+                // Calcular primer y último día del mes
+                const firstDay = `${year}-${month}-01`;
+                const lastDay = new Date(year, parseInt(month), 0).getDate();
+                const lastDayFormatted = `${year}-${month}-${lastDay.toString().padStart(2, '0')}`;
+                
+                $('#date_from').val(firstDay);
+                $('#date_to').val(lastDayFormatted);
+                
+                // Aplicar filtros automáticamente
+                applyFilters();
+            } else if (year && !month) {
+                // Solo año seleccionado - todo el año
+                const firstDay = `${year}-01-01`;
+                const lastDay = `${year}-12-31`;
+                
+                $('#date_from').val(firstDay);
+                $('#date_to').val(lastDay);
+                
+                // Aplicar filtros automáticamente
+                applyFilters();
             }
         });
         

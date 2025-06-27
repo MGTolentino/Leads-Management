@@ -189,6 +189,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow-y: auto;
 }
 
 .modal-content {
@@ -196,7 +197,7 @@
     width: 90%;
     max-width: 600px;
     max-height: 90vh;
-    overflow-y: auto;
+    overflow-y: visible;
 }
 
 .modal-header {
@@ -401,4 +402,8 @@
     background: white;
     padding: 10px 20px;
     border: 1px solid #ddd;
+}.month-year-filter {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
