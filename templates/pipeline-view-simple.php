@@ -40,9 +40,15 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                 <option value="custom">Rango personalizado</option>
             </select>
             
-            <div id="custom_date_range" style="display:none;">
-                <input type="date" id="date_from" class="filter-input" title="Desde">
-                <input type="date" id="date_to" class="filter-input" title="Hasta">
+            <div id="custom_date_range" class="date-range-inputs" style="display:none;">
+                <div class="date-input-wrapper">
+                    <label class="date-input-label" for="date_from">Desde:</label>
+                    <input type="date" id="date_from" class="filter-input datepicker-input">
+                </div>
+                <div class="date-input-wrapper">
+                    <label class="date-input-label" for="date_to">Hasta:</label>
+                    <input type="date" id="date_to" class="filter-input datepicker-input">
+                </div>
             </div>
             
             <select id="event_type_filter" class="filter-select">

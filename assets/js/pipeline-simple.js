@@ -46,7 +46,7 @@
         // Mostrar/ocultar rango de fechas personalizado
         $('#period_filter').on('change', function() {
             if ($(this).val() === 'custom') {
-                $('#custom_date_range').show();
+                $('#custom_date_range').show().css('display', 'flex');
             } else {
                 $('#custom_date_range').hide();
                 $('#date_from, #date_to').val('');
@@ -297,7 +297,7 @@
         $('#value_filter').val('');
         $('#date_from').val('');
         $('#date_to').val('');
-        $('#custom_date_range').hide();
+        $('#custom_date_range').hide().css('display', 'none');
         currentFilters = {};
         loadPipelineData();
     }

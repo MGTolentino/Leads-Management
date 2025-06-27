@@ -499,6 +499,52 @@
     border-color: #2196f3;
 }
 
+/* Styles for pipeline inline date range filters */
+.inline-filters #custom_date_range.date-range-inputs {
+    display: none;
+    flex-direction: row;
+    gap: 15px;
+    align-items: flex-end;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+.inline-filters #custom_date_range.date-range-inputs[style*="block"] {
+    display: flex !important;
+}
+
+.inline-filters .date-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-width: 140px;
+}
+
+.inline-filters .date-input-label {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    font-size: 11px !important;
+    color: #666 !important;
+    font-weight: 600 !important;
+    margin-bottom: 4px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    line-height: 1.2;
+}
+
+.inline-filters .datepicker-input {
+    width: 100%;
+    min-width: 130px;
+    height: 32px;
+    padding: 5px 8px;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .filters-grid-two-columns {
@@ -590,5 +636,23 @@
     /* Más espacio entre componentes en móvil */
     .filter-group {
         margin-bottom: 30px;
+    }
+    
+    /* Mobile adjustments for inline date range */
+    .inline-filters #custom_date_range.date-range-inputs {
+        flex-direction: column;
+        gap: 10px;
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    .inline-filters .date-input-wrapper {
+        min-width: 100%;
+    }
+    
+    .inline-filters .date-input-label {
+        font-size: 12px !important;
+        margin-bottom: 5px !important;
     }
 }
