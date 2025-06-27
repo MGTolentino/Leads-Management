@@ -32,6 +32,28 @@
         }
     });
     
+    // Limpiar filtros
+    function clearFilters() {
+        $('#quick_search').val('');
+        $('#period_filter').val('');
+        $('#event_type_filter').val('');
+        $('#priority_filter').val('');
+        $('#value_filter').val('');
+        $('#date_from').val('');
+        $('#date_to').val('');
+        $('#custom_date_range').hide();
+        $('#month_year_selectors').hide();
+        
+        const dateRangePicker = $('#daterange_picker').data('daterangepicker');
+        if (dateRangePicker && typeof moment !== 'undefined') {
+            dateRangePicker.setStartDate(moment());
+            dateRangePicker.setEndDate(moment());
+        }
+        $('#daterange_picker').val('');
+        currentFilters = {};
+        loadPipelineData();
+    }
+    
     // Configurar eventos
     function initializeEvents() {
         // Botón agregar lead
@@ -498,28 +520,6 @@
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
-    }
-    
-    // Limpiar filtros
-    function clearFilters() {
-        $('#quick_search').val('');
-        $('#period_filter').val('');
-        $('#event_type_filter').val('');
-        $('#priority_filter').val('');
-        $('#value_filter').val('');
-        $('#date_from').val('');
-        $('#date_to').val('');
-        $('#custom_date_range').hide();
-        $('#month_year_selectors').hide();
-        
-        const dateRangePicker = $('#daterange_picker').data('daterangepicker');
-        if (dateRangePicker && typeof moment !== 'undefined') {
-            dateRangePicker.setStartDate(moment());
-            dateRangePicker.setEndDate(moment());
-        }
-        $('#daterange_picker').val('');
-        currentFilters = {};
-        loadPipelineData();
     }
     
     // Cargar tipos de evento dinámicamente
