@@ -37,17 +37,54 @@
     border-radius: 4px;
     background: white;
     cursor: pointer;
+    color: #333 !important;
+    font-size: 13px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
 }
 
 .daterangepicker .btn-success {
-    background-color: #007cba;
-    border-color: #007cba;
-    color: white;
+    background-color: #007cba !important;
+    border-color: #007cba !important;
+    color: white !important;
 }
 
 .daterangepicker .btn-success:hover {
-    background-color: #005a87;
-    border-color: #005a87;
+    background-color: #005a87 !important;
+    border-color: #005a87 !important;
+    color: white !important;
+}
+
+/* Additional button states for better visibility */
+.daterangepicker .btn-default {
+    background-color: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+    color: #212529 !important;
+}
+
+.daterangepicker .btn-default:hover {
+    background-color: #e9ecef !important;
+    border-color: #adb5bd !important;
+    color: #212529 !important;
+}
+
+/* Ensure button text is always visible */
+.daterangepicker .drp-buttons .btn {
+    font-weight: 500;
+    min-width: 70px;
+    transition: all 0.2s ease;
+}
+
+/* Fix for any potential text hiding issues */
+.daterangepicker .drp-buttons .btn span,
+.daterangepicker .drp-buttons .btn::before,
+.daterangepicker .drp-buttons .btn::after {
+    color: inherit !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 /* Month/year selector styling */
@@ -58,6 +95,54 @@
 
 .month-year-filter select {
     min-width: 120px;
+}
+
+/* Enhanced daterangepicker styling for better UX */
+.daterangepicker {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 6px !important;
+    border: 1px solid #d1d5db !important;
+}
+
+.daterangepicker .drp-calendar table {
+    background-color: white;
+}
+
+.daterangepicker td.active, 
+.daterangepicker td.active:hover {
+    background-color: #007cba !important;
+    border-color: #007cba !important;
+}
+
+.daterangepicker td.in-range {
+    background-color: #e8f4f8 !important;
+    color: #333 !important;
+}
+
+.daterangepicker .ranges li.active {
+    background-color: #007cba !important;
+    color: white !important;
+}
+
+/* Ensure proper text visibility in all states */
+.daterangepicker .drp-buttons {
+    border-top: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+}
+
+/* Fix for any lingering button text issues */
+.daterangepicker .btn,
+.daterangepicker .btn * {
+    color: inherit !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Make sure the daterangepicker appears above everything */
+.daterangepicker {
+    z-index: 10001 !important;
+    position: absolute !important;
 }
 
 /* Mobile responsive adjustments */
@@ -79,5 +164,17 @@
     
     .daterangepicker {
         width: 300px !important;
+        left: 10px !important;
+        right: 10px !important;
+        margin: 0 auto !important;
+    }
+    
+    .daterangepicker .drp-buttons {
+        text-align: center;
+    }
+    
+    .daterangepicker .drp-buttons .btn {
+        margin: 0 5px;
+        min-width: 80px;
     }
 }

@@ -83,39 +83,68 @@
             const year = $('#year_selector').val();
             const month = $('#month_selector').val();
             
-            if (year && month) {
-                // Usar moment.js para calcular fechas
-                const firstDay = moment(`${year}-${month}-01`, 'YYYY-MM-DD');
-                const lastDay = moment(firstDay).endOf('month');
-                
-                const dateRangePicker = $('#daterange_picker').data('daterangepicker');
-                if (dateRangePicker && firstDay.isValid() && lastDay.isValid()) {
-                    dateRangePicker.setStartDate(firstDay);
-                    dateRangePicker.setEndDate(lastDay);
-                    $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
+            // Timeout aumentado para asegurar inicialización completa
+            setTimeout(function() {
+                if (year && month) {
+                    // Usar moment.js para calcular fechas
+                    const firstDay = moment(`${year}-${month}-01`, 'YYYY-MM-DD');
+                    const lastDay = moment(firstDay).endOf('month');
                     
-                    // Aplicar filtros automáticamente
-                    applyFilters();
-                } else {
-                    console.error('DateRangePicker not available or invalid dates');
-                }
-            } else if (year && !month) {
-                // Solo año seleccionado - todo el año
-                const firstDay = moment(`${year}-01-01`, 'YYYY-MM-DD');
-                const lastDay = moment(`${year}-12-31`, 'YYYY-MM-DD');
-                
-                const dateRangePicker = $('#daterange_picker').data('daterangepicker');
-                if (dateRangePicker && firstDay.isValid() && lastDay.isValid()) {
-                    dateRangePicker.setStartDate(firstDay);
-                    dateRangePicker.setEndDate(lastDay);
-                    $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
+                    if (firstDay.isValid() && lastDay.isValid()) {
+                        const dateRangePicker = $('#daterange_picker').data('daterangepicker');
+                        if (dateRangePicker && typeof dateRangePicker.setStartDate === 'function') {
+                            try {
+                                dateRangePicker.setStartDate(firstDay);
+                                dateRangePicker.setEndDate(lastDay);
+                                $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
+                                
+                                // Aplicar filtros automáticamente
+                                applyFilters();
+                            } catch (error) {
+                                console.error('Error setting daterangepicker dates:', error);
+                                // Fallback: set the value directly and apply filters
+                                $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
+                                applyFilters();
+                            }
+                        } else {
+                            console.warn('DateRangePicker not fully initialized, trying direct approach');
+                            $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
+                            applyFilters();
+                        }
+                    } else {
+                        console.error('Invalid dates generated from month/year selection');
+                    }
+                } else if (year && !month) {
+                    // Solo año seleccionado - todo el año
+                    const firstDay = moment(`${year}-01-01`, 'YYYY-MM-DD');
+                    const lastDay = moment(`${year}-12-31`, 'YYYY-MM-DD');
                     
-                    // Aplicar filtros automáticamente
-                    applyFilters();
-                } else {
-                    console.error('DateRangePicker not available or invalid dates');
+                    if (firstDay.isValid() && lastDay.isValid()) {
+                        const dateRangePicker = $('#daterange_picker').data('daterangepicker');
+                        if (dateRangePicker && typeof dateRangePicker.setStartDate === 'function') {
+                            try {
+                                dateRangePicker.setStartDate(firstDay);
+                                dateRangePicker.setEndDate(lastDay);
+                                $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
+                                
+                                // Aplicar filtros automáticamente
+                                applyFilters();
+                            } catch (error) {
+                                console.error('Error setting daterangepicker dates for year:', error);
+                                // Fallback: set the value directly and apply filters
+                                $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
+                                applyFilters();
+                            }
+                        } else {
+                            console.warn('DateRangePicker not fully initialized for year selection, trying direct approach');
+                            $('#daterange_picker').val(firstDay.format('DD/MM/YYYY') + ' - ' + lastDay.format('DD/MM/YYYY'));
+                            applyFilters();
+                        }
+                    } else {
+                        console.error('Invalid dates generated from year selection');
+                    }
                 }
-            }
+            }, 500); // Increased delay to ensure daterangepicker is fully ready
         });
         
         // Formulario de lead
@@ -330,9 +359,28 @@
             }
         } else if (period === 'custom') {
             const daterangePicker = $('#daterange_picker').data('daterangepicker');
+            const inputValue = $('#daterange_picker').val();
+            
             if (daterangePicker && daterangePicker.startDate && daterangePicker.endDate) {
                 fechaInicio = daterangePicker.startDate.format('YYYY-MM-DD');
                 fechaFin = daterangePicker.endDate.format('YYYY-MM-DD');
+            } else if (inputValue && inputValue.trim()) {
+                // Parse input value as fallback
+                const parts = inputValue.split(' - ');
+                if (parts.length === 2) {
+                    const startMoment = moment(parts[0], 'DD/MM/YYYY');
+                    const endMoment = moment(parts[1], 'DD/MM/YYYY');
+                    if (startMoment.isValid() && endMoment.isValid()) {
+                        fechaInicio = startMoment.format('YYYY-MM-DD');
+                        fechaFin = endMoment.format('YYYY-MM-DD');
+                    }
+                } else if (parts.length === 1 && parts[0].trim()) {
+                    // Single date
+                    const singleMoment = moment(parts[0].trim(), 'DD/MM/YYYY');
+                    if (singleMoment.isValid()) {
+                        fechaInicio = fechaFin = singleMoment.format('YYYY-MM-DD');
+                    }
+                }
             }
         }
         
@@ -498,12 +546,27 @@
                 showDropdowns: true,
                 showWeekNumbers: false,
                 showISOWeekNumbers: false,
-                autoUpdateInput: false
+                autoUpdateInput: true,
+                autoApply: true,
+                singleDatePicker: false,
+                alwaysShowCalendars: true,
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                    'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                    'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                    'Mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
             });
 
             // Actualizar input cuando se selecciona rango
             $('#daterange_picker').on('apply.daterangepicker', function(ev, picker) {
-                $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+                if (picker.singleDatePicker) {
+                    $(this).val(picker.startDate.format('DD/MM/YYYY'));
+                } else {
+                    $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+                }
                 applyFilters();
             });
 
@@ -512,6 +575,24 @@
                 $(this).val('');
                 applyFilters();
             });
+            
+            // Enable double-click for single date selection
+            $('#daterange_picker').on('dblclick', function() {
+                const picker = $(this).data('daterangepicker');
+                if (picker) {
+                    picker.singleDatePicker = !picker.singleDatePicker;
+                    picker.updateView();
+                    // Update placeholder text
+                    if (picker.singleDatePicker) {
+                        $(this).attr('placeholder', 'Seleccionar fecha única (doble-click para rango)');
+                    } else {
+                        $(this).attr('placeholder', 'Seleccionar rango de fechas (doble-click para fecha única)');
+                    }
+                }
+            });
+            
+            // Set initial placeholder
+            $('#daterange_picker').attr('placeholder', 'Seleccionar rango de fechas (doble-click para fecha única)');
             
             return true;
         } catch (error) {
