@@ -7,30 +7,7 @@
     let draggedElement = null;
     let sourceColumn = null;
     
-    // Inicialización
-    $(document).ready(function() {
-        // Validar librerías requeridas
-        if (typeof moment === 'undefined') {
-            console.error('Moment.js is required but not loaded');
-            return;
-        }
-        
-        if (typeof $.fn.daterangepicker === 'undefined') {
-            console.error('DateRangePicker is required but not loaded');
-            return;
-        }
-        
-        initializeEvents();
-        initializeDragAndDrop();
-        
-        // Inicializar date range picker y proceder si es exitoso
-        if (initializeDateRangePicker()) {
-            loadEventTypes();
-            loadPipelineData();
-        } else {
-            console.error('Failed to initialize DateRangePicker');
-        }
-    });
+    // Definiciones de funciones
     
     // Configurar eventos
     function initializeEvents() {
@@ -779,6 +756,31 @@
             timeout = setTimeout(later, wait);
         };
     }
+    
+    // Inicialización
+    $(document).ready(function() {
+        // Validar librerías requeridas
+        if (typeof moment === 'undefined') {
+            console.error('Moment.js is required but not loaded');
+            return;
+        }
+        
+        if (typeof $.fn.daterangepicker === 'undefined') {
+            console.error('DateRangePicker is required but not loaded');
+            return;
+        }
+        
+        initializeEvents();
+        initializeDragAndDrop();
+        
+        // Inicializar date range picker y proceder si es exitoso
+        if (initializeDateRangePicker()) {
+            loadEventTypes();
+            loadPipelineData();
+        } else {
+            console.error('Failed to initialize DateRangePicker');
+        }
+    });
     }
     
 })(jQuery);
