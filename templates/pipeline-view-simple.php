@@ -29,8 +29,7 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
             </select>
             
             <div id="custom_date_range" style="display:none;">
-                <input type="date" id="date_from" class="filter-input" title="Fecha desde">
-                <input type="date" id="date_to" class="filter-input" title="Fecha hasta">
+                <input type="text" id="date_range" class="filter-input" title="Rango de fechas" placeholder="Seleccionar rango de fechas">
             </div>
             
             <select id="event_type_filter" class="filter-select">
@@ -168,6 +167,24 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                                     <option value="<?php echo esc_attr($value); ?>"><?php echo esc_html($label); ?></option>
                                 <?php endforeach; ?>
                             </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>Dirección del Evento</label>
+                            <input type="text" name="direccion_evento" placeholder="Dirección completa del evento">
+                        </div>
+                        <div class="form-field">
+                            <label>Servicio de Interés</label>
+                            <input type="text" name="evento_servicio_de_interes" id="servicio_autocomplete" placeholder="Buscar servicio...">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-field full-width">
+                            <label>Comentarios Adicionales</label>
+                            <textarea name="comentarios_evento" rows="3" placeholder="Notas o comentarios sobre el evento..."></textarea>
                         </div>
                     </div>
                 </div>

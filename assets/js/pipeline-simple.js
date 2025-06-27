@@ -9,10 +9,40 @@
     
     // Inicialización
     $(document).ready(function() {
+        validateLibraries();
         initializeEvents();
         initializeDragAndDrop();
         loadPipelineData();
     });
+    
+    // Validar que las librerías requeridas estén cargadas
+    function validateLibraries() {
+        const requiredLibraries = [
+            { name: 'jQuery', check: () => typeof $ !== 'undefined' },
+            { name: 'Moment.js', check: () => typeof moment !== 'undefined' },
+            { name: 'DateRangePicker', check: () => typeof $.fn.daterangepicker !== 'undefined' },
+            { name: 'jQuery UI Autocomplete', check: () => typeof $.fn.autocomplete !== 'undefined' }
+        ];
+        
+        const missingLibraries = [];
+        
+        requiredLibraries.forEach(lib => {
+            if (!lib.check()) {
+                missingLibraries.push(lib.name);
+                console.error(`${lib.name} no está disponible`);
+            }
+        });
+        
+        if (missingLibraries.length > 0) {
+            console.warn(`Librerías faltantes: ${missingLibraries.join(', ')}`);
+            // Mostrar advertencia visual si hay librerías faltantes críticas
+            if (missingLibraries.includes('jQuery')) {
+                alert('Error crítico: jQuery no está cargado. El sistema no funcionará correctamente.');
+            }
+        } else {
+            console.log('Todas las librerías requeridas están cargadas correctamente');
+        }
+    }
     
     // Configurar eventos
     function initializeEvents() {
@@ -46,9 +76,10 @@
         $('#period_filter').on('change', function() {
             if ($(this).val() === 'custom') {
                 $('#custom_date_range').show();
+                initializeDateRangePicker();
             } else {
                 $('#custom_date_range').hide();
-                $('#date_from, #date_to').val('');
+                $('#date_range').val('');
             }
         });
         
@@ -65,6 +96,12 @@
                 const leadId = $(this).data('lead-id');
                 window.open(ltb_leads.site_url + '/lead-details/lead-' + leadId, '_blank');
             }
+        });
+        
+        // Inicializar autocomplete para servicios cuando se muestra el modal
+        $('#add_lead_btn').on('click', function() {
+            // Inicializar autocomplete después de mostrar el modal
+            setTimeout(initializeServicesAutocomplete, 100);
         });
     }
     
@@ -240,8 +277,12 @@
                     break;
             }
         } else if (period === 'custom') {
-            fechaInicio = $('#date_from').val();
-            fechaFin = $('#date_to').val();
+            const dateRange = $('#date_range').val();
+            if (dateRange && dateRange.indexOf(' - ') !== -1) {
+                const dates = dateRange.split(' - ');
+                fechaInicio = dates[0];
+                fechaFin = dates[1];
+            }
         }
         
         currentFilters = {
@@ -271,8 +312,7 @@
         $('#event_type_filter').val('');
         $('#event_month_filter').val('');
         $('#status_filter').val('');
-        $('#date_from').val('');
-        $('#date_to').val('');
+        $('#date_range').val('');
         $('#custom_date_range').hide();
         currentFilters = {};
         loadPipelineData();
@@ -346,6 +386,77 @@
         // Actualizar total
         const total = $('.lead-card').length;
         $('#total_leads').text(total);
+    }
+    
+    // Inicializar DateRangePicker
+    function initializeDateRangePicker() {
+        if (typeof daterangepicker === 'undefined' || typeof moment === 'undefined') {
+            console.error('DateRangePicker o Moment.js no están disponibles');
+            return;
+        }
+        
+        $('#date_range').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Limpiar',
+                applyLabel: 'Aplicar',
+                format: 'YYYY-MM-DD',
+                separator: ' - ',
+                daysOfWeek: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                           'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                firstDay: 1
+            }
+        });
+        
+        $('#date_range').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+        });
+        
+        $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+    }
+    
+    // Inicializar autocomplete para servicios
+    function initializeServicesAutocomplete() {
+        if (typeof $.fn.autocomplete === 'undefined') {
+            console.error('jQuery UI Autocomplete no está disponible');
+            return;
+        }
+        
+        $('#servicio_autocomplete').autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: ltb_leads.ajax_url,
+                    type: 'GET',
+                    data: {
+                        action: 'search_services',
+                        term: request.term,
+                        nonce: ltb_leads.nonce
+                    },
+                    success: function(data) {
+                        if (data.success) {
+                            response(data.data);
+                        } else {
+                            response([]);
+                        }
+                    },
+                    error: function() {
+                        response([]);
+                    }
+                });
+            },
+            minLength: 2,
+            select: function(event, ui) {
+                $(this).val(ui.item.url);
+                return false;
+            },
+            focus: function(event, ui) {
+                $(this).val(ui.item.label);
+                return false;
+            }
+        });
     }
     
     // Función debounce para búsqueda

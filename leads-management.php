@@ -128,6 +128,31 @@ class LTB_Leads_Management {
             wp_enqueue_script('jquery-ui-autocomplete');
             wp_enqueue_script('jquery-ui-datepicker');
             
+            // Cargar Moment.js
+            wp_enqueue_script(
+                'moment-js',
+                'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js',
+                array(),
+                '2.29.4',
+                true
+            );
+            
+            // Cargar DateRangePicker
+            wp_enqueue_style(
+                'daterangepicker-css',
+                'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css',
+                array(),
+                '3.1.0'
+            );
+            
+            wp_enqueue_script(
+                'daterangepicker-js',
+                'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js',
+                array('jquery', 'moment-js'),
+                '3.1.0',
+                true
+            );
+            
             // Cargar lead-add.js para funcionalidad de autocomplete
             wp_enqueue_script(
                 'ltb-lead-add',
