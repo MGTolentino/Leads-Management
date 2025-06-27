@@ -196,8 +196,10 @@
         if (lead.fecha_evento) {
             card.append($('<div class="lead-info">').text('Fecha: ' + lead.fecha_evento));
         }
-        if (lead.lead_celular) {
-            card.append($('<div class="lead-info">').text('Tel: ' + lead.lead_celular));
+        if (lead.servicio_titulo) {
+            card.append($('<div class="lead-info">').text('Servicio: ' + lead.servicio_titulo));
+        } else if (lead.evento_servicio_de_interes) {
+            card.append($('<div class="lead-info">').text('Servicio: ' + lead.evento_servicio_de_interes));
         }
         
         // Solo mostrar enlace de ver detalles

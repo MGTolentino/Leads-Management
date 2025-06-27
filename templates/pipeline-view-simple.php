@@ -169,6 +169,24 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                             </select>
                         </div>
                     </div>
+                    
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>Dirección</label>
+                            <input type="text" name="evento_direccion" placeholder="Dirección del evento">
+                        </div>
+                        <div class="form-field">
+                            <label>Servicio de Interés</label>
+                            <input type="text" name="evento_servicio_de_interes" placeholder="Servicio requerido">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-field full-width">
+                            <label>Comentarios</label>
+                            <textarea name="evento_comentarios" rows="3" placeholder="Comentarios adicionales"></textarea>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="form-actions">

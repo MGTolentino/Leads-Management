@@ -98,6 +98,14 @@ class LTB_Leads_Management {
             array(),
             LTB_LEADS_VERSION
         );
+        
+        // Cargar también enhanced-filters.css para los filtros de fecha
+        wp_enqueue_style(
+            'ltb-enhanced-filters',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/enhanced-filters.css',
+            array(),
+            LTB_LEADS_VERSION
+        );
 
         if ($this->is_leads_listing_page()) {
             // Solo cargar el JavaScript simplificado del pipeline
