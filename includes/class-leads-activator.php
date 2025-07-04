@@ -97,6 +97,11 @@ class LTB_Leads_Activator {
             // Por ejemplo, migrar datos existentes a las nuevas tablas de metadatos
             self::migrate_existing_data_to_metadata();
         }
+        
+        if (version_compare($from_version, '2.1.0', '<')) {
+            // Crear nueva tabla de seguimientos por evento
+            self::create_event_followups_table();
+        }
     }
     
     /**
@@ -130,6 +135,40 @@ class LTB_Leads_Activator {
                     'updated_at' => current_time('mysql')
                 )
             );
+        }
+    }
+    
+    /**
+     * Crear tabla específica de seguimientos por evento
+     */
+    private static function create_event_followups_table() {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . 'jet_cct_event_followups';
+        $charset_collate = $wpdb->get_charset_collate();
+        
+        // Verificar si la tabla ya existe
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '{$table_name}'");
+        
+        if (!$table_exists) {
+            $sql = "CREATE TABLE IF NOT EXISTS `{$table_name}` (
+                `_ID` bigint(20) NOT NULL AUTO_INCREMENT,
+                `event_id` bigint(20) NOT NULL,
+                `lead_id` bigint(20) NOT NULL,
+                `cotizacion_id` bigint(20) DEFAULT NULL,
+                `seguimiento` longtext,
+                `cct_status` varchar(20) DEFAULT 'publish',
+                `cct_created` datetime NOT NULL,
+                `cct_modified` datetime NOT NULL,
+                PRIMARY KEY (`_ID`),
+                KEY `event_id` (`event_id`),
+                KEY `lead_id` (`lead_id`),
+                KEY `cotizacion_id` (`cotizacion_id`),
+                KEY `event_lead` (`event_id`,`lead_id`)
+            ) {$charset_collate};";
+            
+            require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+            dbDelta($sql);
         }
     }
 }

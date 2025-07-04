@@ -266,15 +266,30 @@ $telefono_limpio = preg_replace('/[^0-9]/', '', $lead_data->lead_celular);
                 
                 <div class="followup-form-container" style="display: none;">
                     <?php 
-                    $followup_form = new LTB_Leads_Followup_Form();
-                    echo $followup_form->render_form();
+                    // Usar la nueva clase para seguimientos de eventos
+                    if (class_exists('LTB_Leads_Event_Followup')) {
+                        $event_followup = new LTB_Leads_Event_Followup();
+                        echo $event_followup->render_form($event_data->_ID);
+                    } else {
+                        // Fallback a la clase antigua si no existe la nueva
+                        $followup_form = new LTB_Leads_Followup_Form();
+                        echo $followup_form->render_form();
+                    }
                     ?>
                 </div>
                 
                 <div class="followups-timeline">
                     <?php 
-                    if (method_exists($followup_form, 'render_seguimientos_list')) {
-                        echo $followup_form->render_seguimientos_list($lead_data->_ID);
+                    // Usar la nueva clase para mostrar seguimientos
+                    if (class_exists('LTB_Leads_Event_Followup')) {
+                        $event_followup = new LTB_Leads_Event_Followup();
+                        echo $event_followup->render_event_seguimientos_list($event_data->_ID, $lead_data->_ID);
+                    } else {
+                        // Fallback a la clase antigua
+                        $followup_form = new LTB_Leads_Followup_Form();
+                        if (method_exists($followup_form, 'render_seguimientos_list')) {
+                            echo $followup_form->render_seguimientos_list($lead_data->_ID);
+                        }
                     }
                     ?>
                 </div>
@@ -713,6 +728,20 @@ $telefono_limpio = preg_replace('/[^0-9]/', '', $lead_data->lead_celular);
 }
 </style>
 
+<script>
+// Localizar datos para el script de seguimientos de evento
+var ltbEventFollowup = {
+    ajaxurl: '<?php echo admin_url('admin-ajax.php'); ?>',
+    nonce: '<?php echo wp_create_nonce('event_followup_nonce'); ?>',
+    eventId: <?php echo esc_js($event_data->_ID); ?>
+};
+</script>
+<?php
+// Encolar el script de seguimientos de evento si existe la nueva clase
+if (class_exists('LTB_Leads_Event_Followup')) {
+    wp_enqueue_script('event-followup-form', plugin_dir_url(dirname(__FILE__)) . 'assets/js/event-followup-form.js', array('jquery'), '1.0.0', true);
+}
+?>
 <script>
 jQuery(document).ready(function($) {
    // Toggle para el formulario de seguimiento

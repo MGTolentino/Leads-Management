@@ -40,3 +40,20 @@ CREATE TABLE IF NOT EXISTS `{prefix}ltb_leads_tag_relationships` (
   PRIMARY KEY (`lead_id`,`tag_id`),
   KEY `tag_id` (`tag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Tabla de seguimientos por evento
+CREATE TABLE IF NOT EXISTS `{prefix}jet_cct_event_followups` (
+  `_ID` bigint(20) NOT NULL AUTO_INCREMENT,
+  `event_id` bigint(20) NOT NULL,
+  `lead_id` bigint(20) NOT NULL,
+  `cotizacion_id` bigint(20) DEFAULT NULL,
+  `seguimiento` longtext,
+  `cct_status` varchar(20) DEFAULT 'publish',
+  `cct_created` datetime NOT NULL,
+  `cct_modified` datetime NOT NULL,
+  PRIMARY KEY (`_ID`),
+  KEY `event_id` (`event_id`),
+  KEY `lead_id` (`lead_id`),
+  KEY `cotizacion_id` (`cotizacion_id`),
+  KEY `event_lead` (`event_id`,`lead_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

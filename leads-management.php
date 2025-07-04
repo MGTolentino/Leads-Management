@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Leads Management
  * Description: Sistema de gestión de leads y eventos
- * Version: 2.0.0
+ * Version: 2.1.0
  * Author: Miguel Tolentino
  * Text Domain: ltb-leads
  */
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('LTB_LEADS_VERSION', '2.0.0');
+define('LTB_LEADS_VERSION', '2.1.0');
 define('LTB_LEADS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('LTB_LEADS_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -42,6 +42,7 @@ class LTB_Leads_Management {
             'class-leads-router.php',
             'class-leads-ajax.php',
             'class-leads-followup-form.php',
+            'class-leads-event-followup.php',
             'class-leads-add.php',
             'class-leads-event-router.php',
 			'class-leads-status-utils.php',
