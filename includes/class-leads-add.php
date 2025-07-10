@@ -17,13 +17,13 @@ class LTB_Leads_Add {
 
     private function init_hooks() {
         add_action('wp_ajax_add_new_lead', array($this, 'handle_add_lead'));
-        add_action('wp_ajax_nopriv_add_new_lead', array($this, 'handle_add_lead'));
+        // Removed wp_ajax_nopriv_add_new_lead since this action requires admin permissions
     }
 
     public function handle_add_lead() {
         check_ajax_referer('ltb_lead_add_nonce', 'nonce');
         
-        if (!current_user_can('manage_options')) {
+        if (!ltb_user_can_manage_leads()) {
             wp_send_json_error('No tienes permisos para realizar esta acción');
             return;
         }
@@ -59,6 +59,9 @@ class LTB_Leads_Add {
             wp_send_json_error('El email no es válido');
             return;
         }
+        
+        // Check if user already exists with this email
+        $existing_user_id = email_exists($lead_data['lead_e_mail']);
 		
 		if ($existing_user_id) {
         // Verificar si ya existe un lead con este usuario
