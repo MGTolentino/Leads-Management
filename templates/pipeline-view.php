@@ -171,7 +171,7 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                         
                         <div class="form-group required">
                             <label for="evento_tipo">Tipo de Evento:</label>
-                            <select id="evento_tipo" name="evento_tipo" required>
+                            <select id="evento_tipo" name="tipo_de_evento" required>
                                 <option value="">Seleccionar...</option>
                                 <option value="Bodas">Bodas</option>
                                 <option value="XV años">XV años</option>
