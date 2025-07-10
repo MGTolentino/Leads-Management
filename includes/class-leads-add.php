@@ -110,10 +110,19 @@ class LTB_Leads_Add {
 	
         
         // Insertar lead
+        $formats = array();
+        foreach ($lead_data as $key => $value) {
+            if ($key === 'cct_author_id') {
+                $formats[] = '%d';
+            } else {
+                $formats[] = '%s';
+            }
+        }
+        
         $inserted = $this->wpdb->insert(
             $this->wpdb->prefix . 'jet_cct_leads',
             $lead_data,
-            array('%s', '%s', '%s', '%s', '%s', '%s', '%s')
+            $formats
         );
         
         if (!$inserted) {
@@ -183,10 +192,19 @@ if (!empty($evento_data['evento_servicio_de_interes'])) {
 }
             
             // Insertar evento
+            $evento_formats = array();
+            foreach ($evento_data as $key => $value) {
+                if ($key === 'lead_id' || $key === 'fecha_de_evento') {
+                    $evento_formats[] = '%d';
+                } else {
+                    $evento_formats[] = '%s';
+                }
+            }
+            
             $evento_inserted = $this->wpdb->insert(
                 $this->wpdb->prefix . 'jet_cct_eventos',
                 $evento_data,
-                array('%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
+                $evento_formats
             );
             
             if (!$evento_inserted) {
