@@ -463,7 +463,8 @@
             url: ltb_leads.ajax_url,
             type: 'POST',
             data: {
-                action: includeEvent ? 'add_lead_with_event' : 'add_lead_only',
+                action: 'add_new_lead',
+                form_type: includeEvent ? 'lead_and_event' : 'lead_only',
                 nonce: ltb_leads.nonce,
                 ...Object.fromEntries(new URLSearchParams(formData))
             },
