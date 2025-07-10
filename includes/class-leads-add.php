@@ -21,7 +21,7 @@ class LTB_Leads_Add {
     }
 
     public function handle_add_lead() {
-        check_ajax_referer('ltb_lead_add_nonce', 'nonce');
+        check_ajax_referer('ltb_leads_nonce', 'nonce');
         
         if (!ltb_user_can_manage_leads()) {
             wp_send_json_error('No tienes permisos para realizar esta acción');
