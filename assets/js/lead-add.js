@@ -330,6 +330,13 @@ leadFormSubmit.on('click', function(e) {
             evento_servicio_de_interes: $('#evento_servicio').val()
         };
         
+        // DEBUG: Log form data being sent
+        console.log('DEBUG - Form data being sent:', formData);
+        console.log('DEBUG - evento_fecha field value:', $('#evento_fecha').val());
+        console.log('DEBUG - evento_tipo field value:', $('#evento_tipo').val());
+        console.log('DEBUG - evento_tipo field exists:', $('#evento_tipo').length);
+        console.log('DEBUG - Full tipo_de_evento value:', formData.tipo_de_evento);
+        
         submitForm(formData);
     });
     
@@ -431,6 +438,10 @@ leadFormSubmit.on('click', function(e) {
                 comentarios_evento: $('#evento_comentarios').val(),
                 evento_servicio_de_interes: $('#evento_servicio').val()
             };
+            
+            // DEBUG: Log event data for existing lead
+            console.log('DEBUG - Event data for existing lead:', eventData);
+            console.log('DEBUG - tipo_de_evento for existing lead:', eventData.tipo_de_evento);
             
             submitEventToExistingLead(eventData);
             return;

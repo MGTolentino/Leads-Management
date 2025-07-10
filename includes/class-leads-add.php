@@ -28,6 +28,9 @@ class LTB_Leads_Add {
             return;
         }
         
+        // DEBUG: Log all POST data
+        error_log('DEBUG handle_add_lead - All POST data: ' . print_r($_POST, true));
+        
         $form_type = isset($_POST['form_type']) ? sanitize_text_field($_POST['form_type']) : '';
         
         if (!in_array($form_type, array('lead_only', 'lead_and_event'))) {
@@ -135,16 +138,32 @@ class LTB_Leads_Add {
         
 // Si es formulario completo, agregar también el evento
 if ($form_type === 'lead_and_event') {
+    // DEBUG: Log event field validation
+    error_log('DEBUG - Event validation started');
+    error_log('DEBUG - fecha_de_evento exists in POST: ' . (isset($_POST['fecha_de_evento']) ? 'YES' : 'NO'));
+    error_log('DEBUG - fecha_de_evento value: ' . (isset($_POST['fecha_de_evento']) ? $_POST['fecha_de_evento'] : 'NOT SET'));
+    error_log('DEBUG - tipo_de_evento exists in POST: ' . (isset($_POST['tipo_de_evento']) ? 'YES' : 'NO'));
+    error_log('DEBUG - tipo_de_evento value: ' . (isset($_POST['tipo_de_evento']) ? $_POST['tipo_de_evento'] : 'NOT SET'));
+    
     // Validar campos requeridos del evento
     $evento_fecha = isset($_POST['fecha_de_evento']) ? sanitize_text_field($_POST['fecha_de_evento']) : '';
     $evento_tipo = isset($_POST['tipo_de_evento']) ? sanitize_text_field($_POST['tipo_de_evento']) : '';
     
+    // DEBUG: Log sanitized values
+    error_log('DEBUG - Sanitized evento_fecha: "' . $evento_fecha . '"');
+    error_log('DEBUG - Sanitized evento_tipo: "' . $evento_tipo . '"');
+    error_log('DEBUG - fecha empty: ' . (empty($evento_fecha) ? 'YES' : 'NO'));
+    error_log('DEBUG - tipo empty: ' . (empty($evento_tipo) ? 'YES' : 'NO'));
+    
     if (empty($evento_fecha) || empty($evento_tipo)) {
         // Si hay error en el evento, eliminar el lead para mantener consistencia
         $this->wpdb->delete($this->wpdb->prefix . 'jet_cct_leads', array('_ID' => $lead_id));
+        error_log('DEBUG - Event validation FAILED - sending error response');
         wp_send_json_error('Por favor completa los campos obligatorios del evento');
         return;
     }
+    
+    error_log('DEBUG - Event validation PASSED');
     
     // Obtener y validar la fecha como timestamp
     $evento_fecha_original = isset($_POST['fecha_de_evento']) ? $_POST['fecha_de_evento'] : '';

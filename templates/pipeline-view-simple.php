@@ -149,11 +149,11 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                     <div class="form-row">
                         <div class="form-field">
                             <label>Fecha del Evento</label>
-                            <input type="date" name="fecha_de_evento">
+                            <input type="date" id="evento_fecha" name="fecha_de_evento">
                         </div>
                         <div class="form-field">
                             <label>Tipo de Evento</label>
-                            <select name="evento_tipo">
+                            <select id="evento_tipo" name="tipo_de_evento">
                                 <option value="">Seleccionar...</option>
                                 <option value="Bodas">Bodas</option>
                                 <option value="XV años">XV años</option>
@@ -166,11 +166,11 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                     <div class="form-row">
                         <div class="form-field">
                             <label>Número de Invitados</label>
-                            <input type="number" name="evento_asistentes" min="1">
+                            <input type="number" id="evento_asistentes" name="evento_asistentes" min="1">
                         </div>
                         <div class="form-field">
                             <label>Status</label>
-                            <select name="evento_status">
+                            <select id="evento_status" name="evento_status">
                                 <?php foreach ($status_options as $value => $label) : ?>
                                     <option value="<?php echo esc_attr($value); ?>"><?php echo esc_html($label); ?></option>
                                 <?php endforeach; ?>
@@ -181,20 +181,23 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                     <div class="form-row">
                         <div class="form-field">
                             <label>Dirección del Evento</label>
-                            <input type="text" name="direccion_evento" placeholder="Dirección completa del evento">
+                            <input type="text" id="evento_direccion" name="direccion_evento" placeholder="Dirección completa del evento">
                         </div>
                         <div class="form-field">
                             <label>Servicio de Interés</label>
-                            <input type="text" name="evento_servicio_de_interes" id="servicio_autocomplete" placeholder="Buscar servicio...">
+                            <input type="text" id="evento_servicio_search" placeholder="Buscar servicio...">
+                            <input type="hidden" id="evento_servicio" name="evento_servicio_de_interes">
                         </div>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-field full-width">
                             <label>Comentarios Adicionales</label>
-                            <textarea name="comentarios_evento" rows="3" placeholder="Notas o comentarios sobre el evento..."></textarea>
+                            <textarea id="evento_comentarios" name="comentarios_evento" rows="3" placeholder="Notas o comentarios sobre el evento..."></textarea>
                         </div>
                     </div>
+                    
+                    <input type="hidden" id="evento_ubicacion" name="evento_ubicacion">
                 </div>
                 
                 <div class="form-actions">
