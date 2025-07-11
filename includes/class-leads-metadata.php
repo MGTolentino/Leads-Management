@@ -75,7 +75,6 @@ class LTB_Leads_Metadata {
         // Extraer metadatos del array de datos
         $metadata = array(
             'lead_id' => $lead_id,
-            'evento_id' => isset($data['evento_id']) ? $data['evento_id'] : null,
             'prioridad' => isset($data['prioridad']) ? $data['prioridad'] : null,
             'valor_potencial' => isset($data['valor_potencial']) ? $data['valor_potencial'] : null,
             'probabilidad' => isset($data['probabilidad']) ? $data['probabilidad'] : null,
@@ -89,8 +88,6 @@ class LTB_Leads_Metadata {
             'estado_propuesta' => isset($data['estado_propuesta']) ? $data['estado_propuesta'] : null,
             'rango_cotizacion' => isset($data['rango_cotizacion']) ? $data['rango_cotizacion'] : null,
             'temporada' => isset($data['temporada']) ? $data['temporada'] : null,
-            'servicios_requeridos' => isset($data['servicios_requeridos']) ? maybe_serialize($data['servicios_requeridos']) : null,
-            'venue' => isset($data['venue']) ? $data['venue'] : null,
             'updated_at' => current_time('mysql')
         );
         

@@ -41,8 +41,6 @@ jQuery(function($) {
             estado_propuesta: $('#estado_propuesta').val(),
             rango_cotizacion: $('#rango_cotizacion').val(),
             temporada: $('#temporada').val(),
-            servicios_requeridos: $('#servicios_requeridos').val(),
-            venue: $('#venue').val(),
             etiquetas: $('#etiquetas').val()
         };
         

@@ -24,7 +24,13 @@ jQuery(function($) {
         
         // Si es habilitar edición, guardar valor original
         if (enable && !originalValues[eventoId + '_' + field]) {
-            originalValues[eventoId + '_' + field] = value;
+            // Guardar valor original (puede ser vacío)
+            originalValues[eventoId + '_' + field] = value || '';
+            console.log('Valor original guardado:', {
+                field: field,
+                eventoId: eventoId,
+                value: value || '(vacío)'
+            });
         }
         
         // Crear campo editable según el tipo
@@ -35,7 +41,18 @@ jQuery(function($) {
                 
                 // Marcar como modificado cuando cambie el valor
                 element.find('select').on('change', function() {
-                    markAsModified(eventoId, field);
+                    const newValue = $(this).val();
+                    const originalValue = originalValues[eventoId + '_' + field] || '';
+                    
+                    // Marcar como modificado si hay cualquier cambio (incluyendo de vacío a valor)
+                    if (newValue !== originalValue) {
+                        markAsModified(eventoId, field);
+                        console.log('Status cambiado:', {
+                            original: originalValue || '(vacío)',
+                            nuevo: newValue,
+                            eventoId: eventoId
+                        });
+                    }
                 });
             } else if (field === 'tipo_de_evento') {
                 const eventTypeHTML = createEventTypeSelector(value, eventoId);
@@ -180,6 +197,13 @@ jQuery(function($) {
             modifiedFields[eventoId] = {};
         }
         modifiedFields[eventoId][field] = true;
+        
+        // Debug para verificar que se está marcando correctamente
+        console.log('Campo marcado como modificado:', {
+            eventoId: eventoId,
+            field: field,
+            allModified: modifiedFields
+        });
     }
 
     // Añadir iconos de edición
@@ -331,6 +355,12 @@ function createStatusOptionsHTML() {
     };
     
     let html = `<select class="edit-input" name="evento_status" data-evento-id="${eventoId}">`;
+    
+    // Agregar opción vacía si el valor actual está vacío
+    if (!currentValue || currentValue === '') {
+        html += `<option value="" selected>-- Seleccionar estado --</option>`;
+    }
+    
     for (const [value, label] of Object.entries(statusOptions)) {
         const selected = value === currentValue ? 'selected' : '';
         html += `<option value="${value}" ${selected}>${label}</option>`;
@@ -446,6 +476,16 @@ $('.edit-section-button[data-section="evento"]').show();
                         const element = $(`[data-field="${field}"][data-evento-id="${eventoId}"]`);
                         if (element.find('.edit-input').length) {
                             let value = element.find('.edit-input').val();
+                            
+                            // Detectar si realmente hay un cambio (incluir cambios de vacío a valor)
+                            const originalValue = originalValues[eventoId + '_' + field] || '';
+                            if (value !== originalValue) {
+                                console.log('Cambio detectado:', {
+                                    field: field,
+                                    original: originalValue,
+                                    nuevo: value
+                                });
+                            }
                             
                             // Manejar caso especial de fecha
                             if (field === 'fecha_de_evento' && value) {

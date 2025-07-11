@@ -2,7 +2,6 @@
 CREATE TABLE IF NOT EXISTS `{prefix}leads_metadata` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `lead_id` bigint(20) NOT NULL,
-  `evento_id` bigint(20) DEFAULT NULL,
   `prioridad` varchar(50) DEFAULT NULL,
   `valor_potencial` varchar(50) DEFAULT NULL,
   `probabilidad` varchar(50) DEFAULT NULL,
@@ -16,13 +15,10 @@ CREATE TABLE IF NOT EXISTS `{prefix}leads_metadata` (
   `estado_propuesta` varchar(50) DEFAULT NULL,
   `rango_cotizacion` varchar(50) DEFAULT NULL,
   `temporada` varchar(50) DEFAULT NULL,
-  `servicios_requeridos` text DEFAULT NULL,
-  `venue` varchar(200) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `lead_id` (`lead_id`),
-  KEY `evento_id` (`evento_id`)
+  KEY `lead_id` (`lead_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabla de etiquetas
