@@ -112,7 +112,7 @@ class LTB_Leads_Activator {
         
         // Comprobar si hay leads sin metadatos
         $leads_table = $wpdb->prefix . 'jet_cct_leads';
-        $metadata_table = $wpdb->prefix . 'ltb_leads_metadata';
+        $metadata_table = $wpdb->prefix . 'leads_metadata';
         
         $leads = $wpdb->get_results("
             SELECT l._ID as lead_id

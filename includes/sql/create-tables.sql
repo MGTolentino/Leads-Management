@@ -1,5 +1,5 @@
 -- Tabla de metadatos para extender leads
-CREATE TABLE IF NOT EXISTS `{prefix}ltb_leads_metadata` (
+CREATE TABLE IF NOT EXISTS `{prefix}leads_metadata` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `lead_id` bigint(20) NOT NULL,
   `evento_id` bigint(20) DEFAULT NULL,
@@ -16,6 +16,8 @@ CREATE TABLE IF NOT EXISTS `{prefix}ltb_leads_metadata` (
   `estado_propuesta` varchar(50) DEFAULT NULL,
   `rango_cotizacion` varchar(50) DEFAULT NULL,
   `temporada` varchar(50) DEFAULT NULL,
+  `servicios_requeridos` text DEFAULT NULL,
+  `venue` varchar(200) DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -24,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `{prefix}ltb_leads_metadata` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabla de etiquetas
-CREATE TABLE IF NOT EXISTS `{prefix}ltb_leads_tags` (
+CREATE TABLE IF NOT EXISTS `{prefix}leads_tags` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `slug` varchar(100) NOT NULL,
@@ -34,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `{prefix}ltb_leads_tags` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabla de relación entre leads y etiquetas
-CREATE TABLE IF NOT EXISTS `{prefix}ltb_leads_tag_relationships` (
+CREATE TABLE IF NOT EXISTS `{prefix}leads_tag_relationships` (
   `lead_id` bigint(20) NOT NULL,
   `tag_id` bigint(20) NOT NULL,
   PRIMARY KEY (`lead_id`,`tag_id`),

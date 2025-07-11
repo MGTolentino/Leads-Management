@@ -177,10 +177,8 @@
                 $('#mes_evento_basic').val('');
                 $('#anio_evento').val('');
                 
-                // Aplicar filtros automáticamente para períodos predefinidos
-                if (value) {
-                    applyFilters();
-                }
+                // Aplicar filtros automáticamente (incluyendo "Todos los períodos")
+                applyFilters();
             }
         });
         

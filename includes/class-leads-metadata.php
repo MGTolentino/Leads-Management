@@ -18,9 +18,9 @@ class LTB_Leads_Metadata {
     public function __construct() {
         global $wpdb;
         $this->wpdb = $wpdb;
-        $this->metadata_table = $wpdb->prefix . 'ltb_leads_metadata';
-        $this->tags_table = $wpdb->prefix . 'ltb_leads_tags';
-        $this->tag_relationships_table = $wpdb->prefix . 'ltb_leads_tag_relationships';
+        $this->metadata_table = $wpdb->prefix . 'leads_metadata';
+        $this->tags_table = $wpdb->prefix . 'leads_tags';
+        $this->tag_relationships_table = $wpdb->prefix . 'leads_tag_relationships';
         
         $this->init_hooks();
     }
@@ -459,8 +459,8 @@ class LTB_Leads_Metadata {
             $etiquetas_count = count($args['etiquetas']);
             $tag_subquery = "l._ID IN (
                 SELECT tr.lead_id 
-                FROM {$wpdb->prefix}ltb_leads_tag_relationships tr
-                JOIN {$wpdb->prefix}ltb_leads_tags t ON tr.tag_id = t.id
+                FROM {$wpdb->prefix}leads_tag_relationships tr
+                JOIN {$wpdb->prefix}leads_tags t ON tr.tag_id = t.id
                 WHERE t.name IN (" . implode(',', array_fill(0, $etiquetas_count, '%s')) . ")
                 GROUP BY tr.lead_id
                 HAVING COUNT(DISTINCT t.id) = %d
