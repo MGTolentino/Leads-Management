@@ -158,7 +158,7 @@
             applyFilters();
         }, 300));
         
-        // Mostrar/ocultar filtros de fecha
+        // Mostrar/ocultar filtros de fecha y aplicar automáticamente
         $('#period_filter').on('change.pipeline', function() {
             const value = $(this).val();
             
@@ -176,6 +176,11 @@
                 $('#date_range').val('');
                 $('#mes_evento_basic').val('');
                 $('#anio_evento').val('');
+                
+                // Aplicar filtros automáticamente para períodos predefinidos
+                if (value) {
+                    applyFilters();
+                }
             }
         });
         
@@ -186,6 +191,11 @@
         
         // Evento para filtro de prioridad
         $('#priority_filter').on('change.pipeline', function() {
+            applyFilters();
+        });
+        
+        // Evento para filtro de tipo de evento
+        $('#event_type_filter').on('change.pipeline', function() {
             applyFilters();
         });
         
@@ -302,7 +312,8 @@
         // Limpiar columnas
         $('.column-content').empty();
         
-        let totalLeads = 0;
+        let totalLeadsVisible = 0; // Solo leads visibles
+        let totalLeadsAll = 0;     // Todos los leads
         const counts = {};
         
         // Mostrar/ocultar columna de sin evento según el checkbox
@@ -319,12 +330,18 @@
                 return;
             }
             
+            const leads = data[status];
+            
+            // Contar todos los leads para estadística total
+            if (status !== 'sin-evento' || showLeadsWithoutEvent) {
+                totalLeadsAll += leads.length;
+            }
+            
             // Solo procesar sin-evento si el checkbox está activo
             if (status === 'sin-evento' && !showLeadsWithoutEvent) {
                 return;
             }
             
-            const leads = data[status];
             const $container = $('#' + status + '-cards');
             
             if ($container.length) {
@@ -333,7 +350,7 @@
                 });
                 
                 counts[status] = leads.length;
-                totalLeads += leads.length;
+                totalLeadsVisible += leads.length;
             }
         });
         
@@ -342,7 +359,8 @@
             $(`.pipeline-column[data-status="${status}"] .count`).text(counts[status] || 0);
         });
         
-        $('#total_leads').text(totalLeads);
+        // Actualizar total con los leads realmente visibles
+        $('#total_leads').text(totalLeadsVisible);
     }
     
     // Crear tarjeta de lead
