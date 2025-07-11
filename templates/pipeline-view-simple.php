@@ -75,6 +75,11 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
             
             <button id="apply_filters" class="btn-secondary">Filtrar</button>
             <button id="clear_filters" class="btn-text">Limpiar</button>
+            
+            <label class="checkbox-inline" style="margin-left: 10px;">
+                <input type="checkbox" id="show_leads_without_event">
+                Mostrar leads sin evento
+            </label>
         </div>
         
         <div class="pipeline-stats">
@@ -97,6 +102,17 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                 </div>
             </div>
         <?php endforeach; ?>
+        
+        <!-- Columna para leads sin evento (oculta por defecto) -->
+        <div class="pipeline-column" data-status="sin-evento" id="sin-evento-column" style="display:none;">
+            <div class="column-header">
+                <h3>Sin Evento</h3>
+                <span class="count">0</span>
+            </div>
+            <div class="column-content" id="sin-evento-cards">
+                <!-- Las tarjetas de leads sin evento se cargarán aquí -->
+            </div>
+        </div>
     </div>
 
     <!-- Modal simplificado para agregar lead -->

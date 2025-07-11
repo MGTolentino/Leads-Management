@@ -13,6 +13,7 @@
     let allLeads = [];
     let draggedElement = null;
     let sourceColumn = null;
+    let showLeadsWithoutEvent = false; // Nueva variable para controlar mostrar leads sin evento
     
     // Inicialización
     $(document).ready(function() {
@@ -123,6 +124,13 @@
         $('#quick_search').off('keyup.pipeline');
         $('#lead_form').off('submit.pipeline');
         $('#priority_filter').off('change.pipeline');
+        $('#show_leads_without_event').off('change.pipeline');
+        
+        // Checkbox para mostrar/ocultar leads sin evento
+        $('#show_leads_without_event').on('change.pipeline', function() {
+            showLeadsWithoutEvent = this.checked;
+            applyFilters();
+        });
         
         // Botón agregar lead
         $('#add_lead_btn').on('click.pipeline', function() {
@@ -297,10 +305,23 @@
         let totalLeads = 0;
         const counts = {};
         
+        // Mostrar/ocultar columna de sin evento según el checkbox
+        if (showLeadsWithoutEvent) {
+            $('#sin-evento-column').show();
+        } else {
+            $('#sin-evento-column').hide();
+        }
+        
         // Procesar datos por estado
         Object.keys(data).forEach(function(status) {
-            if (status === 'sin-evento' || status === 'otros') {
-                return; // Omitir estos estados
+            // Omitir 'otros' pero procesar 'sin-evento' si el checkbox está activo
+            if (status === 'otros') {
+                return;
+            }
+            
+            // Solo procesar sin-evento si el checkbox está activo
+            if (status === 'sin-evento' && !showLeadsWithoutEvent) {
+                return;
             }
             
             const leads = data[status];
@@ -372,21 +393,23 @@
         let fechaFin = '';
         
         // Calcular fechas según el período seleccionado
-        if (period && period !== 'custom') {
+        if (period && period !== 'custom' && period !== 'specific_month') {
             const today = new Date();
             const year = today.getFullYear();
             const month = today.getMonth();
             const date = today.getDate();
+            const day = today.getDay();
             
             switch(period) {
                 case 'today':
                     fechaInicio = fechaFin = formatDate(today);
                     break;
                 case 'this_week':
-                    const firstDay = new Date(today.setDate(date - today.getDay()));
-                    const lastDay = new Date(today.setDate(date - today.getDay() + 6));
-                    fechaInicio = formatDate(firstDay);
-                    fechaFin = formatDate(lastDay);
+                    // Crear nuevas instancias de Date para evitar modificar 'today'
+                    const firstDayOfWeek = new Date(year, month, date - day);
+                    const lastDayOfWeek = new Date(year, month, date - day + 6);
+                    fechaInicio = formatDate(firstDayOfWeek);
+                    fechaFin = formatDate(lastDayOfWeek);
                     break;
                 case 'this_month':
                     fechaInicio = formatDate(new Date(year, month, 1));
@@ -410,9 +433,9 @@
             
             if (mes && anio) {
                 // Crear rango para el mes específico del año específico
-                fechaInicio = `${anio}-${mes}-01`;
-                const lastDay = new Date(anio, mes, 0).getDate();
-                fechaFin = `${anio}-${mes}-${lastDay.toString().padStart(2, '0')}`;
+                fechaInicio = `${anio}-${mes.padStart(2, '0')}-01`;
+                const lastDay = new Date(parseInt(anio), parseInt(mes), 0).getDate();
+                fechaFin = `${anio}-${mes.padStart(2, '0')}-${lastDay.toString().padStart(2, '0')}`;
             } else if (anio && !mes) {
                 // Solo año seleccionado - todo el año
                 fechaInicio = `${anio}-01-01`;
@@ -424,8 +447,9 @@
             search: $('#quick_search').val(),
             prioridad: $('#priority_filter').val(),
             tipo_evento: $('#event_type_filter').val() ? [$('#event_type_filter').val()] : [],
-            fecha_inicio: fechaInicio,
-            fecha_fin: fechaFin
+            fecha_evento_inicio: fechaInicio,  // Cambiado de fecha_inicio
+            fecha_evento_fin: fechaFin,        // Cambiado de fecha_fin
+            show_leads_without_event: showLeadsWithoutEvent
         };
         
         loadPipelineData();
