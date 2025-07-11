@@ -51,7 +51,7 @@
                     });
                 } else {
                     // Fallback a tipos por defecto si no hay datos
-                    const defaultTypes = ['Bodas', 'XV años', 'Empresarial', 'Otros'];
+                    const defaultTypes = ['Bodas', 'XV años', 'Cumpleaños', 'Graduaciones', 'Empresarial', 'Otros'];
                     const $eventTypeFilter = $('#event_type_filter');
                     
                     defaultTypes.forEach(function(tipo) {
@@ -67,7 +67,7 @@
             error: function() {
                 console.error('Error al cargar tipos de evento, usando valores por defecto');
                 // Fallback en caso de error
-                const defaultTypes = ['Bodas', 'XV años', 'Empresarial', 'Otros'];
+                const defaultTypes = ['Bodas', 'XV años', 'Cumpleaños', 'Graduaciones', 'Empresarial', 'Otros'];
                 const $eventTypeFilter = $('#event_type_filter');
                 
                 defaultTypes.forEach(function(tipo) {

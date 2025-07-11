@@ -781,13 +781,15 @@ public function get_leads_by_status($args = array()) {
             }
         }
         
-        // Añadir condiciones SQL
-        if ($inicio_timestamp !== null) {
+        // Añadir condiciones SQL agrupadas para el rango de fechas
+        if ($inicio_timestamp !== null && $fin_timestamp !== null) {
+            $where[] = "(e.fecha_de_evento >= %d AND e.fecha_de_evento <= %d)";
+            $values[] = $inicio_timestamp;
+            $values[] = $fin_timestamp;
+        } elseif ($inicio_timestamp !== null) {
             $where[] = "e.fecha_de_evento >= %d";
             $values[] = $inicio_timestamp;
-        }
-        
-        if ($fin_timestamp !== null) {
+        } elseif ($fin_timestamp !== null) {
             $where[] = "e.fecha_de_evento <= %d";
             $values[] = $fin_timestamp;
         }

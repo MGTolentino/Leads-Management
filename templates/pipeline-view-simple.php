@@ -173,6 +173,8 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                                 <option value="">Seleccionar...</option>
                                 <option value="Bodas">Bodas</option>
                                 <option value="XV años">XV años</option>
+                                <option value="Cumpleaños">Cumpleaños</option>
+                                <option value="Graduaciones">Graduaciones</option>
                                 <option value="Empresarial">Empresarial</option>
                                 <option value="Otros">Otros</option>
                             </select>
