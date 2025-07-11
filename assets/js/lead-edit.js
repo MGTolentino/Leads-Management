@@ -140,7 +140,8 @@ jQuery(function($) {
     element.html(serviceHTML);
     
     // Inicializar autocompletado
-    element.find('.service-search').val(serviceTitle).autocomplete({
+    if (typeof $.fn.autocomplete !== 'undefined') {
+        element.find('.service-search').val(serviceTitle).autocomplete({
             source: function(request, response) {
                 $.ajax({
                     url: ltbLeadEdit.ajaxurl,
@@ -185,10 +186,13 @@ jQuery(function($) {
             }
         });
         
-				 // Marcar como modificado al escribir
-			element.find('.service-search').on('input', function() {
-				markAsModified(eventoId, 'evento_servicio_de_interes');
-			});
+		// Marcar como modificado al escribir
+		element.find('.service-search').on('input', function() {
+			markAsModified(eventoId, 'evento_servicio_de_interes');
+		});
+    } else {
+        console.warn('jQuery UI Autocomplete no está disponible para la edición de servicios');
+    }
     }
 
     // Marcar un campo como modificado
@@ -738,6 +742,8 @@ if (field === 'evento_servicio_de_interes') {
                                         <option value="">Seleccionar...</option>
                                         <option value="Bodas">Bodas</option>
                                         <option value="XV años">XV años</option>
+                                        <option value="Cumpleaños">Cumpleaños</option>
+                                        <option value="Graduaciones">Graduaciones</option>
                                         <option value="Empresarial">Empresarial</option>
                                         <option value="Otros">Otros</option>
                                     </select>
@@ -790,6 +796,7 @@ if (field === 'evento_servicio_de_interes') {
         
         // Mostrar modal
         $('#event-modal').addClass('active');
+        $('body').addClass('modal-open');
         
         // Inicializar datepicker
         $('#evento_fecha').datepicker({
@@ -807,7 +814,8 @@ if (field === 'evento_servicio_de_interes') {
         });
         
         // Inicializar autocompletado de servicios
-        $('#evento_servicio_search').autocomplete({
+        if (typeof $.fn.autocomplete !== 'undefined') {
+            $('#evento_servicio_search').autocomplete({
             source: function(request, response) {
                 $.ajax({
                     url: ltbLeadEdit.ajaxurl,
@@ -850,10 +858,22 @@ if (field === 'evento_servicio_de_interes') {
                 console.log('Autocomplete cerrado (modal)'); // Debug
             }
         });
+        } else {
+            console.warn('jQuery UI Autocomplete no está disponible para el modal de eventos');
+        }
         
         // Controladores de eventos del modal
-        $('.close-modal, .cancel-btn, .modal-backdrop').on('click', function() {
+        $('.close-modal, .cancel-btn, .modal-backdrop').off('click').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             $('#event-modal').removeClass('active');
+            $('body').removeClass('modal-open');
+            console.log('Modal cerrado');
+        });
+        
+        // Prevenir que el modal se cierre al hacer clic dentro del contenido
+        $('.modal-content').off('click').on('click', function(e) {
+            e.stopPropagation();
         });
         
         // Manejar guardado de evento
