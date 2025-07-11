@@ -211,18 +211,15 @@ jQuery(function($) {
         const startDate = $('#fecha_evento_inicio').val();
         const endDate = $('#fecha_evento_fin').val();
         
-        console.log('[FILTER DEBUG] Updating daterangepicker:', { startDate, endDate });
         
         // Verificar si daterangepicker existe
         const daterangePicker = $('#daterange_picker');
         if (!daterangePicker.length) {
-            console.log('[FILTER DEBUG] Daterangepicker element not found');
             return;
         }
         
         const drpInstance = daterangePicker.data('daterangepicker');
         if (!drpInstance) {
-            console.log('[FILTER DEBUG] Daterangepicker not initialized yet');
             // Intentar después de un breve delay
             setTimeout(function() {
                 updateDaterangepicker();
@@ -242,12 +239,9 @@ jQuery(function($) {
                     const displayValue = startMoment.format('DD/MM/YYYY') + ' - ' + endMoment.format('DD/MM/YYYY');
                     daterangePicker.val(displayValue);
                     
-                    console.log('[FILTER DEBUG] Daterangepicker updated successfully:', displayValue);
                 } else {
-                    console.error('[FILTER DEBUG] Invalid moment objects:', { startMoment: startMoment.isValid(), endMoment: endMoment.isValid() });
                 }
             } catch (error) {
-                console.error('[FILTER DEBUG] Error updating daterangepicker:', error);
             }
         }
     }
@@ -257,7 +251,6 @@ jQuery(function($) {
         const fechaInicio = $('#fecha_evento_inicio').val();
         const fechaFin = $('#fecha_evento_fin').val();
         
-        console.log('[FILTER DEBUG] Updating display:', { fechaInicio, fechaFin });
         
         let textoDisplay = '';
         
@@ -274,7 +267,6 @@ jQuery(function($) {
         }
         
         $('#fecha_evento_display').text(textoDisplay);
-        console.log('[FILTER DEBUG] Display updated:', textoDisplay);
     }
     
     // Variable para prevenir loops infinitos en selectores
@@ -287,7 +279,6 @@ jQuery(function($) {
         const anio = $(this).val();
         const mes = $('#mes_evento_basic').val() || $('#mes_evento').val();
         
-        console.log('[FILTER DEBUG] Year changed:', { anio, mes });
         
         if (anio) {
             isUpdatingDateSelectors = true;
@@ -302,8 +293,7 @@ jQuery(function($) {
                     $('#fecha_evento_inicio').val(startDate);
                     $('#fecha_evento_fin').val(endDate);
                     
-                    console.log('[FILTER DEBUG] Month range set:', { startDate, endDate });
-                } else {
+                    } else {
                     // Solo año, poner el rango del año completo
                     const startDate = `${anio}-01-01`;
                     const endDate = `${anio}-12-31`;
@@ -311,7 +301,6 @@ jQuery(function($) {
                     $('#fecha_evento_inicio').val(startDate);
                     $('#fecha_evento_fin').val(endDate);
                     
-                    console.log('[FILTER DEBUG] Year range set:', { startDate, endDate });
                 }
                 
                 // Actualizar daterangepicker si existe
@@ -321,7 +310,6 @@ jQuery(function($) {
                 actualizarVisualizacionFechaEvento();
                 
             } catch (error) {
-                console.error('[FILTER DEBUG] Error in year change:', error);
             } finally {
                 isUpdatingDateSelectors = false;
             }
@@ -335,7 +323,6 @@ jQuery(function($) {
         const anio = $('#anio_evento').val() || new Date().getFullYear();
         const selectorId = this.id;
         
-        console.log('[FILTER DEBUG] Month changed:', { mes, anio, selectorId });
         
         if (mes) {
             isUpdatingDateSelectors = true;
@@ -348,7 +335,6 @@ jQuery(function($) {
                 $('#fecha_evento_inicio').val(startDate);
                 $('#fecha_evento_fin').val(endDate);
                 
-                console.log('[FILTER DEBUG] Month range set:', { startDate, endDate });
                 
                 // Sincronizar los dos selectores de mes
                 if (selectorId === 'mes_evento') {
@@ -369,7 +355,6 @@ jQuery(function($) {
                 actualizarVisualizacionFechaEvento();
                 
             } catch (error) {
-                console.error('[FILTER DEBUG] Error in month change:', error);
             } finally {
                 isUpdatingDateSelectors = false;
             }
@@ -524,7 +509,6 @@ jQuery(function($) {
     $applyFiltersBtn.on('click', function(e) {
         e.preventDefault();
         
-        console.log('[FILTER DEBUG] Apply filters clicked');
         
         // Recopilar valores de los filtros de categorización
         currentFilters.fecha_ingreso_inicio = $('#fecha_ingreso_inicio').val();
@@ -532,7 +516,6 @@ jQuery(function($) {
         currentFilters.fecha_evento_inicio = $('#fecha_evento_inicio').val();
         currentFilters.fecha_evento_fin = $('#fecha_evento_fin').val();
         
-        console.log('[FILTER DEBUG] Date filters collected:', {
             fecha_evento_inicio: currentFilters.fecha_evento_inicio,
             fecha_evento_fin: currentFilters.fecha_evento_fin,
             anio_evento: $('#anio_evento').val(),
@@ -748,7 +731,6 @@ jQuery(function($) {
         
         loadingOverlay.show();
         
-        console.log('[FILTER DEBUG] Sending AJAX request with filters:', currentFilters);
         
         $.ajax({
             url: ltbLeadsFilters.ajaxurl,
@@ -759,10 +741,8 @@ jQuery(function($) {
                 ...currentFilters
             },
             success: function(response) {
-                console.log('[FILTER DEBUG] AJAX response received:', response);
                 
                 if (response.success) {
-                    console.log('[FILTER DEBUG] Success - found', response.data.data.length, 'leads');
                     
                     // Limpiar contenedores
                     tableBody.empty();
@@ -772,13 +752,11 @@ jQuery(function($) {
                     if (response.data.applied_filters) {
                         actualizarChipsFiltrosActivos(response.data.applied_filters);
                         actualizarContadorFiltros(response.data.applied_filters.length);
-                        console.log('[FILTER DEBUG] Applied filters:', response.data.applied_filters);
                     }
                     
                     // Renderizar datos
                     response.data.data.forEach(function(lead) {
                         if (lead.is_obsolete_status) {
-                            console.log('Lead con estado obsoleto:', lead);
                         }
                         
                         // Generar slug para la URL
@@ -893,11 +871,9 @@ jQuery(function($) {
                     // Actualizar paginación
                     updatePagination(response.data.total, response.data.pages);
                 } else {
-                    console.error('[FILTER DEBUG] Error al filtrar leads:', response.data);
                 }
             },
             error: function(xhr, status, error) {
-                console.error('[FILTER DEBUG] AJAX Error al filtrar leads:', {
                     status: status,
                     error: error,
                     responseText: xhr.responseText
@@ -1392,7 +1368,6 @@ jQuery(function($) {
     
     // Inicialización
     $(document).ready(function() {
-        console.log('[FILTER DEBUG] Filters.js initialized');
         
         // Mostrar el selector de vista
         $('.view-selector').show();
@@ -1421,7 +1396,6 @@ jQuery(function($) {
         
         // Verificar que los elementos existen antes de cargar datos
         const hasFilterElements = $('#anio_evento').length || $('#mes_evento').length || $('#mes_evento_basic').length;
-        console.log('[FILTER DEBUG] Filter elements found:', hasFilterElements);
         
         // Cargar datos iniciales
         updateTable();
@@ -1429,9 +1403,7 @@ jQuery(function($) {
         // Configurar sincronización con pipeline si está disponible
         setTimeout(function() {
             if (typeof window.updateDaterangepicker === 'function') {
-                console.log('[FILTER DEBUG] Daterangepicker sync function available');
             } else {
-                console.log('[FILTER DEBUG] Daterangepicker sync function not available');
             }
         }, 1000);
     });

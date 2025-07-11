@@ -28,8 +28,6 @@ class LTB_Leads_Add {
             return;
         }
         
-        // DEBUG: Log all POST data
-        error_log('DEBUG handle_add_lead - All POST data: ' . print_r($_POST, true));
         
         $form_type = isset($_POST['form_type']) ? sanitize_text_field($_POST['form_type']) : '';
         

@@ -609,8 +609,6 @@ public function get_leads_by_status($args = array()) {
     $where = array('1=1');
     $values = array();
     
-    // Debug: Log the arguments received
-    error_log('[QUERY DEBUG] get_leads_by_status args: ' . print_r($args, true));
 
     $query = "
         SELECT 
@@ -971,9 +969,6 @@ public function get_leads_by_status($args = array()) {
        }
    }
 
-   error_log('[QUERY DEBUG] Final grouped_leads count: ' . count($grouped_leads));
-   error_log('[QUERY DEBUG] Final WHERE conditions: ' . implode(' AND ', $where));
-   error_log('[QUERY DEBUG] Final query values: ' . print_r($values, true));
 
    return $grouped_leads;
 }

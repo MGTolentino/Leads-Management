@@ -3,7 +3,6 @@
     
     // Prevenir conflictos con otros sistemas JS
     if (window.pipelineSimpleLoaded) {
-        console.warn('Pipeline Simple ya está cargado, evitando duplicación');
         return;
     }
     window.pipelineSimpleLoaded = true;
@@ -65,7 +64,6 @@
                 }
             },
             error: function() {
-                console.error('Error al cargar tipos de evento, usando valores por defecto');
                 // Fallback en caso de error
                 const defaultTypes = ['Bodas', 'XV años', 'Cumpleaños', 'Graduaciones', 'Empresarial', 'Otros'];
                 const $eventTypeFilter = $('#event_type_filter');
@@ -96,18 +94,15 @@
         requiredLibraries.forEach(lib => {
             if (!lib.check()) {
                 missingLibraries.push(lib.name);
-                console.error(`${lib.name} no está disponible`);
             }
         });
         
         if (missingLibraries.length > 0) {
-            console.warn(`Librerías faltantes: ${missingLibraries.join(', ')}`);
             // Mostrar advertencia visual si hay librerías faltantes críticas
             if (missingLibraries.includes('jQuery')) {
                 alert('Error crítico: jQuery no está cargado. El sistema no funcionará correctamente.');
             }
         } else {
-            console.log('Todas las librerías requeridas están cargadas correctamente');
         }
     }
     
@@ -568,7 +563,6 @@
     // Inicializar DateRangePicker
     function initializeDateRangePicker() {
         if (typeof daterangepicker === 'undefined' || typeof moment === 'undefined') {
-            console.error('DateRangePicker o Moment.js no están disponibles');
             return;
         }
         
@@ -622,18 +616,15 @@
         
         // Verificar que el elemento existe y jQuery UI está disponible
         if ($input.length === 0) {
-            console.error('Campo #servicio_autocomplete no encontrado');
             return;
         }
         
         if (typeof $.fn.autocomplete === 'undefined') {
-            console.error('jQuery UI Autocomplete no está disponible');
             return;
         }
         
         // Verificar que ltbLeadAdd está disponible
         if (typeof ltbLeadAdd === 'undefined') {
-            console.error('ltbLeadAdd no está disponible - usando fallback');
             return;
         }
         
@@ -644,7 +635,6 @@
         
         $input.autocomplete({
             source: function(request, response) {
-                console.log('Buscando servicios para:', request.term);
                 $.ajax({
                     url: ltb_leads.ajax_url,
                     type: 'GET',
@@ -654,11 +644,9 @@
                         nonce: ltbLeadAdd.nonce
                     },
                     success: function(data) {
-                        console.log('Respuesta del servidor:', data);
                         if (data.success && data.data && data.data.length > 0) {
                             response(data.data);
                         } else {
-                            console.log('No se encontraron servicios');
                             response([{
                                 label: 'No se encontraron servicios',
                                 value: '',
@@ -667,7 +655,6 @@
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Error en búsqueda de servicios:', error, xhr.responseText);
                         response([{
                             label: 'Error al buscar servicios',
                             value: '',
@@ -700,7 +687,6 @@
             }
         });
         
-        console.log('Autocomplete de servicios inicializado correctamente');
     }
     
     // Función debounce para búsqueda

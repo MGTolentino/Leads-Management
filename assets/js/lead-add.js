@@ -1,11 +1,5 @@
 jQuery(function($) {
     // Verificar dependencias
-    console.log('jQuery UI autocomplete disponible:', typeof $.fn.autocomplete !== 'undefined');
-    console.log('ltbLeadAdd disponible:', typeof ltbLeadAdd !== 'undefined');
-    if (typeof ltbLeadAdd !== 'undefined') {
-        console.log('ltbLeadAdd.ajaxurl:', ltbLeadAdd.ajaxurl);
-        console.log('ltbLeadAdd.nonce:', ltbLeadAdd.nonce);
-    }
 
     // Variables globales
     const addLeadBtn = $('#add_lead_btn');
@@ -20,12 +14,10 @@ jQuery(function($) {
 	
 	// Inicializar autocompletado de servicios
 // Verificar si el elemento existe
-console.log('Elemento #evento_servicio_search encontrado:', $('#evento_servicio_search').length);
 
 if ($('#evento_servicio_search').length > 0 && typeof $.fn.autocomplete !== 'undefined') {
     $('#evento_servicio_search').autocomplete({
     source: function(request, response) {
-        console.log('Buscando:', request.term); // Debug
 
         $.ajax({
             url: ltbLeadAdd.ajaxurl,
@@ -37,21 +29,14 @@ if ($('#evento_servicio_search').length > 0 && typeof $.fn.autocomplete !== 'und
                 term: request.term
             },
             success: function(data) {
-                console.log('Respuesta:', data); // Debug
-                console.log('Data type:', typeof data); // Debug
-                console.log('Data structure:', data); // Debug
 
                 if (data.success && Array.isArray(data.data)) {
-                    console.log('Enviando al autocomplete:', data.data); // Debug
                     response(data.data);
                 } else {
-                    console.log('Error en respuesta:', data);
                     response([]);
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Error AJAX:', error); // Debug
-                console.error('Response Text:', xhr.responseText); // Debug
                 response([]);
             }
         });
@@ -61,21 +46,17 @@ if ($('#evento_servicio_search').length > 0 && typeof $.fn.autocomplete !== 'und
     appendTo: 'body',
     position: { collision: 'flip' },
     select: function(event, ui) {
-        console.log('Seleccionado:', ui.item); // Debug
 
         $('#evento_servicio').val(ui.item.url);
         $(this).val(ui.item.label);
         return false;
     },
     open: function() {
-        console.log('Autocomplete abierto'); // Debug
     },
     close: function() {
-        console.log('Autocomplete cerrado'); // Debug
     }
     });
 } else {
-    console.warn('No se pudo inicializar el autocomplete. Element:', $('#evento_servicio_search').length, 'Autocomplete:', typeof $.fn.autocomplete);
 }
     
     // Inicializar datepicker
@@ -331,11 +312,6 @@ leadFormSubmit.on('click', function(e) {
         };
         
         // DEBUG: Log form data being sent
-        console.log('DEBUG - Form data being sent:', formData);
-        console.log('DEBUG - evento_fecha field value:', $('#evento_fecha').val());
-        console.log('DEBUG - evento_tipo field value:', $('#evento_tipo').val());
-        console.log('DEBUG - evento_tipo field exists:', $('#evento_tipo').length);
-        console.log('DEBUG - Full tipo_de_evento value:', formData.tipo_de_evento);
         
         submitForm(formData);
     });
@@ -440,8 +416,6 @@ leadFormSubmit.on('click', function(e) {
             };
             
             // DEBUG: Log event data for existing lead
-            console.log('DEBUG - Event data for existing lead:', eventData);
-            console.log('DEBUG - tipo_de_evento for existing lead:', eventData.tipo_de_evento);
             
             submitEventToExistingLead(eventData);
             return;

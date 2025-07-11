@@ -26,11 +26,6 @@ jQuery(function($) {
         if (enable && !originalValues[eventoId + '_' + field]) {
             // Guardar valor original (puede ser vacío)
             originalValues[eventoId + '_' + field] = value || '';
-            console.log('Valor original guardado:', {
-                field: field,
-                eventoId: eventoId,
-                value: value || '(vacío)'
-            });
         }
         
         // Crear campo editable según el tipo
@@ -47,11 +42,6 @@ jQuery(function($) {
                     // Marcar como modificado si hay cualquier cambio (incluyendo de vacío a valor)
                     if (newValue !== originalValue) {
                         markAsModified(eventoId, field);
-                        console.log('Status cambiado:', {
-                            original: originalValue || '(vacío)',
-                            nuevo: newValue,
-                            eventoId: eventoId
-                        });
                     }
                 });
             } else if (field === 'tipo_de_evento') {
@@ -153,17 +143,13 @@ jQuery(function($) {
                         term: request.term
                     },
                     success: function(data) {
-                        console.log('Autocomplete response (edit mode):', data); // Debug
                         if (data.success) {
                             response(data.data);
                         } else {
-                            console.log('Error en respuesta:', data);
                             response([]);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Error AJAX:', error); // Debug
-                        console.error('Response Text:', xhr.responseText); // Debug
                         response([]);
                     }
                 });
@@ -177,12 +163,6 @@ jQuery(function($) {
                 $(this).val(ui.item.label);
                 markAsModified(eventoId, 'evento_servicio_de_interes');
                 return false;
-            },
-            open: function() {
-                console.log('Autocomplete abierto (edit mode)'); // Debug
-            },
-            close: function() {
-                console.log('Autocomplete cerrado (edit mode)'); // Debug
             }
         });
         
@@ -190,8 +170,6 @@ jQuery(function($) {
 		element.find('.service-search').on('input', function() {
 			markAsModified(eventoId, 'evento_servicio_de_interes');
 		});
-    } else {
-        console.warn('jQuery UI Autocomplete no está disponible para la edición de servicios');
     }
     }
 
@@ -201,13 +179,6 @@ jQuery(function($) {
             modifiedFields[eventoId] = {};
         }
         modifiedFields[eventoId][field] = true;
-        
-        // Debug para verificar que se está marcando correctamente
-        console.log('Campo marcado como modificado:', {
-            eventoId: eventoId,
-            field: field,
-            allModified: modifiedFields
-        });
     }
 
     // Añadir iconos de edición
@@ -483,13 +454,6 @@ $('.edit-section-button[data-section="evento"]').show();
                             
                             // Detectar si realmente hay un cambio (incluir cambios de vacío a valor)
                             const originalValue = originalValues[eventoId + '_' + field] || '';
-                            if (value !== originalValue) {
-                                console.log('Cambio detectado:', {
-                                    field: field,
-                                    original: originalValue,
-                                    nuevo: value
-                                });
-                            }
                             
                             // Manejar caso especial de fecha
                             if (field === 'fecha_de_evento' && value) {
@@ -510,7 +474,7 @@ $('.edit-section-button[data-section="evento"]').show();
                                         value = Math.floor(date.getTime() / 1000);
                                     }
                                 } catch (e) {
-                                    console.warn('Error al parsear fecha:', e);
+                                    // Error al parsear fecha
                                 }
                             }
                             
@@ -519,12 +483,9 @@ $('.edit-section-button[data-section="evento"]').show();
                         
                         // Caso especial para servicio de interés
 if (field === 'evento_servicio_de_interes') {
-    console.log('Buscando servicio para evento ID:', eventoId);
     const serviceInput = $(`input[name="evento_servicio_de_interes"][data-evento-id="${eventoId}"]`);
-    console.log('Elemento encontrado:', serviceInput.length > 0);
     if (serviceInput.length) {
         formData.eventos[eventoId][field] = serviceInput.val();
-        console.log('Valor del servicio:', serviceInput.val());
     }
 }
                     }
@@ -566,8 +527,6 @@ if (field === 'evento_servicio_de_interes') {
                 return;
             }
             
-            // Log para depuración
-            console.log('Datos a enviar:', formData);
             
             // Enviar datos
             $.ajax({
@@ -827,17 +786,13 @@ if (field === 'evento_servicio_de_interes') {
                         term: request.term
                     },
                     success: function(data) {
-                        console.log('Autocomplete response (modal):', data); // Debug
                         if (data.success) {
                             response(data.data);
                         } else {
-                            console.log('Error en respuesta:', data);
                             response([]);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Error AJAX:', error); // Debug
-                        console.error('Response Text:', xhr.responseText); // Debug
                         response([]);
                     }
                 });
@@ -851,15 +806,7 @@ if (field === 'evento_servicio_de_interes') {
                 $(this).val(ui.item.label);
                 return false;
             },
-            open: function() {
-                console.log('Autocomplete abierto (modal)'); // Debug
-            },
-            close: function() {
-                console.log('Autocomplete cerrado (modal)'); // Debug
-            }
         });
-        } else {
-            console.warn('jQuery UI Autocomplete no está disponible para el modal de eventos');
         }
         
         // Controladores de eventos del modal
@@ -868,7 +815,6 @@ if (field === 'evento_servicio_de_interes') {
             e.stopPropagation();
             $('#event-modal').removeClass('active');
             $('body').removeClass('modal-open');
-            console.log('Modal cerrado');
         });
         
         // Prevenir que el modal se cierre al hacer clic dentro del contenido

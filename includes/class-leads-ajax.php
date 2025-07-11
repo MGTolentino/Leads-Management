@@ -160,8 +160,6 @@ class LTB_Leads_Ajax {
  * Maneja la adición de un evento a un lead existente
  */
 public function handle_add_event_to_lead() {
-    // DEBUG: Log all POST data for add_event_to_lead
-    error_log('DEBUG handle_add_event_to_lead - All POST data: ' . print_r($_POST, true));
     
     // Verificar nonce
     if (!check_ajax_referer('ltb_lead_edit_nonce', 'nonce', false)) {
@@ -182,30 +180,16 @@ public function handle_add_event_to_lead() {
         return;
     }
 
-    // DEBUG: Log event field validation in AJAX handler
-    error_log('DEBUG AJAX - Event validation started');
-    error_log('DEBUG AJAX - fecha_de_evento exists in POST: ' . (isset($_POST['fecha_de_evento']) ? 'YES' : 'NO'));
-    error_log('DEBUG AJAX - fecha_de_evento value: ' . (isset($_POST['fecha_de_evento']) ? $_POST['fecha_de_evento'] : 'NOT SET'));
-    error_log('DEBUG AJAX - tipo_de_evento exists in POST: ' . (isset($_POST['tipo_de_evento']) ? 'YES' : 'NO'));
-    error_log('DEBUG AJAX - tipo_de_evento value: ' . (isset($_POST['tipo_de_evento']) ? $_POST['tipo_de_evento'] : 'NOT SET'));
 
     // Validar campos requeridos del evento
     $evento_fecha = isset($_POST['fecha_de_evento']) ? sanitize_text_field($_POST['fecha_de_evento']) : '';
     $evento_tipo = isset($_POST['tipo_de_evento']) ? sanitize_text_field($_POST['tipo_de_evento']) : '';
     
-    // DEBUG: Log sanitized values in AJAX
-    error_log('DEBUG AJAX - Sanitized evento_fecha: "' . $evento_fecha . '"');
-    error_log('DEBUG AJAX - Sanitized evento_tipo: "' . $evento_tipo . '"');
-    error_log('DEBUG AJAX - fecha empty: ' . (empty($evento_fecha) ? 'YES' : 'NO'));
-    error_log('DEBUG AJAX - tipo empty: ' . (empty($evento_tipo) ? 'YES' : 'NO'));
     
     if (empty($evento_fecha) || empty($evento_tipo)) {
-        error_log('DEBUG AJAX - Event validation FAILED - sending error response');
         wp_send_json_error('Por favor completa los campos obligatorios del evento');
         return;
     }
-    
-    error_log('DEBUG AJAX - Event validation PASSED');
     
     // Formatear fecha - asegurarse que funcione correctamente
     $fecha_timestamp = strtotime($evento_fecha);
@@ -444,8 +428,6 @@ public function handle_service_search() {
         return;
     }
     
-    // Debug: Log para verificar funcionamiento
-    error_log('Service search for term: ' . $search_term);
     
     // Buscar posts
     $args = array(
@@ -474,8 +456,6 @@ public function handle_service_search() {
     
     wp_reset_postdata();
     
-    // Debug: Log para verificar resultados
-    error_log('Service search results: ' . print_r($results, true));
     
     wp_send_json_success($results);
 }
