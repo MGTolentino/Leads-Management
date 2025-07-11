@@ -171,12 +171,12 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
                             <label>Tipo de Evento</label>
                             <select id="evento_tipo" name="tipo_de_evento">
                                 <option value="">Seleccionar...</option>
-                                <option value="Bodas">Bodas</option>
-                                <option value="XV años">XV años</option>
-                                <option value="Cumpleaños">Cumpleaños</option>
-                                <option value="Graduaciones">Graduaciones</option>
-                                <option value="Empresarial">Empresarial</option>
-                                <option value="Otros">Otros</option>
+                                <?php
+                                $event_types = LTB_Leads_Status_Utils::get_event_types();
+                                foreach ($event_types as $value => $label) {
+                                    echo '<option value="' . esc_attr($value) . '">' . esc_html($label) . '</option>';
+                                }
+                                ?>
                             </select>
                         </div>
                     </div>

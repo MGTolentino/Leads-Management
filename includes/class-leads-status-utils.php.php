@@ -158,4 +158,73 @@ public static function get_active_status_options() {
         
         return isset($color_map[$category]) ? $color_map[$category] : 'status-otros';
     }
+    
+    /**
+     * Obtiene los tipos de evento estandarizados para ambos plugins
+     * 
+     * @return array Arreglo de tipos de evento con value => label
+     */
+    public static function get_event_types() {
+        return array(
+            'Bodas' => 'Bodas',
+            'XV años' => 'XV años', 
+            'Cumpleaños' => 'Cumpleaños',
+            'Graduaciones' => 'Graduaciones',
+            'Empresarial' => 'Empresarial',
+            'Otros' => 'Otros'
+        );
+    }
+    
+    /**
+     * Normaliza un tipo de evento para que sea consistente
+     * 
+     * @param string $event_type Tipo de evento a normalizar
+     * @return string Tipo de evento normalizado
+     */
+    public static function normalize_event_type($event_type) {
+        if (empty($event_type)) {
+            return '';
+        }
+        
+        // Limpiar espacios y convertir a formato correcto
+        $event_type = trim($event_type);
+        
+        // Mapear variaciones a tipos estándar
+        $mapping = array(
+            'boda' => 'Bodas',
+            'Boda' => 'Bodas',
+            'BODA' => 'Bodas',
+            'bodas' => 'Bodas',
+            'BODAS' => 'Bodas',
+            'otro' => 'Otros',
+            'Otro' => 'Otros', 
+            'OTRO' => 'Otros',
+            'otros' => 'Otros',
+            'OTROS' => 'Otros',
+            'cumpleanos' => 'Cumpleaños',
+            'Cumpleanos' => 'Cumpleaños',
+            'CUMPLEANOS' => 'Cumpleaños',
+            'xv anos' => 'XV años',
+            'XV Anos' => 'XV años',
+            'xv años' => 'XV años',
+            'XV AÑOS' => 'XV años',
+            '15 años' => 'XV años',
+            'quince años' => 'XV años',
+            'graduacion' => 'Graduaciones',
+            'Graduacion' => 'Graduaciones',
+            'GRADUACION' => 'Graduaciones',
+            'graduaciones' => 'Graduaciones',
+            'GRADUACIONES' => 'Graduaciones',
+            'empresarial' => 'Empresarial',
+            'EMPRESARIAL' => 'Empresarial',
+            'corporativo' => 'Empresarial',
+            'Corporativo' => 'Empresarial',
+            'CORPORATIVO' => 'Empresarial',
+            'social' => 'Otros',
+            'Social' => 'Otros',
+            'SOCIAL' => 'Otros'
+        );
+        
+        return isset($mapping[$event_type]) ? $mapping[$event_type] : $event_type;
+    }
 }

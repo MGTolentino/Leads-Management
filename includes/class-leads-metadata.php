@@ -517,7 +517,7 @@ class LTB_Leads_Metadata {
         
         // Agregar JOIN a tabla de metadatos si hay filtros activos
         if ($metadata_filters_active) {
-            $join .= " LEFT JOIN {$wpdb->prefix}ltb_leads_metadata m ON m.lead_id = l._ID";
+            $join .= " LEFT JOIN {$wpdb->prefix}leads_metadata m ON m.lead_id = l._ID";
         }
         
         return $join;

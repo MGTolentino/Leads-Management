@@ -347,18 +347,21 @@ function createStatusOptionsHTML() {
 
     // Crear selector de tipo de evento
     function createEventTypeSelector(currentValue, eventoId) {
-        const options = [
-            'Bodas',
-            'XV años',
-            'Empresarial',
-            'Otros'
-        ];
+        // Usar los tipos de evento desde la configuración de PHP
+        const eventTypes = window.leadManagementConfig?.eventTypes || {
+            'Bodas': 'Bodas',
+            'XV años': 'XV años', 
+            'Cumpleaños': 'Cumpleaños',
+            'Graduaciones': 'Graduaciones',
+            'Empresarial': 'Empresarial',
+            'Otros': 'Otros'
+        };
         
 let html = `<select class="edit-input" name="tipo_de_evento" data-evento-id="${eventoId}">`;
-        options.forEach(option => {
-            const selected = option === currentValue ? 'selected' : '';
-            html += `<option value="${option}" ${selected}>${option}</option>`;
-        });
+        for (const [value, label] of Object.entries(eventTypes)) {
+            const selected = value === currentValue ? 'selected' : '';
+            html += `<option value="${value}" ${selected}>${label}</option>`;
+        }
         html += `</select>`;
         
         return html;

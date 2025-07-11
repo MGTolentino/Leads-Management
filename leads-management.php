@@ -47,7 +47,8 @@ class LTB_Leads_Management {
             'class-leads-event-router.php',
 			'class-leads-status-utils.php',
 			'class-leads-metadata.php',
-			'class-leads-activator.php'
+			'class-leads-activator.php',
+			'normalize-event-types.php'
         );
 
         foreach ($files as $file) {
@@ -185,8 +186,10 @@ class LTB_Leads_Management {
             ));
             
             $status_options = LTB_Leads_Status_Utils::get_status_options();
+            $event_types = LTB_Leads_Status_Utils::get_event_types();
             wp_localize_script('ltb-pipeline-simple', 'leadManagementConfig', array(
-                'statusOptions' => $status_options
+                'statusOptions' => $status_options,
+                'eventTypes' => $event_types
             ));
         }
 
@@ -215,8 +218,10 @@ class LTB_Leads_Management {
             );
 			
 $status_options = LTB_Leads_Status_Utils::get_status_options();
+$event_types = LTB_Leads_Status_Utils::get_event_types();
 wp_localize_script('ltb-lead-edit', 'leadManagementConfig', array(
-    'statusOptions' => $status_options
+    'statusOptions' => $status_options,
+    'eventTypes' => $event_types
 ));
 
             wp_localize_script('ltb-leads-edit', 'ltbLeadEdit', array(

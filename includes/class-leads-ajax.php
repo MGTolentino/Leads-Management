@@ -618,26 +618,16 @@ public function handle_save_lead_metadata() {
  * Obtiene los tipos de evento disponibles dinámicamente desde la base de datos
  */
 public function get_event_types() {
-    global $wpdb;
-    
     try {
-        // Obtener tipos de evento únicos desde la tabla de eventos
-        $tipos = $wpdb->get_col("
-            SELECT DISTINCT tipo_de_evento 
-            FROM {$wpdb->prefix}jet_cct_eventos 
-            WHERE tipo_de_evento IS NOT NULL 
-            AND tipo_de_evento != '' 
-            ORDER BY tipo_de_evento ASC
-        ");
+        // Usar los tipos de evento estandarizados en lugar de consultar la BD directamente
+        $event_types = LTB_Leads_Status_Utils::get_event_types();
         
         $result = array();
-        foreach ($tipos as $tipo) {
-            if (!empty(trim($tipo))) {
-                $result[] = array(
-                    'value' => $tipo,
-                    'label' => $tipo
-                );
-            }
+        foreach ($event_types as $value => $label) {
+            $result[] = array(
+                'value' => $value,
+                'label' => $label
+            );
         }
         
         wp_send_json_success($result);
