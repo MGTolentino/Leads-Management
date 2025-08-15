@@ -358,7 +358,6 @@ wp_localize_script('ltb-lead-edit', 'leadManagementConfig', array(
 function ltb_user_can_manage_leads() {
     // Check if user is logged in
     if (!is_user_logged_in()) {
-        error_log('LTB: User not logged in for lead management');
         return false;
     }
     
@@ -371,10 +370,6 @@ function ltb_user_can_manage_leads() {
     // Also check manage_options capability directly
     $can_manage = !empty($can_manage) || current_user_can('manage_options');
     
-    // Debug logging
-    if (!$can_manage) {
-        error_log('LTB: User ID ' . $user->ID . ' with roles [' . implode(', ', $user->roles) . '] denied lead management access');
-    }
     
     return $can_manage;
 }
