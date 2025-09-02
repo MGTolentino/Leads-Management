@@ -1,11 +1,4 @@
 jQuery(function($) {
-    // Verificar disponibilidad de librerías
-    console.log('=== Verificación de librerías ===');
-    console.log('jQuery versión:', $.fn.jquery);
-    console.log('jQuery UI Autocomplete disponible:', typeof $.fn.autocomplete !== 'undefined');
-    console.log('ltbLeadEdit objeto:', typeof ltbLeadEdit !== 'undefined' ? ltbLeadEdit : 'No disponible');
-    console.log('================================');
-    
     // Toggle formulario de seguimiento
     $('.add-followup-toggle, .add-followup-btn').on('click', function() {
         $('.followup-form-container').slideToggle(300);
@@ -148,17 +141,10 @@ jQuery(function($) {
     
     element.html(serviceHTML);
     
-    console.log('toggleServiceEdit - HTML insertado, buscando .service-search');
-    const searchInput = element.find('.service-search');
-    console.log('toggleServiceEdit - Input encontrado:', searchInput.length, searchInput);
-    
     // Inicializar autocompletado
     if (typeof $.fn.autocomplete !== 'undefined') {
-        console.log('toggleServiceEdit - jQuery UI Autocomplete está disponible');
-        
-        searchInput.val(serviceTitle).autocomplete({
+        element.find('.service-search').val(serviceTitle).autocomplete({
             source: function(request, response) {
-                console.log('Autocomplete - Buscando término:', request.term);
                 $.ajax({
                     url: ltbLeadEdit.ajaxurl,
                     type: 'GET',
@@ -169,17 +155,13 @@ jQuery(function($) {
                         term: request.term
                     },
                     success: function(data) {
-                        console.log('Autocomplete - Respuesta del servidor:', data);
                         if (data.success) {
-                            console.log('Autocomplete - Servicios encontrados:', data.data.length);
                             response(data.data);
                         } else {
-                            console.log('Autocomplete - No se encontraron servicios');
                             response([]);
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Autocomplete - Error en AJAX:', error, xhr.responseText);
                         response([]);
                     }
                 });
@@ -189,30 +171,17 @@ jQuery(function($) {
             appendTo: 'body',
             position: { collision: 'flip' },
             select: function(event, ui) {
-                console.log('Autocomplete - Servicio seleccionado:', ui.item);
                 $(this).siblings('input[name="evento_servicio_de_interes"]').val(ui.item.url);
                 $(this).val(ui.item.label);
                 markAsModified(eventoId, 'evento_servicio_de_interes');
                 return false;
-            },
-            create: function() {
-                console.log('Autocomplete - Widget creado exitosamente');
-            },
-            open: function() {
-                console.log('Autocomplete - Menú abierto');
             }
         });
         
-        console.log('toggleServiceEdit - Autocomplete inicializado');
-        
 		// Marcar como modificado al escribir
-		searchInput.on('input', function() {
-            console.log('Input modificado, valor actual:', $(this).val());
+		element.find('.service-search').on('input', function() {
 			markAsModified(eventoId, 'evento_servicio_de_interes');
 		});
-    } else {
-        console.error('toggleServiceEdit - jQuery UI Autocomplete NO está disponible');
-        console.log('toggleServiceEdit - $.fn.autocomplete:', $.fn.autocomplete);
     }
     }
 
@@ -487,23 +456,15 @@ $('.evento-content').each(function() {
     });
     
     // Buscar y editar el servicio (puede ser link, placeholder o campo agregado dinámicamente)
-    console.log('Buscando elemento de servicio en evento:', eventoId);
     const serviceElement = eventItem.find('.event-value').filter(function() {
-        const hasLink = $(this).has('.service-link').length > 0;
-        const hasPlaceholder = $(this).has('.service-placeholder').length > 0;
-        const isServiceField = $(this).attr('data-service-field') === 'true';
-        console.log('Evaluando elemento:', this, 'hasLink:', hasLink, 'hasPlaceholder:', hasPlaceholder, 'isServiceField:', isServiceField);
-        return hasLink || hasPlaceholder || isServiceField;
+        return $(this).has('.service-link').length || 
+               $(this).has('.service-placeholder').length || 
+               $(this).attr('data-service-field') === 'true';
     }).first();
     
-    console.log('Elemento de servicio encontrado:', serviceElement.length, serviceElement);
-    
     if (serviceElement.length) {
-        console.log('Llamando toggleServiceEdit para evento:', eventoId);
         toggleServiceEdit(serviceElement, true, eventoId);
         serviceElement.find('.edit-field-icon').hide();
-    } else {
-        console.log('No se encontró elemento de servicio para el evento:', eventoId);
     }
     
     editingSections['evento_' + eventoId] = true;
