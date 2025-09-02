@@ -106,23 +106,35 @@ jQuery(function($) {
         const eventoId = element.closest('.evento-item').find('.evento-header').data('evento-id');
         if (originalValues['servicio_url_' + eventoId] && originalValues['servicio_titulo_' + eventoId]) {
             element.html(`<a href="${originalValues['servicio_url_' + eventoId]}" target="_blank" class="service-link">${originalValues['servicio_titulo_' + eventoId]}</a>`);
+        } else if (originalValues['servicio_placeholder_' + eventoId]) {
+            element.html(`<span class="service-placeholder">No especificado</span>`);
         }
         return;
     }
     
     // Habilitar edición del servicio
     const serviceLink = element.find('.service-link');
-    const serviceUrl = serviceLink.attr('href');
-    const serviceTitle = serviceLink.text().trim();
+    const servicePlaceholder = element.find('.service-placeholder');
     const eventoId = element.closest('.evento-item').find('.evento-header').data('evento-id');
     
-    // Guardar valores originales
-    originalValues['servicio_url_' + eventoId] = serviceUrl;
-    originalValues['servicio_titulo_' + eventoId] = serviceTitle;
+    let serviceUrl = '';
+    let serviceTitle = '';
+    
+    if (serviceLink.length) {
+        // Si existe un enlace de servicio
+        serviceUrl = serviceLink.attr('href') || '';
+        serviceTitle = serviceLink.text().trim();
+        // Guardar valores originales
+        originalValues['servicio_url_' + eventoId] = serviceUrl;
+        originalValues['servicio_titulo_' + eventoId] = serviceTitle;
+    } else if (servicePlaceholder.length) {
+        // Si es un placeholder (campo vacío)
+        originalValues['servicio_placeholder_' + eventoId] = true;
+    }
     
     const serviceHTML = `
         <div class="service-edit-container">
-            <input type="text" class="edit-input service-search" placeholder="Buscar servicio...">
+            <input type="text" class="edit-input service-search" placeholder="Buscar servicio..." value="${serviceTitle}">
             <input type="hidden" class="edit-input" name="evento_servicio_de_interes" data-evento-id="${eventoId}" value="${serviceUrl}">
         </div>
     `;
@@ -179,6 +191,140 @@ jQuery(function($) {
             modifiedFields[eventoId] = {};
         }
         modifiedFields[eventoId][field] = true;
+    }
+
+    // Función para agregar campos faltantes del evento al DOM
+    function addMissingEventFields(eventoId) {
+        const eventItem = $(`.evento-item`).has(`.evento-header[data-evento-id="${eventoId}"]`);
+        const eventContent = eventItem.find('.evento-content');
+        const eventInfo = eventContent.find('.event-info');
+        
+        // Verificar y agregar campo de invitados si no existe
+        if (!eventInfo.find(`[data-field="evento_asistentes"][data-evento-id="${eventoId}"]`).length) {
+            // Buscar el row donde debería estar o crear uno nuevo
+            let invitadosRow = eventInfo.find('.event-row').eq(1); // Segunda fila generalmente
+            if (!invitadosRow.length || invitadosRow.find('.event-item').length >= 2) {
+                // Si no existe la fila o está llena, buscar o crear una apropiada
+                const statusItem = eventInfo.find(`[data-field="evento_status"]`).closest('.event-item');
+                if (statusItem.length && statusItem.parent().find('.event-item').length === 1) {
+                    // Agregar en la misma fila que el status
+                    statusItem.before(`
+                        <div class="event-item">
+                            <div class="event-label">
+                                <span class="dashicons dashicons-groups"></span>
+                                <span>Invitados:</span>
+                            </div>
+                            <div class="event-value" data-field="evento_asistentes" data-evento-id="${eventoId}">
+                                No especificado
+                            </div>
+                        </div>
+                    `);
+                }
+            }
+        }
+        
+        // Verificar y agregar campos de ubicación/dirección si no existen
+        const hasUbicacion = eventInfo.find(`[data-field="ubicacion_evento"][data-evento-id="${eventoId}"]`).length > 0;
+        const hasDireccion = eventInfo.find(`[data-field="direccion_evento"][data-evento-id="${eventoId}"]`).length > 0;
+        
+        if (!hasUbicacion || !hasDireccion) {
+            // Buscar si existe una fila para ubicación/dirección
+            let locationRow = eventInfo.find('.event-row').filter(function() {
+                return $(this).find('[data-field="ubicacion_evento"], [data-field="direccion_evento"]').length > 0;
+            });
+            
+            if (!locationRow.length) {
+                // Crear nueva fila después de la segunda fila
+                const secondRow = eventInfo.find('.event-row').eq(1);
+                locationRow = $('<div class="event-row"></div>');
+                if (secondRow.length) {
+                    secondRow.after(locationRow);
+                } else {
+                    eventInfo.append(locationRow);
+                }
+            }
+            
+            // Agregar campo de ubicación si no existe
+            if (!hasUbicacion) {
+                locationRow.append(`
+                    <div class="event-item">
+                        <div class="event-label">
+                            <span class="dashicons dashicons-location"></span>
+                            <span>Ubicación:</span>
+                        </div>
+                        <div class="event-value" data-field="ubicacion_evento" data-evento-id="${eventoId}">
+                            
+                        </div>
+                    </div>
+                `);
+            }
+            
+            // Agregar campo de dirección si no existe
+            if (!hasDireccion) {
+                locationRow.append(`
+                    <div class="event-item">
+                        <div class="event-label">
+                            <span class="dashicons dashicons-location-alt"></span>
+                            <span>Dirección:</span>
+                        </div>
+                        <div class="event-value" data-field="direccion_evento" data-evento-id="${eventoId}">
+                            
+                        </div>
+                    </div>
+                `);
+            }
+        }
+        
+        // Verificar y agregar servicio de interés si no existe
+        if (!eventInfo.find('.service-link').length && !eventInfo.find('.service-placeholder').length) {
+            // Buscar donde insertar el servicio (después de ubicación/dirección)
+            let insertAfter = eventInfo.find('.event-row').filter(function() {
+                return $(this).find('[data-field="ubicacion_evento"], [data-field="direccion_evento"]').length > 0;
+            });
+            
+            if (!insertAfter.length) {
+                insertAfter = eventInfo.find('.event-row').last();
+            }
+            
+            insertAfter.after(`
+                <div class="event-row">
+                    <div class="event-item full-width">
+                        <div class="event-label">
+                            <span class="dashicons dashicons-admin-links"></span>
+                            <span>Servicio de interés:</span>
+                        </div>
+                        <div class="event-value">
+                            <span class="service-placeholder">No especificado</span>
+                        </div>
+                    </div>
+                </div>
+            `);
+        }
+        
+        // Verificar y agregar comentarios si no existe
+        if (!eventInfo.find(`[data-field="comentarios_evento"][data-evento-id="${eventoId}"]`).length) {
+            // Agregar al final, antes de los botones de acción
+            const actionsDiv = eventContent.find('.event-actions');
+            const commentsHTML = `
+                <div class="event-row">
+                    <div class="event-item full-width">
+                        <div class="event-label">
+                            <span class="dashicons dashicons-admin-comments"></span>
+                            <span>Comentarios:</span>
+                        </div>
+                        <div class="event-value event-comments" data-field="comentarios_evento" data-evento-id="${eventoId}">
+                            
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            if (actionsDiv.length) {
+                actionsDiv.before(commentsHTML);
+            } else {
+                eventInfo.append(commentsHTML);
+            }
+        }
     }
 
     // Añadir iconos de edición
@@ -287,15 +433,18 @@ $('.evento-content').each(function() {
     editingSections['lead'] = true;
     editingSections['nombre-apellido'] = true;
 } else if (section === 'evento' && eventoId) {
+    // Primero agregar campos faltantes al DOM
+    addMissingEventFields(eventoId);
+    
     // Editar todos los campos del evento
     $(`.evento-content [data-evento-id="${eventoId}"]`).each(function() {
         toggleFieldEdit($(this), true);
         $(this).find('.edit-field-icon').hide();
     });
     
-    // También editar el servicio si existe
+    // También editar el servicio si existe o agregarlo si no existe
     const eventItem = $(this).closest('.evento-item');
-    const serviceElement = eventItem.find('.event-item.full-width .event-value').has('.service-link');
+    let serviceElement = eventItem.find('.event-item.full-width .event-value').has('.service-link, .service-placeholder');
     if (serviceElement.length) {
         toggleServiceEdit(serviceElement, true);
         serviceElement.find('.edit-field-icon').hide();
@@ -394,17 +543,47 @@ $('.edit-section-button[data-section="evento"]').hide();
 					
                     // Deshabilitar edición de todos los campos
                     $('[data-field]').each(function() {
-                        toggleFieldEdit($(this), false);
+                        const $this = $(this);
+                        const eventoId = $this.data('evento-id');
+                        const field = $this.data('field');
+                        
+                        // Si el campo fue agregado dinámicamente y está vacío, eliminarlo
+                        if (eventoId && !originalValues[eventoId + '_' + field]) {
+                            const value = $this.text().trim();
+                            if (!value || value === 'No especificado' || value === '') {
+                                // Eliminar la fila completa si no tiene más campos
+                                const row = $this.closest('.event-row');
+                                if (row.find('.event-item').length === 1) {
+                                    row.remove();
+                                } else {
+                                    $this.closest('.event-item').remove();
+                                }
+                                return;
+                            }
+                        }
+                        
+                        toggleFieldEdit($this, false);
                     });
                     
                     // Restaurar servicios
-                    $('.event-item.full-width .event-value').has('.service-link, .service-edit-container').each(function() {
-                        toggleServiceEdit($(this), false);
+                    $('.event-item.full-width .event-value').has('.service-link, .service-edit-container, .service-placeholder').each(function() {
+                        const $this = $(this);
+                        const eventoId = $this.closest('.evento-item').find('.evento-header').data('evento-id');
+                        
+                        // Si el servicio fue agregado dinámicamente y está vacío, eliminar la fila
+                        if (!originalValues['servicio_url_' + eventoId] && !originalValues['servicio_titulo_' + eventoId]) {
+                            const row = $this.closest('.event-row');
+                            row.remove();
+                            return;
+                        }
+                        
+                        toggleServiceEdit($this, false);
                     });
                     
                     // Limpiar variables de estado
                     editingSections = {};
                     modifiedFields = {};
+                    originalValues = {};
                     
                     // Restaurar visualización de nombre completo
                     $('.nombre-apellido-edit').hide();
