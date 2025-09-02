@@ -293,7 +293,7 @@ jQuery(function($) {
                             <span class="dashicons dashicons-admin-links"></span>
                             <span>Servicio de interés:</span>
                         </div>
-                        <div class="event-value">
+                        <div class="event-value" data-service-field="true" data-evento-id="${eventoId}">
                             <span class="service-placeholder">No especificado</span>
                         </div>
                     </div>
@@ -447,45 +447,24 @@ $('.evento-content').each(function() {
     // Primero agregar campos faltantes al DOM
     addMissingEventFields(eventoId);
     
-    // Agregar iconos de edición a los campos recién agregados
     const eventItem = $(this).closest('.evento-item');
     
-    // Agregar iconos a campos normales recién agregados
-    eventItem.find('[data-field]').each(function() {
-        const $field = $(this);
-        if (!$field.find('.edit-field-icon').length) {
-            const editIcon = $('<span class="edit-field-icon"><span class="dashicons dashicons-edit"></span></span>');
-            $field.append(editIcon);
-            editIcon.hide(); // Ocultarlo porque vamos a editar todo
-        }
-    });
-    
-    // Agregar icono al servicio si fue agregado dinámicamente
-    const serviceElement = eventItem.find('.service-placeholder').closest('.event-value');
-    if (serviceElement.length && !serviceElement.find('.edit-field-icon').length) {
-        const editIcon = $('<span class="edit-field-icon"><span class="dashicons dashicons-edit"></span></span>');
-        serviceElement.append(editIcon);
-        editIcon.hide(); // Ocultarlo porque vamos a editar todo
-    }
-    
-    // Editar todos los campos del evento
-    $(`.evento-content [data-evento-id="${eventoId}"]`).each(function() {
+    // Editar todos los campos del evento con data-field
+    eventItem.find(`[data-field][data-evento-id="${eventoId}"]`).each(function() {
         toggleFieldEdit($(this), true);
         $(this).find('.edit-field-icon').hide();
     });
     
-    // También editar el servicio si existe o agregarlo si no existe
-    // Buscar el elemento de servicio - puede tener service-link O service-placeholder
-    let serviceRow = eventItem.find('.event-row').filter(function() {
-        return $(this).find('.event-label').text().includes('Servicio de interés');
-    });
+    // Buscar y editar el servicio (puede ser link, placeholder o campo agregado dinámicamente)
+    const serviceElement = eventItem.find('.event-value').filter(function() {
+        return $(this).has('.service-link').length || 
+               $(this).has('.service-placeholder').length || 
+               $(this).attr('data-service-field') === 'true';
+    }).first();
     
-    if (serviceRow.length) {
-        let serviceElement = serviceRow.find('.event-value');
-        if (serviceElement.length) {
-            toggleServiceEdit(serviceElement, true, eventoId);
-            serviceElement.find('.edit-field-icon').hide();
-        }
+    if (serviceElement.length) {
+        toggleServiceEdit(serviceElement, true, eventoId);
+        serviceElement.find('.edit-field-icon').hide();
     }
     
     editingSections['evento_' + eventoId] = true;
