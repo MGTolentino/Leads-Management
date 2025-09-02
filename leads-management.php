@@ -212,7 +212,7 @@ class LTB_Leads_Management {
             wp_enqueue_script(
                 'ltb-leads-edit',
                 LTB_LEADS_PLUGIN_URL . 'assets/js/lead-edit.js',
-                array('jquery'),
+                array('jquery', 'jquery-ui-autocomplete', 'jquery-ui-datepicker'),
                 LTB_LEADS_VERSION,
                 true
             );
