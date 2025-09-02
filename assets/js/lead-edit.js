@@ -100,10 +100,10 @@ jQuery(function($) {
     }
 
     // Función para habilitar/deshabilitar la edición del servicio de interés
-    function toggleServiceEdit(element, enable) {
+    function toggleServiceEdit(element, enable, providedEventoId) {
     if (!enable) {
         // Restaurar el enlace original
-        const eventoId = element.closest('.evento-item').find('.evento-header').data('evento-id');
+        const eventoId = providedEventoId || element.closest('.evento-item').find('.evento-header').data('evento-id');
         if (originalValues['servicio_url_' + eventoId] && originalValues['servicio_titulo_' + eventoId]) {
             element.html(`<a href="${originalValues['servicio_url_' + eventoId]}" target="_blank" class="service-link">${originalValues['servicio_titulo_' + eventoId]}</a>`);
         } else if (originalValues['servicio_placeholder_' + eventoId]) {
@@ -115,7 +115,7 @@ jQuery(function($) {
     // Habilitar edición del servicio
     const serviceLink = element.find('.service-link');
     const servicePlaceholder = element.find('.service-placeholder');
-    const eventoId = element.closest('.evento-item').find('.evento-header').data('evento-id');
+    const eventoId = providedEventoId || element.closest('.evento-item').find('.evento-header').data('evento-id');
     
     let serviceUrl = '';
     let serviceTitle = '';
@@ -347,9 +347,16 @@ jQuery(function($) {
             });
         });
         
-        // Añadir iconos a servicios
-        $('.event-item.full-width .event-value').has('.service-link').each(function() {
+        // Añadir iconos a servicios (tanto links como placeholders)
+        $('.event-item.full-width .event-value').filter(function() {
+            return $(this).has('.service-link').length || $(this).has('.service-placeholder').length;
+        }).each(function() {
             const element = $(this);
+            
+            // No agregar icono si ya existe
+            if (element.find('.edit-field-icon').length) {
+                return;
+            }
             
             // Añadir icono de lápiz
             const editIcon = $('<span class="edit-field-icon"><span class="dashicons dashicons-edit"></span></span>');
@@ -358,7 +365,8 @@ jQuery(function($) {
             // Manejar clic en icono
             editIcon.on('click', function(e) {
                 e.stopPropagation();
-                toggleServiceEdit(element, true);
+                const eventoId = element.closest('.evento-item').find('.evento-header').data('evento-id');
+                toggleServiceEdit(element, true, eventoId);
                 $(this).hide();
             });
         });
@@ -439,6 +447,27 @@ $('.evento-content').each(function() {
     // Primero agregar campos faltantes al DOM
     addMissingEventFields(eventoId);
     
+    // Agregar iconos de edición a los campos recién agregados
+    const eventItem = $(this).closest('.evento-item');
+    
+    // Agregar iconos a campos normales recién agregados
+    eventItem.find('[data-field]').each(function() {
+        const $field = $(this);
+        if (!$field.find('.edit-field-icon').length) {
+            const editIcon = $('<span class="edit-field-icon"><span class="dashicons dashicons-edit"></span></span>');
+            $field.append(editIcon);
+            editIcon.hide(); // Ocultarlo porque vamos a editar todo
+        }
+    });
+    
+    // Agregar icono al servicio si fue agregado dinámicamente
+    const serviceElement = eventItem.find('.service-placeholder').closest('.event-value');
+    if (serviceElement.length && !serviceElement.find('.edit-field-icon').length) {
+        const editIcon = $('<span class="edit-field-icon"><span class="dashicons dashicons-edit"></span></span>');
+        serviceElement.append(editIcon);
+        editIcon.hide(); // Ocultarlo porque vamos a editar todo
+    }
+    
     // Editar todos los campos del evento
     $(`.evento-content [data-evento-id="${eventoId}"]`).each(function() {
         toggleFieldEdit($(this), true);
@@ -446,11 +475,17 @@ $('.evento-content').each(function() {
     });
     
     // También editar el servicio si existe o agregarlo si no existe
-    const eventItem = $(this).closest('.evento-item');
-    let serviceElement = eventItem.find('.event-item.full-width .event-value').has('.service-link, .service-placeholder');
-    if (serviceElement.length) {
-        toggleServiceEdit(serviceElement, true);
-        serviceElement.find('.edit-field-icon').hide();
+    // Buscar el elemento de servicio - puede tener service-link O service-placeholder
+    let serviceRow = eventItem.find('.event-row').filter(function() {
+        return $(this).find('.event-label').text().includes('Servicio de interés');
+    });
+    
+    if (serviceRow.length) {
+        let serviceElement = serviceRow.find('.event-value');
+        if (serviceElement.length) {
+            toggleServiceEdit(serviceElement, true, eventoId);
+            serviceElement.find('.edit-field-icon').hide();
+        }
     }
     
     editingSections['evento_' + eventoId] = true;
