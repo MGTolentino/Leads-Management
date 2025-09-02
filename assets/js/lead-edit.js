@@ -392,7 +392,10 @@ $('.lead-info-column').prepend('<div class="edit-section-button" data-section="l
 $('.evento-content').each(function() {
     const eventoId = $(this).closest('.evento-item').find('.evento-header').data('evento-id');
     if (eventoId) {
-        $(this).prepend(`<div class="edit-section-button" data-section="evento" data-evento-id="${eventoId}" style="display:none;"><span class="dashicons dashicons-edit"></span> Editar todo el evento</div>`);
+        // No agregar el botón si ya existe
+        if (!$(this).find('.edit-section-button[data-section="evento"]').length) {
+            $(this).prepend(`<div class="edit-section-button" data-section="evento" data-evento-id="${eventoId}"><span class="dashicons dashicons-edit"></span> Editar todo el evento</div>`);
+        }
     }
 });
         
@@ -538,9 +541,6 @@ let html = `<select class="edit-input" name="tipo_de_evento" data-evento-id="${e
                 // Manejar clic en botón cancelar
                 cancelBtn.on('click', function() {
 					
-					// Ocultar botones de edición de eventos
-$('.edit-section-button[data-section="evento"]').hide();
-					
                     // Deshabilitar edición de todos los campos
                     $('[data-field]').each(function() {
                         const $this = $(this);
@@ -589,8 +589,9 @@ $('.edit-section-button[data-section="evento"]').hide();
                     $('.nombre-apellido-edit').hide();
                     $('.nombre-completo-display').show();
                     
-                    // Eliminar iconos de edición
-                    $('.edit-field-icon, .edit-section-button').remove();
+                    // Eliminar iconos de edición y ocultar botones de sección
+                    $('.edit-field-icon').remove();
+                    $('.edit-section-button').remove();
                     
                     // Volver a modo visualización
                     editBtn.html('<span class="dashicons dashicons-edit"></span> Editar');
@@ -601,9 +602,10 @@ $('.edit-section-button[data-section="evento"]').hide();
             }
             
             // Añadir iconos de edición
-			// Mostrar todos los botones de edición de evento
-$('.edit-section-button[data-section="evento"]').show();
             addEditIcons();
+            
+            // Mostrar todos los botones de edición de evento DESPUÉS de agregarlos
+            $('.edit-section-button[data-section="evento"]').show();
             
             isEditMode = true;
         } else {
@@ -737,8 +739,9 @@ if (field === 'evento_servicio_de_interes') {
                     isEditMode = false;
                     $('#cancelEditBtn').remove();
                     
-                    // Eliminar iconos de edición
-                    $('.edit-field-icon, .edit-section-button').remove();
+                    // Eliminar iconos de edición y ocultar botones de sección
+                    $('.edit-field-icon').remove();
+                    $('.edit-section-button').remove();
                     
                     // Limpiar variables de estado
                     editingSections = {};
