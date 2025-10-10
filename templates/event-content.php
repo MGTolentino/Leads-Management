@@ -254,6 +254,80 @@ $telefono_limpio = preg_replace('/[^0-9]/', '', $lead_data->lead_celular);
                 <?php endif; ?>
             </div>
             
+            <!-- Contratos Section -->
+            <div class="info-card">
+                <div class="card-header">
+                    <h3 class="card-title">Contratos</h3>
+                </div>
+                
+                <?php
+                // Obtener contratos para este evento
+                $contracts = array();
+                if (class_exists('Event_Quote_Cart_Contract_Handler')) {
+                    $contract_handler = new Event_Quote_Cart_Contract_Handler();
+                    $contracts = $contract_handler->get_contracts_for_event($event_data->_ID);
+                }
+                
+                if (empty($contracts)): 
+                ?>
+                <div class="empty-state">
+                    <span class="dashicons dashicons-media-document empty-icon"></span>
+                    <p>No hay contratos generados para este evento.</p>
+                </div>
+                <?php else: ?>
+                <div class="quotes-list">
+                    <?php foreach ($contracts as $contract): 
+                        $status_class = 'status-' . esc_attr($contract->status);
+                        $status_text = ucfirst($contract->status);
+                        if ($contract->status === 'draft') $status_text = 'Borrador';
+                        elseif ($contract->status === 'sent') $status_text = 'Enviado';
+                        elseif ($contract->status === 'signed') $status_text = 'Firmado';
+                        elseif ($contract->status === 'cancelled') $status_text = 'Cancelado';
+                    ?>
+                    <div class="quote-item contract-item">
+                        <div class="quote-header">
+                            <div class="quote-title">
+                                <span class="dashicons dashicons-media-document"></span>
+                                <span><?php echo esc_html($contract->nombre_pdf ?: 'Contrato'); ?></span>
+                                <span class="contract-status <?php echo $status_class; ?>"><?php echo esc_html($status_text); ?></span>
+                            </div>
+                            <div class="quote-date">
+                                <?php echo date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($contract->created_at)); ?>
+                                <span class="contract-amount">$<?php echo number_format($contract->total_amount, 2); ?></span>
+                            </div>
+                        </div>
+                        <div class="quote-actions">
+                            <a href="<?php echo esc_url($contract->pdf_url); ?>" target="_blank" class="quote-action-btn view-btn">
+                                <span class="dashicons dashicons-visibility"></span>
+                                <span>Ver PDF</span>
+                            </a>
+                            <a href="<?php echo esc_url($contract->pdf_url); ?>" download class="quote-action-btn download-btn">
+                                <span class="dashicons dashicons-download"></span>
+                                <span>Descargar</span>
+                            </a>
+                            <?php if ($contract->status === 'draft'): ?>
+                                <button class="quote-action-btn send-btn" data-contract-id="<?php echo esc_attr($contract->id); ?>">
+                                    <span class="dashicons dashicons-email-alt"></span>
+                                    <span>Enviar</span>
+                                </button>
+                            <?php endif; ?>
+                            <?php if (in_array($contract->status, ['sent', 'draft'])): ?>
+                                <button class="quote-action-btn edit-btn" data-contract-id="<?php echo esc_attr($contract->id); ?>">
+                                    <span class="dashicons dashicons-edit"></span>
+                                    <span>Editar</span>
+                                </button>
+                            <?php endif; ?>
+                            <button class="quote-action-btn share-btn" data-url="<?php echo esc_url($contract->pdf_url); ?>">
+                                <span class="dashicons dashicons-share"></span>
+                                <span>Compartir</span>
+                            </button>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+            </div>
+            
             <!-- Seguimientos específicos para este evento -->
             <div class="info-card">
                 <div class="card-header">
