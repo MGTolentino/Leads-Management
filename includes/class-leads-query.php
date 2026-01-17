@@ -928,6 +928,25 @@ public function get_leads_by_status($args = array()) {
    error_log('Pipeline Query: ' . $prepared_query);
    error_log('Total results from query: ' . count($results));
    
+   // Log primeros 5 resultados para debug
+   for ($i = 0; $i < min(5, count($results)); $i++) {
+       $row = $results[$i];
+       error_log("Result $i: Lead ID {$row->lead_id}, Evento ID: {$row->evento_id}, Status: {$row->evento_status}");
+   }
+   
+   // Buscar lead específico ID 652
+   $found_652 = false;
+   foreach ($results as $row) {
+       if ($row->lead_id == 652) {
+           $found_652 = true;
+           error_log("FOUND Lead 652: Evento ID: {$row->evento_id}, Status: '{$row->evento_status}'");
+           break;
+       }
+   }
+   if (!$found_652) {
+       error_log("Lead 652 NOT FOUND in query results");
+   }
+   
    // Contar leads totales en BD
    $total_leads = $this->wpdb->get_var("SELECT COUNT(*) FROM {$this->leads_table}");
    $total_eventos = $this->wpdb->get_var("SELECT COUNT(*) FROM {$this->eventos_table}");
