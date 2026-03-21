@@ -9,8 +9,8 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         e.stopPropagation();
         
-        // Buscar el modal y mostrarlo
-        const modal = $('#add_lead_modal');
+        // Buscar el modal con el ID correcto
+        const modal = $('#lead_modal');
         
         if (modal.length) {
             // Asegurar que el modal esté en la posición correcta
@@ -19,7 +19,8 @@ jQuery(document).ready(function($) {
             }
             
             // Mostrar el modal
-            modal.fadeIn(300).addClass('show active');
+            modal.show().addClass('show active');
+            modal.fadeIn(300);
             
             // Prevenir scroll del body
             $('body').css('overflow', 'hidden');
@@ -34,22 +35,22 @@ jQuery(document).ready(function($) {
     });
     
     // Cerrar modal al hacer click fuera
-    $('#add_lead_modal').on('click', function(e) {
-        if ($(e.target).is('#add_lead_modal')) {
+    $('#lead_modal').on('click', function(e) {
+        if ($(e.target).is('#lead_modal')) {
             closeModal();
         }
     });
     
     // Cerrar modal con ESC
     $(document).on('keyup', function(e) {
-        if (e.key === "Escape" && $('#add_lead_modal').is(':visible')) {
+        if (e.key === "Escape" && $('#lead_modal').is(':visible')) {
             closeModal();
         }
     });
     
     // Función para cerrar el modal
     function closeModal() {
-        $('#add_lead_modal').fadeOut(300).removeClass('show active');
+        $('#lead_modal').fadeOut(300).removeClass('show active');
         $('body').css('overflow', '');
     }
     
@@ -60,13 +61,19 @@ jQuery(document).ready(function($) {
     
     // Asegurar que el modal no esté visible al cargar la página
     $(window).on('load', function() {
-        $('#add_lead_modal').hide().removeClass('show active');
+        $('#lead_modal').hide().removeClass('show active');
+    });
+    
+    // También manejar el submit del formulario
+    $('#lead_form').on('submit', function(e) {
+        e.preventDefault();
+        // El pipeline-simple.js manejará el submit
     });
 });
 
 // Fix para asegurar que el modal esté oculto inicialmente
 document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('add_lead_modal');
+    const modal = document.getElementById('lead_modal');
     if (modal) {
         modal.style.display = 'none';
         modal.classList.remove('show', 'active');

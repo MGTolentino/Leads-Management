@@ -4,7 +4,8 @@
 
 /* Modal overlay debe cubrir toda la pantalla */
 .modal-overlay,
-#add_lead_modal {
+#lead_modal,
+.modal {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -17,7 +18,10 @@
 
 /* Cuando está activo */
 .modal-overlay.active,
-#add_lead_modal:not(.hidden) {
+#lead_modal.show,
+#lead_modal.active,
+.modal.show,
+.modal.active {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -132,7 +136,8 @@
 }
 
 /* Hacer el modal visible cuando se muestra */
-#add_lead_modal.show,
+#lead_modal.show,
+.modal.show,
 .modal-overlay.show {
     display: flex !important;
 }
@@ -155,7 +160,8 @@
 }
 
 /* Fix para que el modal no aparezca estático abajo */
-#add_lead_modal:not(.show):not(.active) {
+#lead_modal:not(.show):not(.active),
+.modal:not(.show):not(.active) {
     display: none !important;
     visibility: hidden !important;
 }
