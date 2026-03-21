@@ -122,6 +122,22 @@ class LTB_Leads_Management {
             array('ltb-leads-unified'),
             LTB_LEADS_VERSION
         );
+        
+        // Cargar fixes del modal
+        wp_enqueue_style(
+            'ltb-modal-fixes',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/modal-fixes.css',
+            array('ltb-leads-unified'),
+            LTB_LEADS_VERSION
+        );
+        
+        // Cargar fixes de filtros
+        wp_enqueue_style(
+            'ltb-filter-fixes',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/filter-fixes.css',
+            array('ltb-leads-unified'),
+            LTB_LEADS_VERSION
+        );
 
         if ($this->is_leads_listing_page()) {
             // Cargar jQuery UI CSS para autocomplete y datepicker
@@ -175,6 +191,15 @@ class LTB_Leads_Management {
                 'ltb-pipeline-simple',
                 LTB_LEADS_PLUGIN_URL . 'assets/js/pipeline-simple.js',
                 array('jquery', 'jquery-ui-autocomplete', 'moment-js', 'daterangepicker-js', 'ltb-lead-add'),
+                LTB_LEADS_VERSION,
+                true
+            );
+            
+            // Cargar fix para el modal
+            wp_enqueue_script(
+                'ltb-modal-fix',
+                LTB_LEADS_PLUGIN_URL . 'assets/js/modal-fix.js',
+                array('jquery'),
                 LTB_LEADS_VERSION,
                 true
             );
