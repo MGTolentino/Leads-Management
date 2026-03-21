@@ -1,0 +1,423 @@
+/* Pipeline CSS Minimalista - Solo funcionalidad */
+
+/* Reset básico */
+.pipeline-container * {
+    box-sizing: border-box;
+}
+
+/* Contenedor principal */
+.pipeline-container {
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Barra de herramientas */
+.pipeline-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Filtros en línea */
+.inline-filters {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    align-items: center;
+}
+
+.filter-input,
+.filter-select {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    background: white;
+    font-size: 13px;
+}
+
+.filter-input {
+    width: 150px;
+}
+
+.filter-select {
+    width: 180px;
+}
+
+/* Botones */
+.btn-primary,
+.btn-secondary,
+.btn-text {
+    padding: 6px 12px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: #0073aa;
+    color: white;
+}
+
+.btn-secondary {
+    background: #666;
+    color: white;
+}
+
+.btn-text {
+    background: none;
+    color: #666;
+    text-decoration: underline;
+}
+
+.btn-primary:hover {
+    background: #005a87;
+}
+
+.btn-secondary:hover {
+    background: #555;
+}
+
+/* Estadísticas */
+.pipeline-stats {
+    font-weight: 600;
+}
+
+/* Tablero Pipeline */
+.pipeline-board {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+/* Columnas */
+.pipeline-column {
+    flex: 1;
+    min-width: 250px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+}
+
+.column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #e5e5e5;
+    border-bottom: 1px solid #ddd;
+}
+
+.column-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.count {
+    background: #666;
+    color: white;
+    padding: 2px 8px;
+    font-size: 12px;
+}
+
+.column-content {
+    padding: 10px;
+    min-height: 400px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+/* Tarjetas de leads */
+.lead-card {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.lead-card:hover {
+    background: #f9f9f9;
+}
+
+.lead-name {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.lead-info {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 3px;
+}
+
+.lead-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+}
+
+.lead-actions a {
+    color: #0073aa;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.lead-actions a:hover {
+    text-decoration: underline;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: visible;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+/* Formulario */
+.simple-form {
+    padding: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-field label {
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-field input,
+.form-field select {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.form-section {
+    margin: 20px 0;
+    padding: 15px 0;
+    border-top: 1px solid #eee;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+/* Estados específicos - colores funcionales para identificación rápida */
+/* Estados nuevos/iniciales - Azul */
+.pipeline-column[data-status="nuevo"],
+.pipeline-column[data-status="nuevo-no-contactado"] {
+    background-color: #f0f8ff;
+}
+.pipeline-column[data-status="nuevo"] .column-header,
+.pipeline-column[data-status="nuevo-no-contactado"] .column-header {
+    background-color: #cfe2ff;
+    border-top: 3px solid #0d6efd;
+}
+
+/* Estados en progreso - Verde claro */
+.pipeline-column[data-status="con-presupuesto"],
+.pipeline-column[data-status="con-cotizacion"],
+.pipeline-column[data-status="contactado-interesado"] {
+    background-color: #e8f5e9;
+}
+.pipeline-column[data-status="con-presupuesto"] .column-header,
+.pipeline-column[data-status="con-cotizacion"] .column-header,
+.pipeline-column[data-status="contactado-interesado"] .column-header {
+    background-color: #a5d6a7;
+    border-top: 3px solid #66bb6a;
+}
+
+/* Estados avanzados - Amarillo */
+.pipeline-column[data-status="por-cerrar"],
+.pipeline-column[data-status="reservado"] {
+    background-color: #fff8e1;
+}
+.pipeline-column[data-status="por-cerrar"] .column-header,
+.pipeline-column[data-status="reservado"] .column-header {
+    background-color: #ffe082;
+    border-top: 3px solid #ffc107;
+}
+
+/* Estados cerrados exitosos - Verde oscuro */
+.pipeline-column[data-status="con-contrato"],
+.pipeline-column[data-status="cerrado"] {
+    background-color: #e8f5e9;
+}
+.pipeline-column[data-status="con-contrato"] .column-header,
+.pipeline-column[data-status="cerrado"] .column-header {
+    background-color: #81c784;
+    border-top: 3px solid #4caf50;
+}
+
+/* Estados negativos - Rojo */
+.pipeline-column[data-status="perdido"],
+.pipeline-column[data-status="cancelado"] {
+    background-color: #ffeef0;
+}
+.pipeline-column[data-status="perdido"] .column-header,
+.pipeline-column[data-status="cancelado"] .column-header {
+    background-color: #ffcdd2;
+    border-top: 3px solid #f44336;
+}
+
+/* Estados especiales - Gris */
+.pipeline-column[data-status="sin-evento"],
+.pipeline-column[data-status="otros"] {
+    background-color: #f8f9fa;
+}
+.pipeline-column[data-status="sin-evento"] .column-header,
+.pipeline-column[data-status="otros"] .column-header {
+    background-color: #e9ecef;
+    border-top: 3px solid #6c757d;
+}
+
+/* Estilos para drag & drop */
+.lead-card.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.pipeline-column.drag-over {
+    background-color: #e8f4f8;
+    border: 2px dashed #0073aa;
+}
+
+/* Scrollbar personalizado para columnas */
+.column-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.column-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.column-content::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pipeline-toolbar {
+        flex-wrap: wrap;
+    }
+    
+    .inline-filters {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+    
+    .filter-input,
+    .filter-select {
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Checkbox inline */
+.checkbox-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.checkbox-inline input[type="checkbox"] {
+    cursor: pointer;
+}
+
+/* Loading state */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: "Cargando...";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+}.month-year-filter {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}

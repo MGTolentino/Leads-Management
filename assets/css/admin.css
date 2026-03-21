@@ -1,0 +1,302 @@
+/* Contenedor principal */
+.leads-wrapper {
+    margin: 20px 0;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Filtros mejorados */
+.leads-filter-container {
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.filter-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.filter-group label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #495057;
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* Estos estilos han sido comentados para evitar conflictos
+.filter-group input,
+.filter-group select {
+    height: 28px;
+    padding: 2px 6px;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    font-size: 12px;
+    background: white;
+}
+
+.filter-group input {
+    width: 100px;
+}
+
+.filter-group select {
+    width: auto;
+    min-width: 90px;
+}
+*/
+
+.filter-group.order-group {
+    display: flex;
+    align-items: center;
+}
+
+.filter-group.order-group select {
+    width: 110px;
+}
+
+#search_leads {
+    width: 120px;
+}
+
+#orden {
+    width: 45px !important;
+    padding-right: 2px;
+}
+
+/* Botones compactos */
+.button-group {
+    display: flex;
+    gap: 6px;
+    margin-left: 6px;
+    flex-shrink: 0;
+}
+
+
+/* Botones */
+.button-group {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.button {
+    height: 28px;
+    padding: 0 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.button-primary {
+    background: #0d6efd;
+    color: white;
+}
+
+.button-primary:hover {
+    background: #0b5ed7;
+}
+
+.button-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.button-secondary:hover {
+    background: #5c636a;
+}
+
+.button-edit {
+    background: #198754;
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    height: 24px;
+}
+
+.button-edit:hover {
+    background: #157347;
+}
+
+/* Placeholders más pequeños */
+::placeholder {
+    font-size: 11px;
+    color: #adb5bd;
+}
+
+
+/* Tabla */
+.leads-table-container {
+    overflow-x: auto;
+}
+
+.leads-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.leads-table th {
+    background: #f8f9fa;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+}
+
+.leads-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #dee2e6;
+    vertical-align: middle;
+}
+
+.leads-table tr {
+    transition: background-color 0.2s;
+}
+
+.leads-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Clases de alineación */
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+
+/* Enlaces */
+.link-servicio {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.link-servicio:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .filter-row {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .button-group {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 768px) {
+    .leads-table-container {
+        margin: 0 -16px;
+    }
+    
+    .filter-group {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .filter-group input,
+    .filter-group select {
+        width: 100%;
+    }
+}
+
+/* Estilos para autocompletado */
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.ui-menu-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.ui-menu-item:hover {
+    background-color: #f8f9fa;
+}
+
+.ui-state-active,
+.ui-widget-content .ui-state-active {
+    background: #e9ecef;
+    border: none;
+    margin: 0;
+}
+
+.service-search {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Estilos para autocompletado */
+.ui-autocomplete.ui-widget {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 9999;
+    padding: 0;
+    list-style: none;
+}
+
+.ui-autocomplete .ui-menu-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: none;
+    margin: 0;
+}
+
+.ui-autocomplete .ui-menu-item:hover {
+    background-color: #f8f9fa;
+}
+
+.ui-autocomplete .ui-state-active,
+.ui-autocomplete .ui-widget-content .ui-state-active {
+    background: #e9ecef;
+    border: none;
+    margin: 0;
+    font-weight: normal;
+}
+
+.service-search {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+}
