@@ -156,10 +156,10 @@ class LTB_Leads_Management_V2 {
             return;
         }
         
-        // Enqueue modern unified pipeline script
+        // Enqueue modern unified CSS system
         wp_enqueue_style(
-            'ltb-pipeline-unified',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/pipeline-unified.css',
+            'ltb-leads-unified',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/leads-unified.css',
             [],
             LTB_LEADS_VERSION
         );
@@ -225,9 +225,10 @@ class LTB_Leads_Management_V2 {
      * Enqueue admin scripts and styles
      */
     public function enqueue_admin_scripts() {
+        // Use unified CSS for admin too
         wp_enqueue_style(
-            'ltb-admin',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/admin.css',
+            'ltb-leads-unified',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/leads-unified.css',
             [],
             LTB_LEADS_VERSION
         );

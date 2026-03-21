@@ -55,6 +55,8 @@ class LTB_Leads_Management {
             $filepath = LTB_LEADS_PLUGIN_DIR . 'includes/' . $file;
             if (file_exists($filepath)) {
                 require_once $filepath;
+            } else {
+                error_log('ARCHIVO NO ENCONTRADO: ' . $filepath);
             }
         }
     }
@@ -91,27 +93,51 @@ class LTB_Leads_Management {
             return;
         }
 
-        // Solo cargar el CSS minimalista del pipeline
+        // Cargar sistema de diseño CSS unificado moderno
         wp_enqueue_style(
-            'ltb-pipeline-simple',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/pipeline-simple.css',
+            'ltb-leads-unified',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/leads-unified.css',
             array(),
             LTB_LEADS_VERSION
         );
         
-        // Cargar también enhanced-filters.css para los filtros de fecha
+        // Cargar CSS de compatibilidad para transición
         wp_enqueue_style(
-            'ltb-enhanced-filters',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/enhanced-filters.css',
-            array(),
+            'ltb-compatibility-bridge',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/compatibility-bridge.css',
+            array('ltb-leads-unified'),
             LTB_LEADS_VERSION
         );
         
-        // Cargar autocomplete fixes CSS
+        // Cargar ajustes compactos
         wp_enqueue_style(
-            'ltb-autocomplete-fixes',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/autocomplete-fixes.css',
-            array(),
+            'ltb-compact-adjustments',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/compact-adjustments.css',
+            array('ltb-leads-unified'),
+            LTB_LEADS_VERSION
+        );
+        
+        // Cargar fixes del pipeline
+        wp_enqueue_style(
+            'ltb-pipeline-fixes',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/pipeline-fixes.css',
+            array('ltb-leads-unified'),
+            LTB_LEADS_VERSION
+        );
+        
+        // Cargar fixes del modal
+        wp_enqueue_style(
+            'ltb-modal-fixes',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/modal-fixes.css',
+            array('ltb-leads-unified'),
+            LTB_LEADS_VERSION
+        );
+        
+        // Cargar fixes de filtros
+        wp_enqueue_style(
+            'ltb-filter-fixes',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/filter-fixes.css',
+            array('ltb-leads-unified'),
             LTB_LEADS_VERSION
         );
 
@@ -162,11 +188,20 @@ class LTB_Leads_Management {
                 true
             );
             
-            // Solo cargar el JavaScript simplificado del pipeline
+            // Cargar el JavaScript original del pipeline que funcionaba
             wp_enqueue_script(
                 'ltb-pipeline-simple',
                 LTB_LEADS_PLUGIN_URL . 'assets/js/pipeline-simple.js',
                 array('jquery', 'jquery-ui-autocomplete', 'moment-js', 'daterangepicker-js', 'ltb-lead-add'),
+                LTB_LEADS_VERSION,
+                true
+            );
+            
+            // Cargar fix para el modal
+            wp_enqueue_script(
+                'ltb-modal-fix',
+                LTB_LEADS_PLUGIN_URL . 'assets/js/modal-fix.js',
+                array('jquery'),
                 LTB_LEADS_VERSION,
                 true
             );
@@ -192,20 +227,7 @@ class LTB_Leads_Management {
         }
 
         if ($this->is_lead_details_page()) {
-            wp_enqueue_style(
-                'ltb-leads-edit',
-                LTB_LEADS_PLUGIN_URL . 'assets/css/lead-edit.css',
-                array(),
-                LTB_LEADS_VERSION
-            );
-            
-            // Cargar estilos para metadatos
-            wp_enqueue_style(
-                'ltb-leads-metadata',
-                LTB_LEADS_PLUGIN_URL . 'assets/css/lead-metadata.css',
-                array(),
-                LTB_LEADS_VERSION
-            );
+            // El CSS unificado ya contiene todos los estilos necesarios
 
             wp_enqueue_script(
                 'ltb-leads-edit',
@@ -306,7 +328,7 @@ wp_localize_script('ltb-lead-edit', 'leadManagementConfig', array(
         ob_start();
 
         if ($this->is_leads_listing_page()) {
-            // Solo cargar la vista pipeline simplificada
+            // Cargar la vista pipeline simple original que funcionaba
             $pipeline_template_path = LTB_LEADS_PLUGIN_DIR . 'templates/pipeline-view-simple.php';
             if (file_exists($pipeline_template_path)) {
                 include $pipeline_template_path;
