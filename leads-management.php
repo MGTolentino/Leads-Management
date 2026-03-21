@@ -91,26 +91,10 @@ class LTB_Leads_Management {
             return;
         }
 
-        // Solo cargar el CSS minimalista del pipeline
+        // Cargar sistema de diseño CSS unificado moderno
         wp_enqueue_style(
-            'ltb-pipeline-simple',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/pipeline-simple.css',
-            array(),
-            LTB_LEADS_VERSION
-        );
-        
-        // Cargar también enhanced-filters.css para los filtros de fecha
-        wp_enqueue_style(
-            'ltb-enhanced-filters',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/enhanced-filters.css',
-            array(),
-            LTB_LEADS_VERSION
-        );
-        
-        // Cargar autocomplete fixes CSS
-        wp_enqueue_style(
-            'ltb-autocomplete-fixes',
-            LTB_LEADS_PLUGIN_URL . 'assets/css/autocomplete-fixes.css',
+            'ltb-leads-unified',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/leads-unified.css',
             array(),
             LTB_LEADS_VERSION
         );
@@ -192,20 +176,7 @@ class LTB_Leads_Management {
         }
 
         if ($this->is_lead_details_page()) {
-            wp_enqueue_style(
-                'ltb-leads-edit',
-                LTB_LEADS_PLUGIN_URL . 'assets/css/lead-edit.css',
-                array(),
-                LTB_LEADS_VERSION
-            );
-            
-            // Cargar estilos para metadatos
-            wp_enqueue_style(
-                'ltb-leads-metadata',
-                LTB_LEADS_PLUGIN_URL . 'assets/css/lead-metadata.css',
-                array(),
-                LTB_LEADS_VERSION
-            );
+            // El CSS unificado ya contiene todos los estilos necesarios
 
             wp_enqueue_script(
                 'ltb-leads-edit',
