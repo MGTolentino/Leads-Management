@@ -2,7 +2,7 @@
  * Filter Fixes - Arreglar la visualización de filtros
  */
 
-/* Contenedor de filtros principal */
+/* Contenedor de filtros principal - Sobrescribir compatibility-bridge */
 .pipeline-toolbar {
     display: flex !important;
     align-items: center !important;
@@ -13,6 +13,8 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
     margin-bottom: 1.5rem !important;
     flex-wrap: wrap !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 /* Botón agregar lead destacado */
@@ -46,7 +48,7 @@
     flex-wrap: wrap !important;
 }
 
-/* Inputs de filtros */
+/* Inputs de filtros - Sobrescribir todos los estilos previos */
 .filter-input,
 .filter-select {
     padding: 0.5rem 0.75rem !important;
@@ -56,6 +58,10 @@
     font-size: 0.875rem !important;
     min-width: 150px !important;
     transition: all 0.2s !important;
+    height: 36px !important;
+    line-height: 1.5 !important;
+    color: #374151 !important;
+    box-sizing: border-box !important;
 }
 
 .filter-input:focus,
@@ -63,6 +69,7 @@
     outline: none !important;
     border-color: #6366f1 !important;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+    background: white !important;
 }
 
 /* Input de búsqueda más ancho */

@@ -188,34 +188,35 @@
     border-color: #6366f1 !important;
 }
 
-/* Pipeline board - Mostrar siempre 5 columnas con scroll horizontal si es necesario */
+/* Pipeline board - Forzar siempre 5 columnas */
 .ltb-pipeline-board,
 .pipeline-board {
-    display: flex !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
     gap: 1rem !important;
     padding: 1rem !important;
     background: #f9fafb !important;
     border-radius: 0.5rem !important;
     overflow-x: auto !important;
     min-height: 500px;
-    flex-wrap: nowrap !important;
+    width: 100% !important;
 }
 
-/* Columnas con ancho flexible para mostrar 5 columnas */
+/* Columnas con ancho mínimo para evitar que se compriman demasiado */
 .ltb-pipeline-column,
 .pipeline-column {
-    flex: 1 1 18% !important;
-    min-width: 200px !important;
-    max-width: 300px !important;
+    min-width: 240px !important;
+    background: white !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid #e5e7eb !important;
 }
 
-/* Para pantallas más grandes, asegurar que se vean las 5 columnas */
-@media (min-width: 1200px) {
-    .ltb-pipeline-column,
-    .pipeline-column {
-        flex: 0 0 calc(20% - 1rem) !important;
-        min-width: calc(20% - 1rem) !important;
-        max-width: calc(20% - 1rem) !important;
+/* Para pantallas pequeñas, permitir scroll horizontal */
+@media (max-width: 1400px) {
+    .ltb-pipeline-board,
+    .pipeline-board {
+        min-width: 1300px !important;
     }
 }
 

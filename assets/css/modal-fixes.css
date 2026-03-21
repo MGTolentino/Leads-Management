@@ -14,17 +14,14 @@
     background: rgba(0, 0, 0, 0.5) !important;
     z-index: 9999 !important;
     display: none; /* Oculto por defecto */
+    align-items: center;
+    justify-content: center;
 }
 
-/* Cuando está activo */
-.modal-overlay.active,
-#lead_modal.show,
+/* Cuando está activo - pipeline-simple.js usa clase "active" */
 #lead_modal.active,
-.modal.show,
 .modal.active {
     display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
 }
 
 /* Container del modal centrado */
@@ -135,14 +132,12 @@
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
 }
 
-/* Hacer el modal visible cuando se muestra */
-#lead_modal.show,
-.modal.show,
-.modal-overlay.show {
-    display: flex !important;
+/* Animación de entrada cuando está activo */
+#lead_modal.active .modal-content,
+.modal.active .modal-content {
+    animation: modalSlideIn 0.3s ease-out;
 }
 
-/* Animación de entrada */
 @keyframes modalSlideIn {
     from {
         opacity: 0;
@@ -154,16 +149,10 @@
     }
 }
 
-.modal-container,
-.modal-content {
-    animation: modalSlideIn 0.3s ease-out;
-}
-
 /* Fix para que el modal no aparezca estático abajo */
-#lead_modal:not(.show):not(.active),
-.modal:not(.show):not(.active) {
+#lead_modal:not(.active),
+.modal:not(.active) {
     display: none !important;
-    visibility: hidden !important;
 }
 
 /* Asegurar que cuando se hace click en el overlay se cierre */
