@@ -57,6 +57,23 @@ class LTB_Leads_Management {
                 require_once $filepath;
             }
         }
+        
+        // Cargar optimizaciones SQL si están disponibles
+        $optimizations = array(
+            'class-query-builder.php',
+            'class-leads-ajax-optimized.php',
+            'class-leads-cache.php',
+            'class-input-validator.php',
+            'class-nonce-manager.php',
+            'class-error-handler.php'
+        );
+        
+        foreach ($optimizations as $file) {
+            $filepath = LTB_LEADS_PLUGIN_DIR . 'includes/' . $file;
+            if (file_exists($filepath)) {
+                require_once $filepath;
+            }
+        }
     }
 
     private function init_hooks() {
@@ -69,7 +86,29 @@ class LTB_Leads_Management {
         
         $this->query_handler = new LTB_Leads_Query();
         $this->filters_handler = new LTB_Leads_Filters();
-        $this->ajax_handler = new LTB_Leads_Ajax(); 
+        $this->ajax_handler = new LTB_Leads_Ajax();
+        
+        // Inicializar sistemas optimizados si están disponibles
+        if (class_exists('LTB_Leads_Ajax_Optimized')) {
+            new LTB_Leads_Ajax_Optimized();
+        }
+        
+        if (class_exists('LTB_Leads_Cache')) {
+            LTB_Leads_Cache::get_instance();
+        }
+        
+        if (class_exists('LTB_Input_Validator')) {
+            LTB_Input_Validator::get_instance();
+        }
+        
+        if (class_exists('LTB_Nonce_Manager')) {
+            LTB_Nonce_Manager::get_instance();
+        }
+        
+        if (class_exists('LTB_Error_Handler')) {
+            LTB_Error_Handler::get_instance();
+        }
+        
         LTB_Leads_Router::get_instance();
         if (class_exists('LTB_Leads_Event_Router')) {
                 LTB_Leads_Event_Router::get_instance();
