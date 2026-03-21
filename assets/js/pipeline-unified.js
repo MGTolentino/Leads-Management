@@ -85,6 +85,11 @@ class PipelineManager {
      * Initialize all event listeners
      */
     initializeEvents() {
+        // Botón agregar lead
+        const addLeadBtn = document.getElementById('add_lead_btn');
+        if (addLeadBtn) {
+            addLeadBtn.addEventListener('click', () => this.openAddLeadModal());
+        }
         // Date range picker
         this.initDateRangePicker();
         
@@ -265,9 +270,18 @@ class PipelineManager {
                 }
             }
             
-            this.allLeads = data.leads || [];
-            this.renderPipeline(data);
-            this.updateStats(data.stats);
+            // Verificar la estructura de datos recibida
+            if (data.pipeline) {
+                // Si viene con estructura de pipeline, usar esa
+                this.renderPipelineFromStructure(data.pipeline);
+                this.allLeads = this.flattenPipeline(data.pipeline);
+            } else if (data.leads) {
+                // Si vienen leads planos, agruparlos
+                this.allLeads = data.leads;
+                this.renderPipeline(data);
+            }
+            
+            this.updateStats(data.stats || {});
             
         } catch (error) {
             console.error('Error loading pipeline:', error);
@@ -286,7 +300,7 @@ class PipelineManager {
         if (!container) return;
         
         // Group leads by status
-        const grouped = this.groupLeadsByStatus(data.leads);
+        const grouped = this.groupLeadsByStatus(data.leads || []);
         
         // Clear and rebuild columns
         container.innerHTML = '';
@@ -300,6 +314,39 @@ class PipelineManager {
         
         // Re-initialize drag and drop
         this.dragDrop.refresh();
+    }
+    
+    /**
+     * Render pipeline from structured data
+     */
+    renderPipelineFromStructure(pipeline) {
+        const container = document.getElementById('pipeline-container');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        const statuses = ['nuevo', 'contactado', 'visitado', 'cotizado', 'contratado', 'perdido'];
+        
+        statuses.forEach(status => {
+            const leads = pipeline[status] || [];
+            const column = this.createColumn(status, leads);
+            container.appendChild(column);
+        });
+        
+        this.dragDrop.refresh();
+    }
+    
+    /**
+     * Flatten pipeline structure to array
+     */
+    flattenPipeline(pipeline) {
+        let allLeads = [];
+        Object.values(pipeline).forEach(statusLeads => {
+            if (Array.isArray(statusLeads)) {
+                allLeads = allLeads.concat(statusLeads);
+            }
+        });
+        return allLeads;
     }
     
     /**
@@ -343,19 +390,26 @@ class PipelineManager {
         const eventDate = lead.event_date ? 
             new Date(lead.event_date).toLocaleDateString('es-MX') : 'Sin fecha';
         
+        // Validar datos antes de mostrar
+        const nombre = lead.nombre || 'Sin nombre';
+        const apellido = lead.apellido || '';
+        const email = lead.email || 'Sin email';
+        const telefono = lead.telefono || 'Sin teléfono';
+        const leadId = lead.id || lead._ID || 0;
+        
         card.innerHTML = `
             <div class="lead-header">
-                <span class="lead-name">${lead.nombre} ${lead.apellido}</span>
-                <span class="lead-id">#${lead.id}</span>
+                <span class="lead-name">${nombre} ${apellido}</span>
+                <span class="lead-id">#${leadId}</span>
             </div>
             <div class="lead-details">
-                <p class="lead-email">${lead.email}</p>
-                <p class="lead-phone">${lead.telefono}</p>
+                <p class="lead-email">${email}</p>
+                <p class="lead-phone">${telefono}</p>
                 <p class="lead-event">${lead.event_type || 'Sin evento'} - ${eventDate}</p>
             </div>
             <div class="lead-actions">
-                <a href="${this.config.siteUrl}/lead-details/${lead.id}" class="btn-view">Ver</a>
-                <button class="btn-edit" data-lead-id="${lead.id}">Editar</button>
+                <a href="${this.config.siteUrl}/lead-details/${leadId}" class="btn-view">Ver</a>
+                <button class="btn-edit" data-lead-id="${leadId}">Editar</button>
             </div>
         `;
         
@@ -444,6 +498,120 @@ class PipelineManager {
      */
     editLead(leadId) {
         window.location.href = `${this.config.siteUrl}/lead-details/${leadId}`;
+    }
+    
+    /**
+     * Open add lead modal
+     */
+    openAddLeadModal() {
+        // Si existe el modal del sistema anterior, usarlo
+        if (typeof jQuery !== 'undefined' && jQuery('#add_lead_modal').length) {
+            jQuery('#add_lead_modal').fadeIn();
+        } else {
+            // Crear un modal simple
+            this.createSimpleAddLeadModal();
+        }
+    }
+    
+    /**
+     * Create simple add lead modal
+     */
+    createSimpleAddLeadModal() {
+        const modal = document.createElement('div');
+        modal.className = 'ltb-modal-overlay';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+            <div class="ltb-modal">
+                <div class="ltb-modal-header">
+                    <h2 class="ltb-modal-title">Agregar Nuevo Lead</h2>
+                    <button class="ltb-modal-close" onclick="this.closest('.ltb-modal-overlay').remove()">×</button>
+                </div>
+                <div class="ltb-modal-body">
+                    <form id="quick-add-lead-form">
+                        <div style="display: grid; gap: 1rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; color: var(--text-secondary);">Nombre *</label>
+                                <input type="text" name="nombre" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 0.375rem;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; color: var(--text-secondary);">Apellido *</label>
+                                <input type="text" name="apellido" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 0.375rem;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; color: var(--text-secondary);">Email *</label>
+                                <input type="email" name="email" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 0.375rem;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem; color: var(--text-secondary);">Teléfono *</label>
+                                <input type="tel" name="telefono" required style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 0.375rem;">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="ltb-modal-footer">
+                    <button class="ltb-btn ltb-btn-secondary" onclick="this.closest('.ltb-modal-overlay').remove()">Cancelar</button>
+                    <button class="ltb-btn ltb-btn-primary" onclick="window.pipelineManager.saveQuickLead()">Guardar Lead</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    /**
+     * Save quick lead
+     */
+    async saveQuickLead() {
+        const form = document.getElementById('quick-add-lead-form');
+        if (!form) return;
+        
+        const formData = new FormData(form);
+        formData.append('action', 'save_lead_data');
+        formData.append('nonce', this.config.nonce);
+        
+        try {
+            const response = await fetch(this.config.ajaxUrl, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Cerrar modal y recargar pipeline
+                document.querySelector('.ltb-modal-overlay')?.remove();
+                this.showSuccess('Lead agregado exitosamente');
+                await this.loadPipelineData();
+            } else {
+                this.showError(result.data || 'Error al guardar el lead');
+            }
+        } catch (error) {
+            this.showError('Error al guardar el lead');
+        }
+    }
+    
+    /**
+     * Show success message
+     */
+    showSuccess(message) {
+        const toast = document.createElement('div');
+        toast.className = 'ltb-toast ltb-toast-success';
+        toast.innerHTML = `
+            <span>${message}</span>
+        `;
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 9999;
+            animation: slideInRight 0.3s ease;
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
     }
     
     /**

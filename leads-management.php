@@ -114,6 +114,14 @@ class LTB_Leads_Management {
             array('ltb-leads-unified'),
             LTB_LEADS_VERSION
         );
+        
+        // Cargar fixes del pipeline
+        wp_enqueue_style(
+            'ltb-pipeline-fixes',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/pipeline-fixes.css',
+            array('ltb-leads-unified'),
+            LTB_LEADS_VERSION
+        );
 
         if ($this->is_leads_listing_page()) {
             // Cargar jQuery UI CSS para autocomplete y datepicker
@@ -162,16 +170,16 @@ class LTB_Leads_Management {
                 true
             );
             
-            // Cargar el JavaScript unificado moderno del pipeline
+            // Cargar el JavaScript original del pipeline que funcionaba
             wp_enqueue_script(
-                'ltb-pipeline-unified',
-                LTB_LEADS_PLUGIN_URL . 'assets/js/pipeline-unified.js',
+                'ltb-pipeline-simple',
+                LTB_LEADS_PLUGIN_URL . 'assets/js/pipeline-simple.js',
                 array('jquery', 'jquery-ui-autocomplete', 'moment-js', 'daterangepicker-js', 'ltb-lead-add'),
                 LTB_LEADS_VERSION,
                 true
             );
             
-            wp_localize_script('ltb-pipeline-unified', 'ltb_leads', array(
+            wp_localize_script('ltb-pipeline-simple', 'ltb_leads', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('ltb_leads_nonce'),
                 'site_url' => site_url()
@@ -185,7 +193,7 @@ class LTB_Leads_Management {
             
             $status_options = LTB_Leads_Status_Utils::get_status_options();
             $event_types = LTB_Leads_Status_Utils::get_event_types();
-            wp_localize_script('ltb-pipeline-unified', 'leadManagementConfig', array(
+            wp_localize_script('ltb-pipeline-simple', 'leadManagementConfig', array(
                 'statusOptions' => $status_options,
                 'eventTypes' => $event_types
             ));
@@ -293,16 +301,10 @@ wp_localize_script('ltb-lead-edit', 'leadManagementConfig', array(
         ob_start();
 
         if ($this->is_leads_listing_page()) {
-            // Cargar la vista pipeline unificada con nuevo diseño
-            $pipeline_template_path = LTB_LEADS_PLUGIN_DIR . 'templates/pipeline-view-unified.php';
+            // Cargar la vista pipeline simple original que funcionaba
+            $pipeline_template_path = LTB_LEADS_PLUGIN_DIR . 'templates/pipeline-view-simple.php';
             if (file_exists($pipeline_template_path)) {
                 include $pipeline_template_path;
-            } else {
-                // Fallback al template simple si no existe el unificado
-                $fallback_template = LTB_LEADS_PLUGIN_DIR . 'templates/pipeline-view-simple.php';
-                if (file_exists($fallback_template)) {
-                    include $fallback_template;
-                }
             }
         }
 

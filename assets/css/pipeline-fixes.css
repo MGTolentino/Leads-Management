@@ -1,0 +1,268 @@
+/**
+ * Pipeline Fixes - Correcciones visuales finales
+ */
+
+/* Arreglar las columnas del pipeline */
+.ltb-pipeline-column,
+.pipeline-column {
+    background: white !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    min-height: 400px !important;
+    border: 1px solid #e5e7eb !important;
+}
+
+.ltb-column-header,
+.column-header {
+    padding: 1rem !important;
+    background: white !important;
+    border-bottom: 3px solid;
+    border-radius: 0.5rem 0.5rem 0 0 !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.column-header h3,
+.column-title {
+    margin: 0 !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+}
+
+.lead-count,
+.ltb-column-badge {
+    background: #f3f4f6 !important;
+    color: #6b7280 !important;
+    padding: 0.125rem 0.5rem !important;
+    border-radius: 9999px !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    min-width: 24px;
+    text-align: center;
+}
+
+/* Colores de estado para las columnas */
+.status-nuevo .column-header,
+.ltb-column-nuevo .ltb-column-header {
+    border-bottom-color: #94a3b8 !important;
+}
+
+.status-contactado .column-header,
+.ltb-column-contactado .ltb-column-header {
+    border-bottom-color: #3b82f6 !important;
+}
+
+.status-visitado .column-header,
+.ltb-column-visitado .ltb-column-header {
+    border-bottom-color: #8b5cf6 !important;
+}
+
+.status-cotizado .column-header,
+.ltb-column-cotizado .ltb-column-header {
+    border-bottom-color: #f59e0b !important;
+}
+
+.status-contratado .column-header,
+.ltb-column-contratado .ltb-column-header {
+    border-bottom-color: #10b981 !important;
+}
+
+.status-perdido .column-header,
+.ltb-column-perdido .ltb-column-header {
+    border-bottom-color: #ef4444 !important;
+}
+
+/* Arreglar cards de leads */
+.lead-card,
+.ltb-lead-card {
+    background: white !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.375rem !important;
+    padding: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+    cursor: move;
+    transition: all 0.2s ease !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.lead-card::before,
+.ltb-lead-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.lead-card:hover,
+.ltb-lead-card:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-1px) !important;
+    border-color: #d1d5db !important;
+}
+
+.lead-header,
+.ltb-lead-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem !important;
+}
+
+.lead-name,
+.ltb-lead-name {
+    font-weight: 600 !important;
+    color: #111827 !important;
+    font-size: 0.875rem !important;
+}
+
+.lead-id,
+.ltb-lead-id {
+    font-size: 0.75rem !important;
+    color: #9ca3af !important;
+    font-family: monospace !important;
+}
+
+.lead-details p,
+.ltb-lead-details p {
+    margin: 0.25rem 0 !important;
+    font-size: 0.75rem !important;
+    color: #6b7280 !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.lead-email::before {
+    content: '✉ ';
+    color: #9ca3af;
+}
+
+.lead-phone::before {
+    content: '☎ ';
+    color: #9ca3af;
+}
+
+.lead-event::before {
+    content: '📅 ';
+}
+
+.lead-actions,
+.ltb-lead-actions {
+    display: flex;
+    gap: 0.25rem !important;
+    margin-top: 0.5rem !important;
+    padding-top: 0.5rem !important;
+    border-top: 1px solid #f3f4f6 !important;
+}
+
+.lead-action,
+.ltb-lead-action,
+.btn-view,
+.btn-edit {
+    flex: 1;
+    padding: 0.25rem 0.5rem !important;
+    font-size: 0.6875rem !important;
+    text-align: center;
+    background: #f9fafb !important;
+    color: #6b7280 !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.25rem !important;
+    cursor: pointer;
+    transition: all 0.15s ease !important;
+    text-decoration: none !important;
+}
+
+.lead-action:hover,
+.ltb-lead-action:hover,
+.btn-view:hover,
+.btn-edit:hover {
+    background: #6366f1 !important;
+    color: white !important;
+    border-color: #6366f1 !important;
+}
+
+/* Pipeline board */
+.ltb-pipeline-board,
+.pipeline-board {
+    display: grid !important;
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 1rem !important;
+    padding: 1rem !important;
+    background: #f9fafb !important;
+    border-radius: 0.5rem !important;
+    overflow-x: auto !important;
+    min-height: 500px;
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+    .ltb-pipeline-board,
+    .pipeline-board {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .ltb-pipeline-board,
+    .pipeline-board {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Columna body */
+.column-body,
+.ltb-column-body {
+    padding: 0.75rem !important;
+    overflow-y: auto !important;
+    max-height: calc(100vh - 400px) !important;
+}
+
+/* Botón agregar lead más visible */
+#add_lead_btn {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+#add_lead_btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+#add_lead_btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Fix para el quote button flotante */
+.quote-button,
+[data-text="QUOTE"] {
+    position: fixed !important;
+    bottom: 2rem !important;
+    right: 2rem !important;
+    background: #c8bb90 !important;
+    color: white !important;
+    border-radius: 50% !important;
+    width: 60px !important;
+    height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    cursor: pointer !important;
+    z-index: 100 !important;
+}

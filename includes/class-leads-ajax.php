@@ -646,89 +646,13 @@ public function get_event_types() {
 
 /**
  * Get pipeline data for the kanban board
+ * NOTA: Este handler no es usado por pipeline-simple.js
+ * pipeline-simple.js usa get_leads_by_status en su lugar
  */
 public function get_pipeline_data() {
-    // Verificar nonce
-    if (!check_ajax_referer('ltb_leads_nonce', 'nonce', false)) {
-        wp_send_json_error('Error de seguridad');
-        return;
-    }
-    
-    // Verificar permisos
-    if (!ltb_user_can_manage_leads()) {
-        wp_send_json_error('No tienes permisos para ver esta información');
-        return;
-    }
-    
-    try {
-        // Obtener filtros del request
-        $filters = isset($_POST['filters']) ? json_decode(stripslashes($_POST['filters']), true) : array();
-        
-        // Obtener todos los leads con los filtros aplicados
-        $all_leads = $this->query_handler->get_leads($filters);
-        
-        // Organizar leads por estado
-        $pipeline = array(
-            'nuevo' => array(),
-            'contactado' => array(),
-            'visitado' => array(),
-            'cotizado' => array(),
-            'contratado' => array(),
-            'perdido' => array()
-        );
-        
-        $total_leads = 0;
-        $total_contratados = 0;
-        
-        foreach ($all_leads as $lead) {
-            // Determinar el estado del lead
-            $status = 'nuevo'; // Estado por defecto
-            
-            if (!empty($lead->evento_status)) {
-                $status = $this->normalize_status($lead->evento_status);
-            }
-            
-            // Formato de lead para el frontend
-            $lead_data = array(
-                'id' => $lead->lead_id,
-                'nombre' => $lead->nombre,
-                'apellido' => $lead->apellido,
-                'email' => $lead->email,
-                'telefono' => $lead->telefono,
-                'status' => $status,
-                'event_type' => $lead->tipo_de_evento ?? '',
-                'event_date' => $lead->fecha_de_evento ?? '',
-                'salon' => $lead->salon ?? '',
-                'ejecutivo' => $lead->ejecutivo ?? ''
-            );
-            
-            // Agregar al pipeline correspondiente
-            if (isset($pipeline[$status])) {
-                $pipeline[$status][] = $lead_data;
-            }
-            
-            $total_leads++;
-            if ($status === 'contratado') {
-                $total_contratados++;
-            }
-        }
-        
-        // Calcular estadísticas
-        $stats = array(
-            'total' => $total_leads,
-            'conversion' => $total_leads > 0 ? round(($total_contratados / $total_leads) * 100, 1) : 0,
-            'value' => '$0' // Podrías calcular el valor total aquí
-        );
-        
-        wp_send_json_success(array(
-            'leads' => $all_leads,
-            'pipeline' => $pipeline,
-            'stats' => $stats
-        ));
-        
-    } catch (Exception $e) {
-        wp_send_json_error('Error al obtener datos del pipeline: ' . $e->getMessage());
-    }
+    // Este método puede quedar para compatibilidad futura
+    // pero el sistema actual usa get_leads_by_status
+    wp_send_json_error('Este endpoint no está activo. Use get_leads_by_status');
 }
 
 /**
