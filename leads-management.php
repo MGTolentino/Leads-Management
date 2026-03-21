@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Definir constantes del plugin
-define('LTB_LEADS_VERSION', '2.1.0');
+define('LTB_LEADS_VERSION', '2.0.1');
 define('LTB_LEADS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('LTB_LEADS_PLUGIN_URL', plugin_dir_url(__FILE__));
 
