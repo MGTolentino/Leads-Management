@@ -10,7 +10,9 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
 }
 ?>
 
-<div class="pipeline-container">
+<div class="ltb-leads-wrapper" data-theme="light">
+<div class="ltb-container">
+<div class="pipeline-container ltb-pipeline">
     <!-- Barra de herramientas superior -->
     <div class="pipeline-toolbar">
         <button id="add_lead_btn" class="btn-primary">+ Agregar Lead</button>
@@ -225,4 +227,6 @@ if (!function_exists('ltb_user_can_manage_leads') || !ltb_user_can_manage_leads(
             </form>
         </div>
     </div>
+</div>
+</div>
 </div>
