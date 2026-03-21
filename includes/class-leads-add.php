@@ -93,7 +93,7 @@ class LTB_Leads_Add {
         $user_id = wp_create_user($username, $password, $lead_data['lead_e_mail']);
         
         if (is_wp_error($user_id)) {
-            error_log('Error al crear usuario: ' . $user_id->get_error_message());
+            // Usuario no creado - error manejado
             // Continuamos aunque haya error, solo que el lead no tendrá usuario asociado
         } else {
             // Actualizar datos del usuario
@@ -137,31 +137,24 @@ class LTB_Leads_Add {
 // Si es formulario completo, agregar también el evento
 if ($form_type === 'lead_and_event') {
     // DEBUG: Log event field validation
-    error_log('DEBUG - Event validation started');
-    error_log('DEBUG - fecha_de_evento exists in POST: ' . (isset($_POST['fecha_de_evento']) ? 'YES' : 'NO'));
-    error_log('DEBUG - fecha_de_evento value: ' . (isset($_POST['fecha_de_evento']) ? $_POST['fecha_de_evento'] : 'NOT SET'));
-    error_log('DEBUG - tipo_de_evento exists in POST: ' . (isset($_POST['tipo_de_evento']) ? 'YES' : 'NO'));
-    error_log('DEBUG - tipo_de_evento value: ' . (isset($_POST['tipo_de_evento']) ? $_POST['tipo_de_evento'] : 'NOT SET'));
+    // Validación de evento
     
     // Validar campos requeridos del evento
     $evento_fecha = isset($_POST['fecha_de_evento']) ? sanitize_text_field($_POST['fecha_de_evento']) : '';
     $evento_tipo = isset($_POST['tipo_de_evento']) ? sanitize_text_field($_POST['tipo_de_evento']) : '';
     
     // DEBUG: Log sanitized values
-    error_log('DEBUG - Sanitized evento_fecha: "' . $evento_fecha . '"');
-    error_log('DEBUG - Sanitized evento_tipo: "' . $evento_tipo . '"');
-    error_log('DEBUG - fecha empty: ' . (empty($evento_fecha) ? 'YES' : 'NO'));
-    error_log('DEBUG - tipo empty: ' . (empty($evento_tipo) ? 'YES' : 'NO'));
+    // Valores sanitizados
     
     if (empty($evento_fecha) || empty($evento_tipo)) {
         // Si hay error en el evento, eliminar el lead para mantener consistencia
         $this->wpdb->delete($this->wpdb->prefix . 'jet_cct_leads', array('_ID' => $lead_id));
-        error_log('DEBUG - Event validation FAILED - sending error response');
+        // Validación fallida
         wp_send_json_error('Por favor completa los campos obligatorios del evento');
         return;
     }
     
-    error_log('DEBUG - Event validation PASSED');
+    // Validación exitosa
     
     // Obtener y validar la fecha como timestamp
     $evento_fecha_original = isset($_POST['fecha_de_evento']) ? $_POST['fecha_de_evento'] : '';
@@ -321,7 +314,7 @@ public function extraer_categoria_desde_url($url_or_id) {
     }
     
     if (!$post_id) {
-        error_log('No se pudo encontrar un post para la entrada: ' . $url_or_id);
+        // Post no encontrado
         return '';
     }
     
@@ -378,7 +371,7 @@ public function extraer_categoria_desde_url($url_or_id) {
         }
         
         if (!$post_id) {
-            error_log('No se pudo encontrar un post para la URL: ' . $url);
+            // Post no encontrado para URL
             return '';
         }
         
@@ -386,7 +379,7 @@ public function extraer_categoria_desde_url($url_or_id) {
         $location_terms = get_the_terms($post_id, 'hp_listing_ubicacion');
         
         if (empty($location_terms) || is_wp_error($location_terms)) {
-            error_log('No se encontraron ubicaciones para el post ID: ' . $post_id);
+            // No se encontraron ubicaciones
             return '';
         }
         

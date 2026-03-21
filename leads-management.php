@@ -55,8 +55,6 @@ class LTB_Leads_Management {
             $filepath = LTB_LEADS_PLUGIN_DIR . 'includes/' . $file;
             if (file_exists($filepath)) {
                 require_once $filepath;
-            } else {
-                error_log('ARCHIVO NO ENCONTRADO: ' . $filepath);
             }
         }
     }

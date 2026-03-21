@@ -740,7 +740,7 @@ public function get_leads_by_status($args = array()) {
     else if (!empty($args['fecha_evento_inicio']) && !empty($args['fecha_evento_fin'])) {
         $fecha_inicio = $args['fecha_evento_inicio'];
         $fecha_fin = $args['fecha_evento_fin'];
-        error_log('[QUERY DEBUG] Processing date range filter: ' . $fecha_inicio . ' to ' . $fecha_fin);
+        // Procesando filtro de rango de fechas
         
         // Procesar fecha de inicio
         $inicio_timestamp = null;
@@ -924,14 +924,12 @@ public function get_leads_by_status($args = array()) {
    $results = $this->wpdb->get_results($prepared_query);
 
    // Debug logs
-   error_log('=== PIPELINE DEBUG ===');
-   error_log('Pipeline Query: ' . $prepared_query);
-   error_log('Total results from query: ' . count($results));
+   // Pipeline procesado
    
    // Log primeros 5 resultados para debug
    for ($i = 0; $i < min(5, count($results)); $i++) {
        $row = $results[$i];
-       error_log("Result $i: Lead ID {$row->lead_id}, Evento ID: {$row->evento_id}, Status: {$row->evento_status}");
+       // Procesando resultado
    }
    
    // Buscar lead específico ID 652
@@ -939,20 +937,18 @@ public function get_leads_by_status($args = array()) {
    foreach ($results as $row) {
        if ($row->lead_id == 652) {
            $found_652 = true;
-           error_log("FOUND Lead 652: Evento ID: {$row->evento_id}, Status: '{$row->evento_status}'");
+           // Lead encontrado
            break;
        }
    }
    if (!$found_652) {
-       error_log("Lead 652 NOT FOUND in query results");
+       // Lead no encontrado en resultados
    }
    
    // Contar leads totales en BD
    $total_leads = $this->wpdb->get_var("SELECT COUNT(*) FROM {$this->leads_table}");
    $total_eventos = $this->wpdb->get_var("SELECT COUNT(*) FROM {$this->eventos_table}");
-   error_log('Total leads in wp_jet_cct_leads: ' . $total_leads);
-   error_log('Total eventos in wp_jet_cct_eventos: ' . $total_eventos);
-   error_log('Query tables: leads=' . $this->leads_table . ', eventos=' . $this->eventos_table);
+   // Totales procesados
 
    // Para la vista pipeline solo necesitamos estados activos, pero para los datos
    $active_status_options = LTB_Leads_Status_Utils::get_active_status_options();
@@ -994,22 +990,21 @@ public function get_leads_by_status($args = array()) {
        if (!empty($row->evento_id)) {
            $status_category = LTB_Leads_Status_Utils::get_status_category($row->evento_status);
            $grouped_leads[$status_category][] = $lead_event;
-           error_log('Lead ID ' . $row->lead_id . ' with evento_status "' . $row->evento_status . '" categorized as: ' . $status_category);
+           // Lead categorizado
        } else {
            // Si no tiene evento, añadirlo al grupo "sin-evento"
            $grouped_leads['sin-evento'][] = $lead_event;
-           error_log('Lead ID ' . $row->lead_id . ' has no evento, categorized as: sin-evento');
+           // Lead sin evento
        }
    }
 
    // Log final counts
    $total_shown = 0;
    foreach ($grouped_leads as $category => $leads) {
-       error_log('Category "' . $category . '": ' . count($leads) . ' leads');
+       // Categoría procesada
        $total_shown += count($leads);
    }
-   error_log('Total leads shown in pipeline: ' . $total_shown);
-   error_log('=== END PIPELINE DEBUG ===');
+   // Pipeline completado
 
    return $grouped_leads;
 }
