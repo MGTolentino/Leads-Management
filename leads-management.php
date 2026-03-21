@@ -106,6 +106,14 @@ class LTB_Leads_Management {
             array('ltb-leads-unified'),
             LTB_LEADS_VERSION
         );
+        
+        // Cargar ajustes compactos
+        wp_enqueue_style(
+            'ltb-compact-adjustments',
+            LTB_LEADS_PLUGIN_URL . 'assets/css/compact-adjustments.css',
+            array('ltb-leads-unified'),
+            LTB_LEADS_VERSION
+        );
 
         if ($this->is_leads_listing_page()) {
             // Cargar jQuery UI CSS para autocomplete y datepicker

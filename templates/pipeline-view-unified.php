@@ -15,13 +15,20 @@ if (!defined('ABSPATH')) {
     <div class="ltb-container">
         
         <!-- Page Header -->
-        <div class="ltb-page-header">
-            <h1 class="ltb-page-title">Gestión de Leads</h1>
-            <p class="ltb-page-description">Visualiza y gestiona todos tus leads en un solo lugar</p>
+        <div class="ltb-page-header" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1 class="ltb-page-title" style="margin: 0; font-size: 1.875rem;">Gestión de Leads</h1>
+                <button id="add_lead_btn" class="ltb-btn ltb-btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 5V10M10 10V15M10 10H15M10 10H5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Agregar Lead
+                </button>
+            </div>
         </div>
         
-        <!-- Filters Section -->
-        <div class="ltb-filters">
+        <!-- Filters Section - Compact -->
+        <div class="ltb-filters" style="padding: 1rem; margin-bottom: 1.5rem;">
             <div class="ltb-filters-header">
                 <div class="ltb-filters-title">
                     <svg class="ltb-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -29,7 +36,7 @@ if (!defined('ABSPATH')) {
                     </svg>
                     <span>Filtros</span>
                 </div>
-                <button id="toggle-dark-mode" class="ltb-btn ltb-btn-ghost ltb-btn-sm">
+                <button id="toggle-dark-mode" class="ltb-btn ltb-btn-ghost ltb-btn-sm" style="margin-left: auto;">
                     <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M10 3V1M10 19V17M17 10H19M1 10H3M15.364 15.364L16.778 16.778M3.222 3.222L4.636 4.636M15.364 4.636L16.778 3.222M3.222 16.778L4.636 15.364M14 10C14 12.209 12.209 14 10 14C7.791 14 6 12.209 6 10C6 7.791 7.791 6 10 6C12.209 6 14 7.791 14 10Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                     </svg>
@@ -37,11 +44,10 @@ if (!defined('ABSPATH')) {
                 </button>
             </div>
             
-            <div class="ltb-filters-grid">
+            <div class="ltb-filters-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.75rem;">
                 <!-- Search -->
-                <div class="ltb-filter-group">
-                    <label class="ltb-filter-label" for="search_filter">Buscar</label>
-                    <input type="text" id="search_filter" class="ltb-filter-input" placeholder="Nombre, email, teléfono...">
+                <div class="ltb-filter-group" style="grid-column: span 2;">
+                    <input type="text" id="search_filter" class="ltb-filter-input" placeholder="🔍 Buscar por nombre, email, teléfono..." style="width: 100%;">
                 </div>
                 
                 <!-- Date Range -->
@@ -81,7 +87,7 @@ if (!defined('ABSPATH')) {
                 </div>
             </div>
             
-            <div class="ltb-filter-actions">
+            <div class="ltb-filter-actions" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
                 <button id="apply_filters" class="ltb-btn ltb-btn-primary">
                     <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 17L5 13M9 17L13 13M9 17V10M18 7H2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>

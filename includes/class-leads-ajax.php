@@ -30,6 +30,13 @@ class LTB_Leads_Ajax {
         // Hook para obtener tipos de evento dinámicamente
         add_action('wp_ajax_get_event_types', array($this, 'get_event_types'));
         add_action('wp_ajax_nopriv_get_event_types', array($this, 'get_event_types'));
+        
+        // Hook para obtener datos del pipeline
+        add_action('wp_ajax_get_pipeline_data', array($this, 'get_pipeline_data'));
+        add_action('wp_ajax_nopriv_get_pipeline_data', array($this, 'get_pipeline_data'));
+        
+        // Hook para actualizar estado del lead
+        add_action('wp_ajax_update_lead_status', array($this, 'update_lead_status'));
     }
 
     public function handle_lead_save() {
@@ -635,5 +642,162 @@ public function get_event_types() {
     } catch (Exception $e) {
         wp_send_json_error('Error al obtener tipos de evento: ' . $e->getMessage());
     }
+}
+
+/**
+ * Get pipeline data for the kanban board
+ */
+public function get_pipeline_data() {
+    // Verificar nonce
+    if (!check_ajax_referer('ltb_leads_nonce', 'nonce', false)) {
+        wp_send_json_error('Error de seguridad');
+        return;
+    }
+    
+    // Verificar permisos
+    if (!ltb_user_can_manage_leads()) {
+        wp_send_json_error('No tienes permisos para ver esta información');
+        return;
+    }
+    
+    try {
+        // Obtener filtros del request
+        $filters = isset($_POST['filters']) ? json_decode(stripslashes($_POST['filters']), true) : array();
+        
+        // Obtener todos los leads con los filtros aplicados
+        $all_leads = $this->query_handler->get_leads($filters);
+        
+        // Organizar leads por estado
+        $pipeline = array(
+            'nuevo' => array(),
+            'contactado' => array(),
+            'visitado' => array(),
+            'cotizado' => array(),
+            'contratado' => array(),
+            'perdido' => array()
+        );
+        
+        $total_leads = 0;
+        $total_contratados = 0;
+        
+        foreach ($all_leads as $lead) {
+            // Determinar el estado del lead
+            $status = 'nuevo'; // Estado por defecto
+            
+            if (!empty($lead->evento_status)) {
+                $status = $this->normalize_status($lead->evento_status);
+            }
+            
+            // Formato de lead para el frontend
+            $lead_data = array(
+                'id' => $lead->lead_id,
+                'nombre' => $lead->nombre,
+                'apellido' => $lead->apellido,
+                'email' => $lead->email,
+                'telefono' => $lead->telefono,
+                'status' => $status,
+                'event_type' => $lead->tipo_de_evento ?? '',
+                'event_date' => $lead->fecha_de_evento ?? '',
+                'salon' => $lead->salon ?? '',
+                'ejecutivo' => $lead->ejecutivo ?? ''
+            );
+            
+            // Agregar al pipeline correspondiente
+            if (isset($pipeline[$status])) {
+                $pipeline[$status][] = $lead_data;
+            }
+            
+            $total_leads++;
+            if ($status === 'contratado') {
+                $total_contratados++;
+            }
+        }
+        
+        // Calcular estadísticas
+        $stats = array(
+            'total' => $total_leads,
+            'conversion' => $total_leads > 0 ? round(($total_contratados / $total_leads) * 100, 1) : 0,
+            'value' => '$0' // Podrías calcular el valor total aquí
+        );
+        
+        wp_send_json_success(array(
+            'leads' => $all_leads,
+            'pipeline' => $pipeline,
+            'stats' => $stats
+        ));
+        
+    } catch (Exception $e) {
+        wp_send_json_error('Error al obtener datos del pipeline: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Update lead status (for drag and drop)
+ */
+public function update_lead_status() {
+    // Verificar nonce
+    if (!check_ajax_referer('ltb_leads_nonce', 'nonce', false)) {
+        wp_send_json_error('Error de seguridad');
+        return;
+    }
+    
+    // Verificar permisos
+    if (!ltb_user_can_manage_leads()) {
+        wp_send_json_error('No tienes permisos para realizar esta acción');
+        return;
+    }
+    
+    $lead_id = isset($_POST['lead_id']) ? intval($_POST['lead_id']) : 0;
+    $new_status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
+    
+    if (!$lead_id || !$new_status) {
+        wp_send_json_error('Datos inválidos');
+        return;
+    }
+    
+    try {
+        global $wpdb;
+        $eventos_table = $wpdb->prefix . 'jet_cct_eventos';
+        
+        // Actualizar el estado del evento
+        $updated = $wpdb->update(
+            $eventos_table,
+            array('evento_status' => $new_status),
+            array('lead_id' => $lead_id),
+            array('%s'),
+            array('%d')
+        );
+        
+        if ($updated !== false) {
+            wp_send_json_success(array(
+                'message' => 'Estado actualizado correctamente',
+                'lead_id' => $lead_id,
+                'new_status' => $new_status
+            ));
+        } else {
+            wp_send_json_error('No se pudo actualizar el estado');
+        }
+        
+    } catch (Exception $e) {
+        wp_send_json_error('Error al actualizar estado: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Normalize status values
+ */
+private function normalize_status($status) {
+    $status_map = array(
+        'nuevo' => 'nuevo',
+        'contactado' => 'contactado',
+        'visitado' => 'visitado',
+        'cotizado' => 'cotizado',
+        'contratado' => 'contratado',
+        'perdido' => 'perdido',
+        'cancelado' => 'perdido'
+    );
+    
+    $status_lower = strtolower(trim($status));
+    return isset($status_map[$status_lower]) ? $status_map[$status_lower] : 'nuevo';
 }
 }
